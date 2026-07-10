@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is `Abhishma/Abhishma` — the special GitHub "profile README" repository. A repo named identically to the account username is rendered by GitHub as the content of the user's public profile page (github.com/Abhishma). There is no application code here.
 
-The repository currently contains a single file, `README.md`, which is a **drafting/notes document** for that profile page rather than the final rendered copy. It mixes several distinct kinds of content that should not be conflated:
+The repository contains `README.md`, a **drafting/notes document** for that profile page rather than the final rendered copy, plus a `.claude/skills/` directory of personal Claude Code skills unrelated to the profile content (see below). `README.md` mixes several distinct kinds of content that should not be conflated:
 
 - **Recommended profile headline** — a one-line tagline suggestion for the GitHub bio field (not part of the profile README body).
 - **Short bio** — candidate prose for a profile "About" section.
@@ -19,7 +19,11 @@ When editing `README.md`, preserve this section structure (`##` headings) since 
 
 ## Development workflow
 
-There is no build, lint, or test tooling in this repository — it is a single Markdown file with no code, package manifest, or CI configuration. Changes are just edits to `README.md`; there is nothing to compile or run.
+There is no build, lint, or test tooling in this repository — no code, package manifest, or CI configuration. Changes are either edits to `README.md` or edits to skill files under `.claude/skills/`; there is nothing to compile or run.
+
+## `.claude/skills/`
+
+This directory holds personal Claude Code skills (`grill-me`, `humanizer`, `fact-checker`, `prompt-master`, `linkedin-hook`), kept here for durable, version-controlled storage rather than for any connection to the profile-README content above. Each skill is a `SKILL.md` with YAML frontmatter (`name`, `description`) followed by its instructions — see any existing file in the directory for the format. When adding or editing a skill, keep the `description` field specific about *when* to trigger it, since that's the only part loaded until the skill is actually invoked.
 
 ## Content/voice conventions
 
