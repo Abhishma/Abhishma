@@ -1,0 +1,16 @@
+{
+  "name": "abhishma",
+  "version": "1.0.0",
+  "description": "Playwright + axe-core accessibility audit tooling.",
+  "main": "rfr-playwright-audit.js",
+  "scripts": {
+    "audit": "node rfr-playwright-audit.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axe-core": "^4.12.1",
+    "playwright": "^1.61.1"
+  }
+}
