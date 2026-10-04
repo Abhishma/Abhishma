@@ -46,14 +46,16 @@ The Categories panel above the trackers sets the store's categories, saved in th
 
 | Source | How products are sorted |
 |---|---|
-| Category template | Keywords in product type, then title, then tags, against one of 18 vertical templates or 57 brand starters (`tools/presets.cjs`). Works on Shopify products or a CSV with just `sku,title` |
+| Category template | Keywords in product type, then title, then tags, against one of 25 vertical templates or 112 brand starters (`tools/presets.cjs`). Works on Shopify products or a CSV with just `sku,title` |
 | Shopify product type | Each product type is a category |
 | Shopify tag prefix | A tag such as `Category: Rugs` names the category; product type becomes the sub-category |
 | CSV file | `sku, title, category, subcategory, product_handle, focus_groups, collection_handle` |
 
-Vertical templates: streetwear and casual wear, premium menswear, womenswear and ethnic wear, innerwear and athleisure, baby and kids, footwear, jewellery and accessories, beauty and personal care, fragrances, health and nutrition, food and beverages, home and sleep, rugs and home decor, consumer electronics and audio, bags and travel, pet supplies, kitchenware, eyewear.
+Vertical templates: streetwear and casual wear, premium menswear, womenswear and ethnic wear, innerwear and athleisure, baby and kids, footwear, jewellery and accessories, beauty and personal care, fragrances, health and nutrition, food and beverages, home and sleep, rugs and home decor, consumer electronics and audio, bags and travel, pet supplies, kitchenware, eyewear, ethnic and occasion menswear, men's grooming, sports and fitness, watches, gifting, flowers and stationery, plants and gardening, toys and games.
 
-Brand starters point a brand at its vertical template, with the store name and suggested focus groups filled in. They include Bonkers Corner, The Bear House, Snitch, The Souled Store, Bewakoof, Rare Rabbit, Libas, FableStreet, XYXX, Neeman's, Giva, Mamaearth, Sugar Cosmetics, Minimalist, Bella Vita, Oziva, The Whole Truth, Sleepy Owl, Wakefit, Jaipur Rugs, Shyam Ahuja, boAt, Mokobara and Heads Up For Tails. They follow each brand's public storefront menu as generally known: starting points to check against the live store, not the brand's own data, and no affiliation is implied.
+Brand starters point a brand at its vertical template, with the store name and suggested focus groups filled in. They include Bonkers Corner, The Bear House, Snitch, The Souled Store, Bewakoof, Freakins, Rare Rabbit, Libas, FableStreet, Manyavar, XYXX, Neeman's, Giva, CaratLane, Mamaearth, Sugar Cosmetics, Minimalist, Beardo, Bombay Shaving Company, Bella Vita, Oziva, MuscleBlaze, The Whole Truth, Yogabar, Wakefit, Duroflex, Jaipur Rugs, Shyam Ahuja, boAt, Fire-Boltt, Mokobara, Lenskart, Boldfit, Fastrack, Ferns N Petals, Ugaoo, Smartivity and Heads Up For Tails. They follow each brand's public storefront menu as generally known: starting points to check against the live store, not the brand's own data, and no affiliation is implied.
+
+For demos, `automation/sample-store.mjs <template>` makes a made-up catalogue for any template, and `automation/demo-data.mjs --catalog --prices --orders --aov` fills it with sample sales. The demo tracker runs Demo Streetwear Co. this way.
 
 Check the preview before saving: it lists SKUs per category and how many matched nothing (shown as Unmapped). Fix stragglers by adding a category in a CSV and uploading that instead.
 

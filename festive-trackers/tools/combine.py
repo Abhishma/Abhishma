@@ -111,7 +111,7 @@ def split(key, path):
     return "<style>\n" + markup, patch(key, script, path.name)
 
 
-DEMO_BANNER = """<p class="tk-demo" role="note"><b>Sample data.</b> Illustrative numbers on the real catalogue, not R for Rabbit sales. Live views (D0, stock, returns) stay empty here.</p>"""
+DEMO_BANNER = """<p class="tk-demo" role="note"><b>Sample data.</b> A made-up store with made-up products and numbers, sorted by the streetwear category template, to show how the trackers work. It is not any brand's catalogue or sales. Live views (D0, stock, returns) stay empty here.</p>"""
 
 
 def main(demo=False):

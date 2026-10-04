@@ -22,7 +22,7 @@ test('every template and brand starter is well formed', () => {
   const brands = P.choices().brands;
   assert.equal(new Set(brands.map(b => b.id)).size, brands.length, 'duplicate brand');
   for (const b of brands) assert.ok(P.template(b.id), `${b.name} points at a missing template`);
-  assert.ok(P.TEMPLATES.length >= 15 && brands.length >= 50);
+  assert.ok(P.TEMPLATES.length >= 25 && brands.length >= 110);
 });
 
 const CASES = {
@@ -41,6 +41,13 @@ const CASES = {
   'brand:jaipur-rugs': [['Hand-Knotted Wool Rug 5x8', 'Rugs'], ['Velvet Cushion Cover', 'Cushions'], ['Brass Table Lamp', 'Lighting']],
   'brand:wakefit': [['Orthopaedic Memory Foam Mattress', 'Mattresses'], ['Sheesham Wood Bed', 'Beds'], ['Microfiber Pillow', 'Pillows']],
   'brand:mokobara': [['The Transit Backpack', 'Backpacks'], ['Cabin Trolley', 'Cabin Luggage']],
+  'brand:manyavar': [['Ivory Silk Sherwani', 'Sherwanis'], ['Kurta Pyjama Set', 'Kurta Sets'], ['Printed Nehru Jacket', 'Nehru Jackets'], ['Embroidered Mojari', 'Footwear']],
+  'brand:beardo': [['Beard Growth Oil', 'Beard Care'], ['Matte Hair Wax', 'Hair Styling'], ['Charcoal Face Wash', 'Face Care']],
+  'brand:boldfit': [['PVC Dumbbell Set', 'Home Gym Equipment'], ['TPE Yoga Mat 6mm', 'Yoga and Pilates'], ['Resistance Loop Bands', 'Resistance and Recovery'], ['Gym Shaker Bottle', 'Gym Accessories']],
+  'brand:fastrack': [['Reflex Smartwatch', 'Smartwatches'], ['Analog Watch for Men', 'Men Watches'], ['Leather Strap', 'Straps']],
+  'brand:ferns-n-petals': [['Red Roses Bouquet', 'Flowers'], ['Chocolate Truffle Cake', 'Cakes'], ['Personalised Photo Mug', 'Personalised Gifts'], ['Diwali Dry Fruit Hamper', 'Hampers']],
+  'brand:ugaoo': [['Snake Plant with Pot', 'Indoor Plants'], ['Potting Mix 5kg', 'Soil and Fertilisers'], ['Ceramic Planter', 'Pots and Planters']],
+  'brand:smartivity': [['Robotic Arm STEM Kit', 'STEM and Science Kits'], ['Wooden Jigsaw Puzzle', 'Puzzles'], ['Strategy Board Game', 'Board Games']],
   'brand:giva': [['Silver Hoop Earrings', 'Earrings'], ['Rose Gold Pendant with Chain', 'Necklaces and Pendants']],
 };
 test('sample titles sort into the expected categories', () => {
@@ -77,4 +84,15 @@ test('Shopify products sort by template', () => {
   assert.deepEqual(c.skus['L-1'].slice(1, 3), ['Shirts', 'Solid']);
   assert.equal(c.collections.shirts, 'Shirts');
   assert.throws(() => C.fromShopify(products, [], { groupBy: 'template', template: 'nope' }), /Pick a category template/);
+});
+
+test('every template sorts its own sample store back into its categories', async () => {
+  const { sampleStore } = await import('../sample-store.mjs');
+  for (const t of P.TEMPLATES) {
+    const { csv } = sampleStore(t.id, { per: 4 });
+    const c = C.fromCsv(csv, { template: t.id });
+    const rows = Object.values(c.skus), unmapped = rows.filter(s => s[1] === 'Unmapped').length;
+    assert.ok(unmapped / rows.length < 0.05, `${t.id}: ${unmapped} of ${rows.length} SKUs unmapped`);
+    assert.ok(c.cats.length >= t.cats.length * 0.7, `${t.id}: only ${c.cats.length} of ${t.cats.length} categories reached`);
+  }
 });
