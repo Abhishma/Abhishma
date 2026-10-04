@@ -49,3 +49,4 @@ Open to discussions on trustworthy AI workflow design, evaluation-driven product
 ## Operational tooling
 
 - [shopify-image-pipeline](https://github.com/Abhishma/shopify-image-pipeline) — Multi-brand Shopify image mapping and upload pipeline for catalog operations across Asterlane and Shyam Ahuja
+- [festive-trackers](festive-trackers/) — Live sale-period trackers for a D2C store (Shopify and app funnel), with configurable categories for any catalogue, scheduled refresh and digest automation, and a read-only Unicommerce and ClickPost connector

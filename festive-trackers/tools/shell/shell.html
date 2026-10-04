@@ -1,0 +1,45 @@
+<div class="tk-shell">
+  <nav class="tk-switch" aria-label="Tracker">
+    <span class="tk-label">Tracker</span>
+    {{BUTTONS}}
+  </nav>
+  {{DEMO_BANNER}}
+  <details class="tk-cat" id="tkCat">
+    <summary><b>Categories</b><span class="tk-sub" id="tkCatSummary">Loading…</span></summary>
+    <div class="tk-cat-body">
+      <p>The trackers group sales, traffic and stock by these categories. Build them from Shopify or upload a CSV to use any store's categories. Everyone who opens this page sees the same set.</p>
+      <div class="tk-field">
+        <span>Where categories come from</span>
+        <div class="tk-src" role="radiogroup" aria-label="Category source">
+          <label><input type="radio" name="tkSrc" id="tkSrcType" value="product_type" checked> Shopify product type</label>
+          <label><input type="radio" name="tkSrc" id="tkSrcTag" value="tag_prefix"> Shopify tag prefix</label>
+          <label><input type="radio" name="tkSrc" id="tkSrcCsv" value="csv"> CSV file</label>
+        </div>
+      </div>
+      <div class="tk-grid">
+        <label class="tk-field" id="tkTagWrap" hidden><span>Category tag prefix</span><input type="text" id="tkTagPrefix" placeholder="Category: " autocomplete="off"><small>Products tagged "Category: Rugs" go in Rugs. Product type becomes the sub-category.</small></label>
+        <label class="tk-field" id="tkFocusWrap"><span>Focus groups (optional)</span><input type="text" id="tkFocus" placeholder="Bestsellers, New launch, Clearance" autocomplete="off"><small>Up to 3 Shopify tags, comma separated. A product can be in several.</small></label>
+        <label class="tk-field" id="tkCsvWrap" hidden><span>CSV file</span><input type="file" id="tkCsv" accept=".csv,text/csv"><small>Columns: sku, title, category, subcategory, product_handle, focus_groups, collection_handle. Download the current set below as a template.</small></label>
+        <label class="tk-field"><span>Store name</span><input type="text" id="tkName" autocomplete="off" placeholder="Shown in the tracker header"></label>
+      </div>
+      <div class="tk-grid">
+        <label class="tk-field"><span>Pages left out of traffic</span><textarea id="tkExclude" spellcheck="false" placeholder="/pages/size-guide"></textarea><small>One landing path per line, for tools or content pages that are not shopping traffic.</small></label>
+        <label class="tk-field"><span>Categories that hold no stock</span><input type="text" id="tkNoStock" autocomplete="off" placeholder="Gift Cards, Bundles"><small>Left out of stock and sales-loss views.</small></label>
+        <label class="tk-field"><span>SKUs that hold no stock (pattern)</span><input type="text" id="tkNoStockRe" autocomplete="off" placeholder="^(combo|kit)"><small>Optional regular expression, matched case-insensitively.</small></label>
+      </div>
+      <div class="tk-actions">
+        <button type="button" class="tk-btn" id="tkBuild">Build from Shopify</button>
+        <button type="button" class="tk-btn ghost" id="tkExport">Download current as CSV</button>
+        <button type="button" class="tk-btn ghost" id="tkReset" hidden>Back to built-in categories</button>
+        <span class="tk-status" id="tkStatus" role="status"></span>
+      </div>
+      <div class="tk-preview" id="tkPreview" hidden></div>
+      <div class="tk-actions" id="tkSaveRow" hidden>
+        <button type="button" class="tk-btn" id="tkSave">Save and reload</button>
+        <button type="button" class="tk-btn ghost" id="tkDiscard">Discard</button>
+      </div>
+      <p>Sales by category regroup as soon as you save. Web landing traffic for days already saved keeps its old grouping until those days are pulled again with Refresh data.</p>
+    </div>
+  </details>
+</div>
+<div id="tk-mount"></div>

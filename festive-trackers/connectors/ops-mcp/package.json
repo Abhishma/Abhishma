@@ -1,0 +1,11 @@
+{
+  "name": "r4r-ops-mcp",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/node.mjs",
+    "test": "node --test test/*.test.mjs",
+    "deploy": "wrangler deploy"
+  }
+}

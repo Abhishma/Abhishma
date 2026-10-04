@@ -1,0 +1,9 @@
+{
+  "artifactUrl": "https://claude.ai/artifact/HwcS4prgQq6hFhEzBqvmD8",
+  "trackers": {
+    "bfd": { "name": "Store-wide (Big Festive Days)", "collections": { "days": "days", "skus": "skus" } },
+    "r4r": { "name": "All categories", "collections": { "days": "r4r_days", "skus": "r4r_skus" } }
+  },
+  "backfillFrom": "2026-09-17",
+  "maxDatesPerRun": 14
+}
