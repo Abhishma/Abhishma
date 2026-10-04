@@ -28,7 +28,7 @@ body { background: var(--paper, var(--tk-paper)); color: var(--ink, var(--tk-ink
 .tk-cat > summary .tk-sub { color: var(--tk-muted); font-size: 13px; overflow-wrap: anywhere }
 .tk-cat-body { display: grid; gap: 14px; padding: 4px 14px 14px; border-top: 1px solid var(--tk-line) }
 .tk-cat-body p { margin: 0; max-width: 72ch; color: var(--tk-muted); font-size: 13px }
-.tk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px }
+.tk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; align-items: start }
 .tk-field { display: grid; gap: 4px; min-width: 0; font-size: 13px }
 .tk-field > span { font-weight: 600 }
 .tk-field small { color: var(--tk-muted) }
@@ -62,15 +62,17 @@ body { background: var(--paper, var(--tk-paper)); color: var(--ink, var(--tk-ink
       <div class="tk-field">
         <span>Where categories come from</span>
         <div class="tk-src" role="radiogroup" aria-label="Category source">
-          <label><input type="radio" name="tkSrc" id="tkSrcType" value="product_type" checked> Shopify product type</label>
+          <label><input type="radio" name="tkSrc" id="tkSrcTpl" value="template" checked> Category template</label>
+          <label><input type="radio" name="tkSrc" id="tkSrcType" value="product_type"> Shopify product type</label>
           <label><input type="radio" name="tkSrc" id="tkSrcTag" value="tag_prefix"> Shopify tag prefix</label>
           <label><input type="radio" name="tkSrc" id="tkSrcCsv" value="csv"> CSV file</label>
         </div>
       </div>
       <div class="tk-grid">
+        <label class="tk-field" id="tkTplWrap"><span>Template or brand starter</span><select id="tkTpl"></select><small>Sorts products by keywords in product type, title and tags. Brand starters follow each brand's public store menu; check the result before saving. No affiliation.</small></label>
         <label class="tk-field" id="tkTagWrap" hidden><span>Category tag prefix</span><input type="text" id="tkTagPrefix" placeholder="Category: " autocomplete="off"><small>Products tagged "Category: Rugs" go in Rugs. Product type becomes the sub-category.</small></label>
         <label class="tk-field" id="tkFocusWrap"><span>Focus groups (optional)</span><input type="text" id="tkFocus" placeholder="Bestsellers, New launch, Clearance" autocomplete="off"><small>Up to 3 Shopify tags, comma separated. A product can be in several.</small></label>
-        <label class="tk-field" id="tkCsvWrap" hidden><span>CSV file</span><input type="file" id="tkCsv" accept=".csv,text/csv"><small>Columns: sku, title, category, subcategory, product_handle, focus_groups, collection_handle. Download the current set below as a template.</small></label>
+        <label class="tk-field" id="tkCsvWrap" hidden><span>CSV file</span><input type="file" id="tkCsv" accept=".csv,text/csv"><small id="tkCsvHelp">Columns: sku, title, category, subcategory, product_handle, focus_groups, collection_handle. Download the current set below as a template.</small></label>
         <label class="tk-field"><span>Store name</span><input type="text" id="tkName" autocomplete="off" placeholder="Shown in the tracker header"></label>
       </div>
       <div class="tk-grid">
@@ -4330,6 +4332,385 @@ renderAll();
 </script>
 <script>
 /*
+ * Category templates for D2C stores, and brand starters that point at them.
+ * Plain script (no modules): inlined into the published page and loaded by Node, like catalog.cjs.
+ *
+ * A template sorts products into categories by keywords found in the product type, title and tags.
+ * Order matters: categories and sub-categories are tried top to bottom and the first match wins,
+ * so specific items (oversized t-shirt) sit above general ones (t-shirt, shirt).
+ *
+ * Brand starters reflect each brand's public storefront menus as generally known; they are starting
+ * points, not the brand's own data, and imply no affiliation. Check them against the live store
+ * (and adjust in the CSV) before relying on category numbers.
+ *
+ * Template shape: { id, name, cats: [[category, [keywords], [[subcategory, [keywords]], ...]], ...],
+ *                   focus: [suggested focus-group tags], noStock: [categories that hold no stock] }
+ */
+var TKPresets = (function () {
+  'use strict';
+  var GIFT = ['Gift Cards', ['gift card', 'gift voucher', 'e gift'], []];
+  var COMBOS = ['Combos and Bundles', ['combo', 'bundle', 'pack of', 'set of', 'kit'], []];
+
+  var TEMPLATES = [
+    { id: 'streetwear', name: 'Streetwear and casual wear', focus: ['Bestsellers', 'New launch', 'Sale'], noStock: ['Gift Cards', 'Combos and Bundles'], cats: [
+      ['Oversized T-shirts', ['oversized t shirt', 'oversized tee', 'drop shoulder', 'boxy t shirt', 'boxy tee'], [['Graphic', ['graphic', 'printed', 'print']], ['Solid', ['solid', 'plain', 'basic']]]],
+      ['T-shirts', ['t shirt', 'tee', 'tshirt', 'henley', 'tank top', 'vest', 'muscle fit'], [['Graphic', ['graphic', 'printed', 'print']], ['Polo', ['polo']], ['Solid', ['solid', 'plain', 'basic']]]],
+      ['Hoodies and Sweatshirts', ['hoodie', 'sweatshirt', 'zipper', 'pullover', 'crewneck sweat'], [['Hoodies', ['hoodie', 'hooded']], ['Sweatshirts', ['sweatshirt', 'pullover']]]],
+      ['Shirts', ['shirt', 'overshirt', 'shacket'], [['Overshirts and Shackets', ['overshirt', 'shacket']], ['Printed', ['printed', 'print', 'resort', 'hawaiian']], ['Solid', ['solid', 'plain', 'oxford', 'linen']]]],
+      ['Co-ord Sets', ['co ord', 'coord', 'matching set', 'two piece set'], []],
+      ['Joggers and Trackpants', ['jogger', 'trackpant', 'track pant', 'sweatpant'], []],
+      ['Cargo Pants', ['cargo', 'parachute pant', 'utility pant'], []],
+      ['Jeans', ['jean', 'denim'], [['Baggy and Wide', ['baggy', 'wide leg', 'relaxed', 'loose']], ['Straight', ['straight']], ['Slim', ['slim', 'skinny', 'tapered']]]],
+      ['Trousers', ['trouser', 'pant', 'chino', 'korean pant'], []],
+      ['Shorts', ['short', 'boxers short', 'bermuda'], []],
+      ['Jackets', ['jacket', 'puffer', 'bomber', 'varsity', 'windcheater', 'coat'], []],
+      ['Sweaters', ['sweater', 'cardigan', 'knit'], []],
+      ['Women Tops', ['crop top', 'women top', 'baby tee', 'corset', 'bodysuit'], []],
+      ['Dresses and Skirts', ['dress', 'skirt'], []],
+      ['Footwear', ['sneaker', 'slider', 'slipper', 'flip flop', 'clog', 'shoe'], []],
+      ['Accessories', ['cap', 'beanie', 'sock', 'bag', 'tote', 'backpack', 'belt', 'sunglass', 'chain', 'bracelet', 'ring', 'wallet', 'phone cover', 'phone case', 'perfume'], [['Headwear', ['cap', 'beanie', 'hat']], ['Bags', ['bag', 'tote', 'backpack']], ['Jewellery', ['chain', 'bracelet', 'ring', 'pendant']], ['Phone Covers', ['phone cover', 'phone case']]]],
+      COMBOS, GIFT,
+    ] },
+    { id: 'premium-menswear', name: 'Premium menswear', focus: ['Bestsellers', 'New arrivals', 'Wedding edit'], noStock: ['Gift Cards'], cats: [
+      ['Polos', ['polo'], []],
+      ['T-shirts', ['t shirt', 'tee', 'henley'], []],
+      ['Overshirts', ['overshirt', 'shacket'], []],
+      ['Shirts', ['shirt'], [['Formal', ['formal', 'office', 'business', 'cutaway']], ['Linen', ['linen']], ['Printed', ['printed', 'print', 'resort']], ['Casual', ['casual', 'oxford', 'corduroy', 'flannel']]]],
+      ['Knitwear', ['sweater', 'cardigan', 'knit', 'pullover', 'turtleneck'], []],
+      ['Blazers and Suits', ['blazer', 'suit', 'waistcoat', 'nehru jacket', 'bandhgala', 'tuxedo'], []],
+      ['Jackets', ['jacket', 'bomber', 'gilet', 'coat', 'trench'], []],
+      ['Trousers', ['trouser', 'chino', 'pant', 'pleated', 'gurkha'], [['Formal', ['formal', 'pleated', 'gurkha']], ['Chinos', ['chino']]]],
+      ['Jeans', ['jean', 'denim'], []],
+      ['Shorts', ['short'], []],
+      ['Co-ord Sets', ['co ord', 'coord', 'set'], []],
+      ['Ethnic Wear', ['kurta', 'sherwani', 'jodhpuri'], []],
+      ['Footwear', ['loafer', 'sneaker', 'derby', 'boot', 'mule', 'shoe'], []],
+      ['Accessories', ['belt', 'wallet', 'tie', 'pocket square', 'cufflink', 'sock', 'cap', 'perfume', 'bag'], []],
+      GIFT,
+    ] },
+    { id: 'womenswear-ethnic', name: 'Womenswear and ethnic wear', focus: ['Bestsellers', 'New arrivals', 'Festive edit'], noStock: ['Gift Cards'], cats: [
+      ['Kurta Sets', ['kurta set', 'suit set', 'salwar suit', 'anarkali set', 'sharara set', 'palazzo set', 'kurta with'], [['Anarkali', ['anarkali']], ['Sharara and Gharara', ['sharara', 'gharara']], ['Straight', ['straight']]]],
+      ['Kurtas and Kurtis', ['kurta', 'kurti', 'tunic'], []],
+      ['Sarees', ['saree', 'sari'], [['Silk', ['silk', 'banarasi', 'kanjeevaram']], ['Cotton', ['cotton', 'handloom', 'mulmul']]]],
+      ['Lehengas', ['lehenga', 'ghagra', 'chaniya'], []],
+      ['Dupattas', ['dupatta', 'stole'], []],
+      ['Ethnic Bottoms', ['palazzo', 'salwar', 'churidar', 'dhoti pant', 'patiala'], []],
+      ['Dresses', ['dress', 'maxi', 'midi', 'gown', 'jumpsuit'], []],
+      ['Tops and Tunics', ['top', 'blouse', 'shirt', 'crop'], []],
+      ['Co-ord Sets', ['co ord', 'coord', 'set'], []],
+      ['Bottoms', ['trouser', 'pant', 'jean', 'skirt', 'short', 'legging', 'jegging'], []],
+      ['Outerwear', ['jacket', 'shrug', 'blazer', 'coat', 'cardigan', 'sweater'], []],
+      ['Nightwear and Loungewear', ['nightwear', 'night suit', 'pyjama', 'pajama', 'lounge', 'nightie'], []],
+      ['Jewellery and Accessories', ['earring', 'necklace', 'bangle', 'bag', 'clutch', 'potli', 'juttis', 'jutti'], []],
+      GIFT,
+    ] },
+    { id: 'innerwear-athleisure', name: 'Innerwear and athleisure', focus: ['Bestsellers', 'Packs', 'New launch'], noStock: ['Gift Cards'], cats: [
+      ['Briefs and Trunks', ['brief', 'trunk'], []],
+      ['Boxers', ['boxer'], []],
+      ['Vests', ['vest', 'undershirt', 'inner tee'], []],
+      ['Bras', ['bra', 'bralette'], [['Sports Bras', ['sports bra']], ['Everyday', ['t shirt bra', 'everyday', 'non padded', 'padded']]]],
+      ['Panties', ['panty', 'panties', 'hipster', 'bikini brief', 'boyshort'], []],
+      ['Shapewear', ['shapewear', 'shaper', 'tummy'], []],
+      ['Activewear Tops', ['sports t shirt', 'active tee', 'gym tee', 'training top', 'tank'], []],
+      ['Leggings and Joggers', ['legging', 'jogger', 'trackpant', 'flare pant', 'yoga pant'], []],
+      ['Shorts', ['short', 'cycling short'], []],
+      ['Loungewear and Sleepwear', ['lounge', 'pyjama', 'pajama', 'sleep', 'night'], []],
+      ['Socks', ['sock'], []],
+      COMBOS, GIFT,
+    ] },
+    { id: 'kids-baby', name: 'Baby and kids', focus: ['Bestsellers', 'New launch', 'Gifting'], noStock: ['Gift Cards', 'Combos and Bundles'], cats: [
+      ['Strollers and Prams', ['stroller', 'pram', 'buggy'], []],
+      ['Car Seats', ['car seat', 'booster seat'], []],
+      ['Ride-ons', ['ride on', 'tricycle', 'scooter', 'balance bike', 'cycle', 'rocker'], []],
+      ['Toys', ['toy', 'puzzle', 'blocks', 'play gym', 'rattle', 'teether', 'plush'], []],
+      ['Nursery and Furniture', ['cot', 'crib', 'cradle', 'bassinet', 'high chair', 'play pen', 'playpen', 'mattress'], []],
+      ['Feeding', ['bottle', 'sipper', 'feeding', 'breast pump', 'sterilizer', 'bib', 'nipple'], []],
+      ['Diapering', ['diaper', 'wipes', 'nappy', 'changing mat'], []],
+      ['Bath and Skin Care', ['bath', 'soap', 'shampoo', 'lotion', 'oil', 'cream', 'powder', 'rash'], []],
+      ['Clothing', ['onesie', 'romper', 'bodysuit', 'jabla', 'frock', 'dress', 't shirt', 'shorts', 'pyjama', 'set', 'sleepsuit'], []],
+      ['Bedding and Swaddles', ['swaddle', 'blanket', 'wrap', 'quilt', 'pillow', 'bedding'], []],
+      ['Carriers', ['carrier', 'hip seat'], []],
+      COMBOS, GIFT,
+    ] },
+    { id: 'footwear', name: 'Footwear', focus: ['Bestsellers', 'New launch', 'Sale'], noStock: ['Gift Cards'], cats: [
+      ['Sneakers', ['sneaker', 'trainer', 'high top', 'low top'], []],
+      ['Running and Sports', ['running', 'sports shoe', 'walking shoe', 'training shoe'], []],
+      ['Loafers and Moccasins', ['loafer', 'moccasin', 'driver'], []],
+      ['Formal Shoes', ['derby', 'oxford', 'brogue', 'monk'], []],
+      ['Boots', ['boot', 'chelsea', 'chukka'], []],
+      ['Sandals', ['sandal', 'kolhapuri', 'gladiator'], []],
+      ['Sliders and Flip-flops', ['slider', 'slide', 'flip flop', 'slipper', 'clog'], []],
+      ['Heels and Flats', ['heel', 'wedge', 'flat', 'ballerina', 'mule', 'jutti'], []],
+      ['Kids Shoes', ['kids', 'boys', 'girls'], []],
+      ['Socks and Care', ['sock', 'insole', 'shoe care', 'cleaner', 'lace'], []],
+      GIFT,
+    ] },
+    { id: 'jewellery', name: 'Jewellery and accessories', focus: ['Bestsellers', 'Gifting', 'New launch'], noStock: ['Gift Cards'], cats: [
+      ['Earrings', ['earring', 'stud', 'hoop', 'jhumka', 'drop'], []],
+      ['Necklaces and Pendants', ['necklace', 'pendant', 'chain', 'choker', 'mangalsutra'], []],
+      ['Rings', ['ring'], []],
+      ['Bracelets and Bangles', ['bracelet', 'bangle', 'kada', 'cuff'], []],
+      ['Anklets', ['anklet', 'payal'], []],
+      ['Nose Pins', ['nose pin', 'nose ring', 'nath'], []],
+      ['Jewellery Sets', ['set', 'combo'], []],
+      ['Men Jewellery', ['men', 'mens'], []],
+      ['Watches', ['watch'], []],
+      ['Hair Accessories', ['clip', 'claw', 'scrunchie', 'hairband', 'hair'], []],
+      ['Bags', ['bag', 'tote', 'sling', 'clutch', 'wallet'], []],
+      GIFT,
+    ] },
+    { id: 'beauty', name: 'Beauty and personal care', focus: ['Bestsellers', 'New launch', 'Value packs'], noStock: ['Gift Cards', 'Combos and Bundles'], cats: [
+      ['Face Care', ['face wash', 'cleanser', 'serum', 'moisturizer', 'moisturiser', 'toner', 'face mask', 'sunscreen', 'spf', 'face cream', 'night cream', 'eye cream', 'exfoliat'], [['Sunscreen', ['sunscreen', 'spf']], ['Serums', ['serum']], ['Cleansers', ['face wash', 'cleanser']], ['Moisturisers', ['moisturizer', 'moisturiser', 'cream']]]],
+      ['Hair Care', ['shampoo', 'conditioner', 'hair oil', 'hair mask', 'hair serum', 'onion'], []],
+      ['Body Care', ['body wash', 'body lotion', 'body butter', 'soap', 'scrub', 'deodorant', 'roll on'], []],
+      ['Lips', ['lipstick', 'lip balm', 'lip gloss', 'lip liner', 'lip tint', 'lip crayon'], []],
+      ['Eyes', ['kajal', 'eyeliner', 'mascara', 'eyeshadow', 'eye shadow', 'brow'], []],
+      ['Face Makeup', ['foundation', 'concealer', 'compact', 'primer', 'blush', 'highlighter', 'bronzer', 'setting', 'bb cream', 'cc cream'], []],
+      ['Nails', ['nail'], []],
+      ['Fragrance', ['perfume', 'eau de', 'edp', 'edt', 'body mist', 'attar'], []],
+      ['Men Grooming', ['beard', 'shaving', 'trimmer', 'aftershave', 'men'], []],
+      ['Baby Care', ['baby'], []],
+      ['Tools and Accessories', ['brush', 'sponge', 'blender', 'roller', 'gua sha', 'tool'], []],
+      COMBOS, GIFT,
+    ] },
+    { id: 'fragrance', name: 'Fragrances', focus: ['Bestsellers', 'Gift sets', 'New launch'], noStock: ['Gift Cards'], cats: [
+      ['Gift Sets', ['gift set', 'combo', 'kit', 'discovery set', 'pack of'], []],
+      ['Perfumes', ['perfume', 'eau de parfum', 'edp', 'eau de toilette', 'edt', 'parfum', 'cologne'], [['Men', ['men', 'him']], ['Women', ['women', 'her']], ['Unisex', ['unisex']]]],
+      ['Body Mists and Deodorants', ['body mist', 'deodorant', 'deo', 'body spray'], []],
+      ['Attars', ['attar', 'ittar', 'oud'], []],
+      ['Home Fragrance', ['candle', 'diffuser', 'room spray', 'incense'], []],
+      ['Bath and Body', ['body wash', 'lotion', 'soap'], []],
+      GIFT,
+    ] },
+    { id: 'health-nutrition', name: 'Health and nutrition', focus: ['Bestsellers', 'Subscriptions', 'New launch'], noStock: ['Gift Cards', 'Combos and Bundles'], cats: [
+      ['Protein', ['protein', 'whey', 'plant protein', 'mass gainer'], []],
+      ['Vitamins and Supplements', ['vitamin', 'multivitamin', 'omega', 'biotin', 'collagen', 'calcium', 'iron', 'zinc', 'magnesium', 'tablet', 'capsule', 'effervescent'], []],
+      ['Ayurveda and Herbal', ['ashwagandha', 'shilajit', 'triphala', 'ayurved', 'herbal', 'juice', 'churna'], []],
+      ['Gummies', ['gummy', 'gummies'], []],
+      ['Weight Management', ['weight', 'slim', 'apple cider', 'fat'], []],
+      ['Sports Nutrition', ['pre workout', 'bcaa', 'creatine', 'electrolyte', 'energy'], []],
+      ['Healthy Snacks', ['bar', 'muesli', 'granola', 'peanut butter', 'oats', 'snack'], []],
+      ['Women Health', ['pcos', 'period', 'women', 'prenatal'], []],
+      COMBOS, GIFT,
+    ] },
+    { id: 'food-beverage', name: 'Food and beverages', focus: ['Bestsellers', 'Subscriptions', 'New launch'], noStock: ['Gift Cards', 'Combos and Bundles'], cats: [
+      ['Coffee', ['coffee', 'cold brew', 'espresso', 'drip bag', 'filter'], [['Instant', ['instant']], ['Cold Brew', ['cold brew']], ['Ground and Beans', ['ground', 'beans', 'roast']]]],
+      ['Tea', ['tea', 'chai', 'matcha', 'green tea'], []],
+      ['Snacks', ['chips', 'namkeen', 'makhana', 'nuts', 'trail mix', 'cookie', 'biscuit', 'snack'], []],
+      ['Spreads', ['peanut butter', 'spread', 'jam', 'honey', 'nutella'], []],
+      ['Breakfast', ['muesli', 'granola', 'oats', 'cereal'], []],
+      ['Bars', ['bar'], []],
+      ['Chocolates and Sweets', ['chocolate', 'mithai', 'sweet', 'candy'], []],
+      ['Beverages', ['juice', 'drink', 'soda', 'kombucha', 'water'], []],
+      ['Pantry', ['masala', 'spice', 'ghee', 'oil', 'flour', 'atta', 'rice', 'pickle', 'sauce'], []],
+      ['Equipment', ['french press', 'grinder', 'mug', 'brewer', 'kettle', 'pour over'], []],
+      COMBOS, GIFT,
+    ] },
+    { id: 'home-sleep', name: 'Home, sleep and furniture', focus: ['Bestsellers', 'New launch', 'Sale'], noStock: ['Gift Cards'], cats: [
+      ['Mattresses', ['mattress'], [['Memory Foam', ['memory foam']], ['Orthopaedic', ['ortho']], ['Latex', ['latex']]]],
+      ['Pillows', ['pillow'], []],
+      ['Bedding', ['bedsheet', 'bed sheet', 'comforter', 'duvet', 'quilt', 'dohar', 'blanket', 'mattress protector'], []],
+      ['Beds', ['bed', 'cot'], []],
+      ['Sofas and Seating', ['sofa', 'recliner', 'chair', 'bean bag', 'ottoman', 'pouf'], []],
+      ['Tables', ['table', 'desk'], []],
+      ['Storage', ['wardrobe', 'cabinet', 'shelf', 'rack', 'drawer', 'storage'], []],
+      ['Kitchen and Dining', ['cookware', 'pan', 'kadai', 'tawa', 'pressure cooker', 'dinner set', 'plate', 'bowl', 'glass', 'bottle', 'container'], []],
+      ['Bath', ['towel', 'bath mat', 'bathrobe'], []],
+      ['Home Decor', ['lamp', 'vase', 'mirror', 'wall art', 'clock', 'candle', 'planter', 'cushion'], []],
+      GIFT,
+    ] },
+    { id: 'rugs-decor', name: 'Rugs and home decor', focus: ['Bestsellers', 'New collection', 'Ready to ship'], noStock: ['Gift Cards', 'Services'], cats: [
+      ['Rugs', ['rug', 'carpet', 'dhurrie', 'kilim', 'runner'], [['Hand-knotted', ['hand knotted', 'handknotted']], ['Hand-tufted', ['hand tufted', 'tufted']], ['Flatweave', ['flatweave', 'flat weave', 'dhurrie', 'kilim']], ['Runners', ['runner']], ['Outdoor', ['outdoor']]]],
+      ['Cushions', ['cushion', 'pillow cover', 'cushion cover'], []],
+      ['Throws and Blankets', ['throw', 'blanket'], []],
+      ['Bedding', ['bedsheet', 'bed sheet', 'duvet', 'quilt', 'bedspread', 'bed cover'], []],
+      ['Curtains and Upholstery', ['curtain', 'drape', 'upholstery', 'fabric'], []],
+      ['Wallcoverings', ['wallpaper', 'wall covering', 'wallcovering'], []],
+      ['Lighting', ['lamp', 'pendant', 'chandelier', 'light', 'sconce'], []],
+      ['Furniture', ['chair', 'sofa', 'table', 'stool', 'bench', 'ottoman', 'pouf'], []],
+      ['Tableware', ['dinnerware', 'plate', 'bowl', 'mug', 'table linen', 'placemat', 'napkin', 'table runner'], []],
+      ['Decor Accents', ['vase', 'mirror', 'candle', 'tray', 'basket', 'wall art', 'sculpture'], []],
+      ['Services', ['custom', 'swatch', 'sample', 'consultation'], []],
+      GIFT,
+    ] },
+    { id: 'electronics-audio', name: 'Consumer electronics and audio', focus: ['Bestsellers', 'New launch', 'Deals'], noStock: ['Gift Cards'], cats: [
+      ['True Wireless Earbuds', ['earbud', 'tws', 'airdopes', 'true wireless'], []],
+      ['Neckbands', ['neckband'], []],
+      ['Headphones', ['headphone', 'over ear', 'on ear', 'rockerz'], []],
+      ['Wired Earphones', ['wired', 'earphone', 'bassheads'], []],
+      ['Smartwatches', ['smartwatch', 'smart watch', 'watch'], []],
+      ['Speakers', ['speaker', 'soundbar', 'stone', 'party'], []],
+      ['Power Banks', ['power bank', 'powerbank'], []],
+      ['Chargers and Cables', ['charger', 'cable', 'adapter'], []],
+      ['Smart Rings and Fitness', ['smart ring', 'ring', 'fitness band'], []],
+      ['Accessories', ['case', 'strap', 'cover', 'stand'], []],
+      GIFT,
+    ] },
+    { id: 'bags-travel', name: 'Bags and travel', focus: ['Bestsellers', 'New launch', 'Sets'], noStock: ['Gift Cards'], cats: [
+      ['Luggage Sets', ['set of', 'luggage set', 'trolley set'], []],
+      ['Cabin Luggage', ['cabin'], []],
+      ['Check-in Luggage', ['check in', 'checkin', 'large', 'medium'], []],
+      ['Backpacks', ['backpack', 'laptop bag'], []],
+      ['Duffles', ['duffle', 'duffel', 'weekender', 'gym bag'], []],
+      ['Handbags and Totes', ['tote', 'handbag', 'sling', 'crossbody', 'satchel'], []],
+      ['Wallets and Small Goods', ['wallet', 'card holder', 'passport', 'pouch', 'organiser', 'organizer'], []],
+      ['Travel Accessories', ['luggage tag', 'neck pillow', 'cover', 'lock', 'packing cube'], []],
+      GIFT,
+    ] },
+    { id: 'pet', name: 'Pet supplies', focus: ['Bestsellers', 'New launch', 'Subscriptions'], noStock: ['Gift Cards', 'Services'], cats: [
+      ['Dog Food', ['dog food', 'puppy food', 'kibble'], []],
+      ['Cat Food', ['cat food', 'kitten food'], []],
+      ['Treats', ['treat', 'chew', 'jerky', 'biscuit'], []],
+      ['Toys', ['toy', 'ball', 'rope'], []],
+      ['Collars, Leashes and Harnesses', ['collar', 'leash', 'harness'], []],
+      ['Beds and Mats', ['bed', 'mat', 'cushion'], []],
+      ['Grooming', ['shampoo', 'brush', 'comb', 'grooming', 'wipes'], []],
+      ['Bowls and Feeders', ['bowl', 'feeder', 'fountain'], []],
+      ['Health and Supplements', ['supplement', 'tick', 'flea', 'deworm', 'vitamin'], []],
+      ['Litter and Hygiene', ['litter', 'poop', 'diaper', 'pad'], []],
+      ['Apparel', ['jacket', 't shirt', 'bandana', 'costume', 'sweater'], []],
+      ['Services', ['grooming session', 'vet', 'consultation', 'training'], []],
+      GIFT,
+    ] },
+    { id: 'kitchenware', name: 'Kitchenware and appliances', focus: ['Bestsellers', 'New launch', 'Gifting'], noStock: ['Gift Cards'], cats: [
+      ['Cookware', ['kadai', 'tawa', 'pan', 'pot', 'cookware', 'pressure cooker', 'casserole', 'dosa'], [['Cast Iron', ['cast iron']], ['Stainless Steel', ['stainless', 'steel', 'triply', 'tri ply']], ['Non-stick', ['non stick', 'nonstick']]]],
+      ['Small Appliances', ['mixer', 'grinder', 'blender', 'kettle', 'toaster', 'air fryer', 'induction', 'juicer', 'chopper'], []],
+      ['Serveware and Dinnerware', ['plate', 'bowl', 'dinner set', 'serving', 'thali', 'cup', 'mug', 'glass'], []],
+      ['Storage', ['container', 'jar', 'lunch box', 'tiffin', 'bottle', 'flask'], []],
+      ['Tools and Utensils', ['knife', 'ladle', 'spatula', 'peeler', 'board', 'grater', 'whisk', 'tong'], []],
+      ['Bakeware', ['bake', 'mould', 'mold', 'tray', 'oven'], []],
+      COMBOS, GIFT,
+    ] },
+    { id: 'eyewear', name: 'Eyewear', focus: ['Bestsellers', 'New launch', 'Blue light'], noStock: ['Gift Cards', 'Services'], cats: [
+      ['Sunglasses', ['sunglass', 'shades', 'aviator', 'wayfarer'], []],
+      ['Eyeglasses', ['eyeglass', 'frame', 'spectacle', 'optical'], []],
+      ['Computer Glasses', ['blue light', 'blu', 'computer glass', 'screen'], []],
+      ['Contact Lenses', ['contact lens', 'lens'], []],
+      ['Kids Eyewear', ['kids'], []],
+      ['Accessories', ['case', 'cleaner', 'chain', 'cord', 'cloth'], []],
+      ['Services', ['eye test', 'lens upgrade', 'power'], []],
+      GIFT,
+    ] },
+  ];
+
+  /* Brand starters: [brand, template id, focus-group tags or null for the template's]. */
+  var BRANDS = [
+    ['Bonkers Corner', 'streetwear', null],
+    ['The Bear House', 'premium-menswear', null],
+    ['Snitch', 'streetwear', null],
+    ['The Souled Store', 'streetwear', ['Bestsellers', 'Official merch', 'New launch']],
+    ['Bewakoof', 'streetwear', null],
+    ['Powerlook', 'streetwear', null],
+    ['Urban Monkey', 'streetwear', null],
+    ['Nobero', 'streetwear', null],
+    ['Rare Rabbit', 'premium-menswear', null],
+    ['Andamen', 'premium-menswear', null],
+    ['Bombay Shirt Company', 'premium-menswear', null],
+    ['Libas', 'womenswear-ethnic', null],
+    ['FableStreet', 'womenswear-ethnic', null],
+    ['Berrylush', 'womenswear-ethnic', null],
+    ['Suta', 'womenswear-ethnic', null],
+    ['House of Masaba', 'womenswear-ethnic', null],
+    ['XYXX', 'innerwear-athleisure', null],
+    ['Bummer', 'innerwear-athleisure', null],
+    ['Damensch', 'innerwear-athleisure', null],
+    ['Blissclub', 'innerwear-athleisure', null],
+    ['Clovia', 'innerwear-athleisure', null],
+    ['R for Rabbit', 'kids-baby', null],
+    ['Neeman\'s', 'footwear', null],
+    ['Comet', 'footwear', null],
+    ['Bacca Bucci', 'footwear', null],
+    ['Giva', 'jewellery', null],
+    ['Salty', 'jewellery', null],
+    ['Palmonas', 'jewellery', null],
+    ['Mamaearth', 'beauty', null],
+    ['Sugar Cosmetics', 'beauty', null],
+    ['Minimalist', 'beauty', null],
+    ['Plum', 'beauty', null],
+    ['The Derma Co', 'beauty', null],
+    ['Bella Vita', 'fragrance', null],
+    ['Oziva', 'health-nutrition', null],
+    ['Wellbeing Nutrition', 'health-nutrition', null],
+    ['Kapiva', 'health-nutrition', null],
+    ['The Whole Truth', 'food-beverage', null],
+    ['Sleepy Owl', 'food-beverage', null],
+    ['Blue Tokai', 'food-beverage', null],
+    ['Rage Coffee', 'food-beverage', null],
+    ['Wakefit', 'home-sleep', null],
+    ['The Sleep Company', 'home-sleep', null],
+    ['Jaipur Rugs', 'rugs-decor', null],
+    ['Shyam Ahuja', 'rugs-decor', null],
+    ['Asterlane', 'rugs-decor', null],
+    ['boAt', 'electronics-audio', null],
+    ['Noise', 'electronics-audio', null],
+    ['Boult', 'electronics-audio', null],
+    ['Mokobara', 'bags-travel', null],
+    ['Nasher Miles', 'bags-travel', null],
+    ['Uppercase', 'bags-travel', null],
+    ['Heads Up For Tails', 'pet', null],
+    ['Supertails', 'pet', null],
+    ['The Indus Valley', 'kitchenware', null],
+    ['Wonderchef', 'kitchenware', null],
+    ['John Jacobs', 'eyewear', null],
+  ];
+
+  var byId = {}; TEMPLATES.forEach(function (t) { byId[t.id] = t; });
+
+  /* Lower case, punctuation to spaces, padded, so " t shirt " matches "T-Shirt" and "t-shirts". */
+  function norm(s) { return ' ' + String(s || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim() + ' '; }
+  function hit(text, kws) {
+    for (var i = 0; i < kws.length; i++) {
+      var k = norm(kws[i]).trim();
+      if (!k) continue;
+      if (text.indexOf(' ' + k + ' ') >= 0 || text.indexOf(' ' + k + 's ') >= 0 || text.indexOf(' ' + k + 'es ') >= 0) return true;
+      if (k.length >= 6 && text.indexOf(' ' + k) >= 0) return true;   // long stems: "exfoliat", "moisturizer" in "moisturizers"
+    }
+    return false;
+  }
+
+  /* [category, subcategory] for one product, or ['Unmapped', ''] when nothing matches.
+     Product type is checked first (most reliable), then title, then tags. */
+  function classify(t, productType, title, tags) {
+    var fields = [norm(productType), norm(title), norm((tags || []).join(' , '))];
+    for (var f = 0; f < fields.length; f++) {
+      for (var i = 0; i < t.cats.length; i++) {
+        var c = t.cats[i];
+        if (!hit(fields[f], c[1])) continue;
+        var all = norm(productType + ' ' + title + ' ' + (tags || []).join(' '));
+        for (var j = 0; j < c[2].length; j++) if (hit(all, c[2][j][1])) return [c[0], c[2][j][0]];
+        return [c[0], ''];
+      }
+    }
+    return ['Unmapped', ''];
+  }
+
+  function template(id) {
+    var t = byId[id];
+    if (t) return t;
+    for (var i = 0; i < BRANDS.length; i++) if (slug(BRANDS[i][0]) === id) return byId[BRANDS[i][1]];
+    return null;
+  }
+  function slug(s) { return 'brand:' + String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+  /* Options for a picker: templates, then brand starters. */
+  function choices() {
+    return {
+      templates: TEMPLATES.map(function (t) { return { id: t.id, name: t.name }; }),
+      brands: BRANDS.map(function (b) { return { id: slug(b[0]), name: b[0], template: b[1], templateName: byId[b[1]].name }; }),
+    };
+  }
+  /* Defaults a choice brings: store name, focus tags, no-stock categories. */
+  function defaults(id) {
+    var t = template(id); if (!t) return null;
+    var brand = null; BRANDS.forEach(function (b) { if (slug(b[0]) === id) brand = b; });
+    return { name: brand ? brand[0] : '', focusTags: (brand && brand[2]) || t.focus.slice(), noStockCats: t.noStock.slice(), cats: t.cats.map(function (c) { return c[0]; }) };
+  }
+
+  return { TEMPLATES: TEMPLATES, BRANDS: BRANDS, classify: classify, template: template, choices: choices, defaults: defaults, slug: slug, norm: norm };
+})();
+if (typeof module !== 'undefined' && module.exports) module.exports = TKPresets;
+
+/*
  * Catalogue layer: lets the trackers run on any store's categories instead of the built-in R for Rabbit map.
  * Plain script (no modules) so the same file is inlined into the published page and loaded by Node.
  *
@@ -4346,6 +4727,8 @@ renderAll();
  */
 var TKCatalog = (function () {
   'use strict';
+  // Category templates (tools/presets.cjs): a global in the page, required in Node.
+  var P = typeof TKPresets !== 'undefined' ? TKPresets : (typeof require === 'function' ? require('./presets.cjs') : null);
   var CODES = ['R', 'T', 'D'];   // the All Categories tracker colours its three focus groups by these codes
   var MAX_SEGMENTS = 3;
   var SKUS_PER_PART = 1500;
@@ -4435,9 +4818,12 @@ var TKCatalog = (function () {
     var lines = String(text).replace(/^﻿/, '').split(/\r?\n/).filter(function (l) { return l.trim(); });
     if (!lines.length) throw new Error('The file is empty.');
     var head = parseLine(lines[0]).map(function (h) { return h.toLowerCase().replace(/\s+/g, '_'); });
-    var col = {}; HEAD.forEach(function (h) { col[h] = head.indexOf(h); });
-    if (col.category < 0) throw new Error('The CSV needs a "category" column. Expected columns: ' + HEAD.join(', ') + '.');
-    var cats = [], seen = {}, segs = [], segIx = {}, c = { v: 1, name: opts.name || '', source: 'csv', cats: cats, segments: segs, skus: {}, handles: {}, collections: {},
+    var col = {}; HEAD.concat(['product_type', 'tags']).forEach(function (h) { col[h] = head.indexOf(h); });
+    var tpl = opts.template && P ? P.template(opts.template) : null;
+    if (opts.template && !tpl) throw new Error('Unknown category template "' + opts.template + '".');
+    if (col.category < 0 && !tpl) throw new Error('The CSV needs a "category" column, or pick a category template to sort products by title. Expected columns: ' + HEAD.join(', ') + '.');
+    if (tpl && col.title < 0 && col.product_type < 0) throw new Error('To sort by template, the CSV needs a "title" or "product_type" column.');
+    var cats = [], seen = {}, segs = [], segIx = {}, c = { v: 1, name: opts.name || '', source: tpl ? 'csv:template:' + opts.template : 'csv', cats: cats, segments: segs, skus: {}, handles: {}, collections: {},
       excludePages: opts.excludePages || [], noStockCats: opts.noStockCats || [], noStockSkuPattern: opts.noStockSkuPattern || '' };
     var get = function (r, k) { return col[k] >= 0 ? (r[col[k]] || '') : ''; };
     var segIdx = function (list) {
@@ -4447,17 +4833,30 @@ var TKCatalog = (function () {
       }).sort().join('');
     };
     for (var i = 1; i < lines.length; i++) {
-      var r = parseLine(lines[i]), cat = get(r, 'category');
+      var r = parseLine(lines[i]), cat = get(r, 'category'), sub = get(r, 'subcategory');
+      if (!cat && tpl && (get(r, 'sku') || get(r, 'product_handle'))) {
+        var hitc = P.classify(tpl, get(r, 'product_type'), get(r, 'title'), get(r, 'tags').split(/[;|]/));
+        cat = hitc[0]; sub = sub || hitc[1];
+      }
       if (cat && !seen[cat] && cat !== 'Unmapped') { seen[cat] = 1; cats.push(cat); }
       var sku = get(r, 'sku'), handle = get(r, 'product_handle'), coll = get(r, 'collection_handle'), fx = segIdx(get(r, 'focus_groups'));
-      if (sku) c.skus[sku] = [get(r, 'title'), cat || 'Unmapped', get(r, 'subcategory'), fx];
+      if (sku) c.skus[sku] = [get(r, 'title'), cat || 'Unmapped', sub, fx];
       if (handle) {
         var prev = c.handles[handle];
         c.handles[handle] = [cat || (prev && prev[0]) || 'Unmapped', mergeIdx(prev && prev[1], fx)];
       }
       if (coll && !sku && !handle) c.collections[coll] = cat;
     }
+    if (tpl) c.cats = orderLike(tpl, c.cats);
     return c;
+  }
+  /* Template order first (as the brand's menu reads), then anything else found. */
+  function orderLike(tpl, cats) {
+    var order = tpl.cats.map(function (x) { return x[0]; });
+    return cats.slice().sort(function (a, b) {
+      var i = order.indexOf(a), j = order.indexOf(b);
+      return (i < 0 ? 999 : i) - (j < 0 ? 999 : j);
+    });
   }
   function mergeIdx(a, b) { var s = {}; (String(a || '') + String(b || '')).split('').forEach(function (x) { s[x] = 1; }); return Object.keys(s).sort().join(''); }
 
@@ -4465,13 +4864,15 @@ var TKCatalog = (function () {
   var PRODUCTS_Q = 'query($after: String) { products(first: 100, after: $after) { pageInfo { hasNextPage endCursor } nodes { handle title productType tags variants(first: 100) { nodes { sku } } } } }';
   var COLLECTIONS_Q = 'query($after: String) { collections(first: 250, after: $after) { pageInfo { hasNextPage endCursor } nodes { handle title } } }';
 
-  /* opts: { groupBy: 'product_type' | 'tag_prefix', tagPrefix, subTagPrefix, focusTags: [], name } */
+  /* opts: { groupBy: 'product_type' | 'tag_prefix' | 'template', tagPrefix, subTagPrefix, template, focusTags: [], name } */
   function fromShopify(products, collections, opts) {
     opts = opts || {};
     var by = opts.groupBy || 'product_type', pre = (opts.tagPrefix || '').toLowerCase(), subPre = (opts.subTagPrefix || '').toLowerCase();
     var focus = (opts.focusTags || []).map(function (t) { return t.trim(); }).filter(Boolean).slice(0, MAX_SEGMENTS);
     var focusLc = focus.map(function (t) { return t.toLowerCase(); });
-    var count = {}, c = { v: 1, name: opts.name || '', source: 'shopify:' + by + (by === 'tag_prefix' ? ':' + opts.tagPrefix : ''), cats: [], segments: focus, skus: {}, handles: {}, collections: {},
+    var tpl = by === 'template' ? (P && P.template(opts.template)) : null;
+    if (by === 'template' && !tpl) throw new Error('Pick a category template first.');
+    var count = {}, c = { v: 1, name: opts.name || '', source: 'shopify:' + by + (by === 'tag_prefix' ? ':' + opts.tagPrefix : by === 'template' ? ':' + opts.template : ''), cats: [], segments: focus, skus: {}, handles: {}, collections: {},
       excludePages: opts.excludePages || [], noStockCats: opts.noStockCats || [], noStockSkuPattern: opts.noStockSkuPattern || '' };
     var tagged = function (tags, prefix) {
       if (!prefix) return '';
@@ -4480,14 +4881,19 @@ var TKCatalog = (function () {
     };
     (products || []).forEach(function (p) {
       var tags = p.tags || [];
-      var cat = (by === 'tag_prefix' ? tagged(tags, pre) : (p.productType || '').trim()) || 'Unmapped';
-      var sub = subPre ? tagged(tags, subPre) : (by === 'tag_prefix' ? (p.productType || '').trim() : '');
+      var cat, sub;
+      if (tpl) { var hc = P.classify(tpl, p.productType, p.title, tags); cat = hc[0]; sub = hc[1]; }
+      else {
+        cat = (by === 'tag_prefix' ? tagged(tags, pre) : (p.productType || '').trim()) || 'Unmapped';
+        sub = subPre ? tagged(tags, subPre) : (by === 'tag_prefix' ? (p.productType || '').trim() : '');
+      }
       var fx = focusLc.map(function (t, i) { return tags.some(function (x) { return x.toLowerCase() === t; }) ? String(i) : ''; }).join('');
       if (cat !== 'Unmapped') count[cat] = (count[cat] || 0) + 1;
       ((p.variants && p.variants.nodes) || []).forEach(function (v) { var s = (v.sku || '').trim(); if (s) c.skus[s] = [String(p.title || '').slice(0, 90), cat, sub, fx]; });
       if (p.handle) c.handles[p.handle] = [cat, fx];
     });
     c.cats = Object.keys(count).sort(function (a, b) { return count[b] - count[a] || (a < b ? -1 : 1); });
+    if (tpl) c.cats = orderLike(tpl, c.cats);
     var lc = {}; c.cats.forEach(function (x) { lc[x.toLowerCase()] = x; });
     (collections || []).forEach(function (k) { c.collections[k.handle] = lc[String(k.title || '').trim().toLowerCase()] || ''; });
     return c;
@@ -4526,6 +4932,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TKCatalog;
   const use = n => (window.claude && typeof window.claude.use === 'function' ? window.claude.use(n).catch(() => null) : Promise.resolve(null));
   const within = (p, ms) => Promise.race([p, new Promise(r => setTimeout(() => r(null), ms))]);
   const fmt = n => Number(n).toLocaleString('en-IN');
+  const skusTxt = n => `${fmt(n)} SKU${n === 1 ? '' : 's'}`;
 
   /* ---------- which tracker ---------- */
   let stored = null;
@@ -4595,7 +5002,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TKCatalog;
   function summaryOf(cat) {
     if (!cat) return 'Built-in R for Rabbit set';
     const src = String(cat.source || '');
-    const from = src.startsWith('shopify:tag_prefix') ? 'Shopify tags' : src.startsWith('shopify') ? 'Shopify product types' : src === 'csv' ? 'CSV' : src;
+    const tpl = src.match(/:template:(.+)$/), tplName = tpl && (TKPresets.choices().templates.concat(TKPresets.choices().brands).find(x => x.id === tpl[1]) || {}).name;
+    const from = tpl ? `${tplName || 'template'} template, ${src.startsWith('csv') ? 'CSV' : 'Shopify'}` : src.startsWith('shopify:tag_prefix') ? 'Shopify tags' : src.startsWith('shopify') ? 'Shopify product types' : src === 'csv' ? 'CSV' : src;
     return `${cat.name || 'Custom set'} · ${fmt(cat.cats.length)} categories · ${fmt(cat.skuCount || Object.keys(cat.skus).length)} SKUs` +
       ((cat.segments || []).length ? ` · focus: ${cat.segments.join(', ')}` : '') + (from ? ` · from ${from}` : '');
   }
@@ -4618,15 +5026,38 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TKCatalog;
       $('tkNoStockRe').value = base.noStockSkuPattern || '';
       if (current && String(current.source).startsWith('shopify:tag_prefix:')) { $('tkSrcTag').checked = true; $('tkTagPrefix').value = current.source.split(':').slice(2).join(':'); }
       if (current && (current.segments || []).length) $('tkFocus').value = current.segments.join(', ');
+      const tplSrc = current && String(current.source).match(/:template:(.+)$/);
+      if (tplSrc && TKPresets.template(tplSrc[1])) sel.value = tplSrc[1];
+      if (!current) { sel.value = 'streetwear'; applyTpl(); $('tkName').value = base.name || ''; }
+      else if (current) $(String(current.source).startsWith('shopify:tag_prefix') ? 'tkSrcTag' : String(current.source) === 'csv' ? 'tkSrcCsv' : 'tkSrcType').checked = true;
       sync();
     };
     const sync = () => {
       const s = src();
+      $('tkTplWrap').hidden = s !== 'template';
       $('tkTagWrap').hidden = s !== 'tag_prefix';
-      $('tkCsvWrap').hidden = s !== 'csv';
+      $('tkCsvWrap').hidden = s !== 'csv' && s !== 'template';
       $('tkFocusWrap').hidden = s === 'csv';
-      $('tkBuild').textContent = s === 'csv' ? 'Read CSV' : 'Build from Shopify';
+      $('tkCsvHelp').textContent = s === 'template'
+        ? 'Optional. Leave empty to sort your Shopify products, or upload a CSV with sku and title (product_type and tags help) to sort those instead.'
+        : 'Columns: sku, title, category, subcategory, product_handle, focus_groups, collection_handle. Download the current set below as a template.';
+      $('tkBuild').textContent = s === 'csv' || (s === 'template' && $('tkCsv').files[0]) ? 'Read CSV' : 'Build from Shopify';
     };
+    /* template picker: verticals, then brand starters */
+    const ch = TKPresets.choices(), sel = $('tkTpl');
+    const group = (label, items) => { const g = document.createElement('optgroup'); g.label = label; items.forEach(i => { const o = document.createElement('option'); o.value = i.id; o.textContent = i.templateName ? `${i.name} (${i.templateName})` : i.name; g.appendChild(o); }); sel.appendChild(g); };
+    group('Category templates', ch.templates);
+    group('Brand starters', ch.brands);
+    const applyTpl = () => {
+      const d = TKPresets.defaults(sel.value); if (!d) return;
+      if (d.name) $('tkName').value = d.name;
+      $('tkFocus').value = d.focusTags.join(', ');
+      $('tkNoStock').value = d.noStockCats.join(', ');
+      $('tkExclude').value = '';      // the previous store's excluded pages and SKU pattern do not carry over
+      $('tkNoStockRe').value = '';
+    };
+    sel.addEventListener('change', applyTpl);
+    $('tkCsv').addEventListener('change', sync);
     $('tkCat').addEventListener('toggle', () => { if ($('tkCat').open) fill(); });
     document.querySelectorAll('input[name="tkSrc"]').forEach(r => r.addEventListener('change', sync));
     if (!db) { $('tkBuild').disabled = true; status('Categories can only be changed where this page can save data.', 'bad'); }
@@ -4644,10 +5075,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TKCatalog;
       const counts = {}; Object.values(c.skus).forEach(s => { counts[s[1]] = (counts[s[1]] || 0) + 1; });
       const head = document.createElement('div');
       head.textContent = `${fmt(Object.keys(c.skus).length)} SKUs in ${fmt(c.cats.length)} categories, ${fmt(Object.keys(c.handles).length)} product pages` +
-        ((c.segments || []).length ? `, focus groups: ${c.segments.join(', ')}` : '') + (counts.Unmapped ? `. ${fmt(counts.Unmapped)} SKUs have no category and show as Unmapped.` : '.');
+        ((c.segments || []).length ? `, focus groups: ${c.segments.join(', ')}` : '') + (counts.Unmapped ? `. ${skusTxt(counts.Unmapped)} matched no category and ${counts.Unmapped === 1 ? 'shows' : 'show'} as Unmapped.` : '.');
       box.appendChild(head);
       const ul = document.createElement('ul');
-      c.cats.slice(0, 40).forEach(k => { const li = document.createElement('li'); li.textContent = `${k}: ${fmt(counts[k] || 0)} SKUs`; ul.appendChild(li); });
+      c.cats.slice(0, 40).forEach(k => { const li = document.createElement('li'); li.textContent = `${k}: ${skusTxt(counts[k] || 0)}`; ul.appendChild(li); });
       if (c.cats.length > 40) { const li = document.createElement('li'); li.textContent = `and ${c.cats.length - 40} more`; ul.appendChild(li); }
       box.appendChild(ul);
       if (errs.length) { status(errs.join(' '), 'bad'); $('tkSaveRow').hidden = true; candidate = null; return; }
@@ -4677,17 +5108,19 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TKCatalog;
       const collections = await pageAll(TKCatalog.COLLECTIONS_Q, 'collections', 'collections');
       const groupBy = src();
       if (groupBy === 'tag_prefix' && !$('tkTagPrefix').value.trim()) throw new Error('Enter the tag prefix that names the category, for example "Category: ".');
-      return TKCatalog.fromShopify(products, collections, { ...opts(), groupBy, tagPrefix: $('tkTagPrefix').value, focusTags: $('tkFocus').value.split(',') });
+      return TKCatalog.fromShopify(products, collections, { ...opts(), groupBy, template: $('tkTpl').value, tagPrefix: $('tkTagPrefix').value, focusTags: $('tkFocus').value.split(',') });
     }
 
     $('tkBuild').addEventListener('click', async () => {
       $('tkBuild').disabled = true; $('tkSaveRow').hidden = true; candidate = null; status('Working…');
       try {
         let c;
+        const f = $('tkCsv').files[0];
         if (src() === 'csv') {
-          const f = $('tkCsv').files[0];
           if (!f) throw new Error('Choose a CSV file first.');
           c = TKCatalog.fromCsv(await f.text(), opts());
+        } else if (src() === 'template' && f) {
+          c = TKCatalog.fromCsv(await f.text(), { ...opts(), template: $('tkTpl').value });
         } else c = await fromShopify();
         if (c) { c.builtAt = Date.now(); preview(c); }
       } catch (e) {

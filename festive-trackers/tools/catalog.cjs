@@ -15,6 +15,8 @@
  */
 var TKCatalog = (function () {
   'use strict';
+  // Category templates (tools/presets.cjs): a global in the page, required in Node.
+  var P = typeof TKPresets !== 'undefined' ? TKPresets : (typeof require === 'function' ? require('./presets.cjs') : null);
   var CODES = ['R', 'T', 'D'];   // the All Categories tracker colours its three focus groups by these codes
   var MAX_SEGMENTS = 3;
   var SKUS_PER_PART = 1500;
@@ -104,9 +106,12 @@ var TKCatalog = (function () {
     var lines = String(text).replace(/^﻿/, '').split(/\r?\n/).filter(function (l) { return l.trim(); });
     if (!lines.length) throw new Error('The file is empty.');
     var head = parseLine(lines[0]).map(function (h) { return h.toLowerCase().replace(/\s+/g, '_'); });
-    var col = {}; HEAD.forEach(function (h) { col[h] = head.indexOf(h); });
-    if (col.category < 0) throw new Error('The CSV needs a "category" column. Expected columns: ' + HEAD.join(', ') + '.');
-    var cats = [], seen = {}, segs = [], segIx = {}, c = { v: 1, name: opts.name || '', source: 'csv', cats: cats, segments: segs, skus: {}, handles: {}, collections: {},
+    var col = {}; HEAD.concat(['product_type', 'tags']).forEach(function (h) { col[h] = head.indexOf(h); });
+    var tpl = opts.template && P ? P.template(opts.template) : null;
+    if (opts.template && !tpl) throw new Error('Unknown category template "' + opts.template + '".');
+    if (col.category < 0 && !tpl) throw new Error('The CSV needs a "category" column, or pick a category template to sort products by title. Expected columns: ' + HEAD.join(', ') + '.');
+    if (tpl && col.title < 0 && col.product_type < 0) throw new Error('To sort by template, the CSV needs a "title" or "product_type" column.');
+    var cats = [], seen = {}, segs = [], segIx = {}, c = { v: 1, name: opts.name || '', source: tpl ? 'csv:template:' + opts.template : 'csv', cats: cats, segments: segs, skus: {}, handles: {}, collections: {},
       excludePages: opts.excludePages || [], noStockCats: opts.noStockCats || [], noStockSkuPattern: opts.noStockSkuPattern || '' };
     var get = function (r, k) { return col[k] >= 0 ? (r[col[k]] || '') : ''; };
     var segIdx = function (list) {
@@ -116,17 +121,30 @@ var TKCatalog = (function () {
       }).sort().join('');
     };
     for (var i = 1; i < lines.length; i++) {
-      var r = parseLine(lines[i]), cat = get(r, 'category');
+      var r = parseLine(lines[i]), cat = get(r, 'category'), sub = get(r, 'subcategory');
+      if (!cat && tpl && (get(r, 'sku') || get(r, 'product_handle'))) {
+        var hitc = P.classify(tpl, get(r, 'product_type'), get(r, 'title'), get(r, 'tags').split(/[;|]/));
+        cat = hitc[0]; sub = sub || hitc[1];
+      }
       if (cat && !seen[cat] && cat !== 'Unmapped') { seen[cat] = 1; cats.push(cat); }
       var sku = get(r, 'sku'), handle = get(r, 'product_handle'), coll = get(r, 'collection_handle'), fx = segIdx(get(r, 'focus_groups'));
-      if (sku) c.skus[sku] = [get(r, 'title'), cat || 'Unmapped', get(r, 'subcategory'), fx];
+      if (sku) c.skus[sku] = [get(r, 'title'), cat || 'Unmapped', sub, fx];
       if (handle) {
         var prev = c.handles[handle];
         c.handles[handle] = [cat || (prev && prev[0]) || 'Unmapped', mergeIdx(prev && prev[1], fx)];
       }
       if (coll && !sku && !handle) c.collections[coll] = cat;
     }
+    if (tpl) c.cats = orderLike(tpl, c.cats);
     return c;
+  }
+  /* Template order first (as the brand's menu reads), then anything else found. */
+  function orderLike(tpl, cats) {
+    var order = tpl.cats.map(function (x) { return x[0]; });
+    return cats.slice().sort(function (a, b) {
+      var i = order.indexOf(a), j = order.indexOf(b);
+      return (i < 0 ? 999 : i) - (j < 0 ? 999 : j);
+    });
   }
   function mergeIdx(a, b) { var s = {}; (String(a || '') + String(b || '')).split('').forEach(function (x) { s[x] = 1; }); return Object.keys(s).sort().join(''); }
 
@@ -134,13 +152,15 @@ var TKCatalog = (function () {
   var PRODUCTS_Q = 'query($after: String) { products(first: 100, after: $after) { pageInfo { hasNextPage endCursor } nodes { handle title productType tags variants(first: 100) { nodes { sku } } } } }';
   var COLLECTIONS_Q = 'query($after: String) { collections(first: 250, after: $after) { pageInfo { hasNextPage endCursor } nodes { handle title } } }';
 
-  /* opts: { groupBy: 'product_type' | 'tag_prefix', tagPrefix, subTagPrefix, focusTags: [], name } */
+  /* opts: { groupBy: 'product_type' | 'tag_prefix' | 'template', tagPrefix, subTagPrefix, template, focusTags: [], name } */
   function fromShopify(products, collections, opts) {
     opts = opts || {};
     var by = opts.groupBy || 'product_type', pre = (opts.tagPrefix || '').toLowerCase(), subPre = (opts.subTagPrefix || '').toLowerCase();
     var focus = (opts.focusTags || []).map(function (t) { return t.trim(); }).filter(Boolean).slice(0, MAX_SEGMENTS);
     var focusLc = focus.map(function (t) { return t.toLowerCase(); });
-    var count = {}, c = { v: 1, name: opts.name || '', source: 'shopify:' + by + (by === 'tag_prefix' ? ':' + opts.tagPrefix : ''), cats: [], segments: focus, skus: {}, handles: {}, collections: {},
+    var tpl = by === 'template' ? (P && P.template(opts.template)) : null;
+    if (by === 'template' && !tpl) throw new Error('Pick a category template first.');
+    var count = {}, c = { v: 1, name: opts.name || '', source: 'shopify:' + by + (by === 'tag_prefix' ? ':' + opts.tagPrefix : by === 'template' ? ':' + opts.template : ''), cats: [], segments: focus, skus: {}, handles: {}, collections: {},
       excludePages: opts.excludePages || [], noStockCats: opts.noStockCats || [], noStockSkuPattern: opts.noStockSkuPattern || '' };
     var tagged = function (tags, prefix) {
       if (!prefix) return '';
@@ -149,14 +169,19 @@ var TKCatalog = (function () {
     };
     (products || []).forEach(function (p) {
       var tags = p.tags || [];
-      var cat = (by === 'tag_prefix' ? tagged(tags, pre) : (p.productType || '').trim()) || 'Unmapped';
-      var sub = subPre ? tagged(tags, subPre) : (by === 'tag_prefix' ? (p.productType || '').trim() : '');
+      var cat, sub;
+      if (tpl) { var hc = P.classify(tpl, p.productType, p.title, tags); cat = hc[0]; sub = hc[1]; }
+      else {
+        cat = (by === 'tag_prefix' ? tagged(tags, pre) : (p.productType || '').trim()) || 'Unmapped';
+        sub = subPre ? tagged(tags, subPre) : (by === 'tag_prefix' ? (p.productType || '').trim() : '');
+      }
       var fx = focusLc.map(function (t, i) { return tags.some(function (x) { return x.toLowerCase() === t; }) ? String(i) : ''; }).join('');
       if (cat !== 'Unmapped') count[cat] = (count[cat] || 0) + 1;
       ((p.variants && p.variants.nodes) || []).forEach(function (v) { var s = (v.sku || '').trim(); if (s) c.skus[s] = [String(p.title || '').slice(0, 90), cat, sub, fx]; });
       if (p.handle) c.handles[p.handle] = [cat, fx];
     });
     c.cats = Object.keys(count).sort(function (a, b) { return count[b] - count[a] || (a < b ? -1 : 1); });
+    if (tpl) c.cats = orderLike(tpl, c.cats);
     var lc = {}; c.cats.forEach(function (x) { lc[x.toLowerCase()] = x; });
     (collections || []).forEach(function (k) { c.collections[k.handle] = lc[String(k.title || '').trim().toLowerCase()] || ''; });
     return c;

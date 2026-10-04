@@ -5,6 +5,7 @@
   const use = n => (window.claude && typeof window.claude.use === 'function' ? window.claude.use(n).catch(() => null) : Promise.resolve(null));
   const within = (p, ms) => Promise.race([p, new Promise(r => setTimeout(() => r(null), ms))]);
   const fmt = n => Number(n).toLocaleString('en-IN');
+  const skusTxt = n => `${fmt(n)} SKU${n === 1 ? '' : 's'}`;
 
   /* ---------- which tracker ---------- */
   let stored = null;
@@ -74,7 +75,8 @@
   function summaryOf(cat) {
     if (!cat) return 'Built-in R for Rabbit set';
     const src = String(cat.source || '');
-    const from = src.startsWith('shopify:tag_prefix') ? 'Shopify tags' : src.startsWith('shopify') ? 'Shopify product types' : src === 'csv' ? 'CSV' : src;
+    const tpl = src.match(/:template:(.+)$/), tplName = tpl && (TKPresets.choices().templates.concat(TKPresets.choices().brands).find(x => x.id === tpl[1]) || {}).name;
+    const from = tpl ? `${tplName || 'template'} template, ${src.startsWith('csv') ? 'CSV' : 'Shopify'}` : src.startsWith('shopify:tag_prefix') ? 'Shopify tags' : src.startsWith('shopify') ? 'Shopify product types' : src === 'csv' ? 'CSV' : src;
     return `${cat.name || 'Custom set'} · ${fmt(cat.cats.length)} categories · ${fmt(cat.skuCount || Object.keys(cat.skus).length)} SKUs` +
       ((cat.segments || []).length ? ` · focus: ${cat.segments.join(', ')}` : '') + (from ? ` · from ${from}` : '');
   }
@@ -97,15 +99,38 @@
       $('tkNoStockRe').value = base.noStockSkuPattern || '';
       if (current && String(current.source).startsWith('shopify:tag_prefix:')) { $('tkSrcTag').checked = true; $('tkTagPrefix').value = current.source.split(':').slice(2).join(':'); }
       if (current && (current.segments || []).length) $('tkFocus').value = current.segments.join(', ');
+      const tplSrc = current && String(current.source).match(/:template:(.+)$/);
+      if (tplSrc && TKPresets.template(tplSrc[1])) sel.value = tplSrc[1];
+      if (!current) { sel.value = 'streetwear'; applyTpl(); $('tkName').value = base.name || ''; }
+      else if (current) $(String(current.source).startsWith('shopify:tag_prefix') ? 'tkSrcTag' : String(current.source) === 'csv' ? 'tkSrcCsv' : 'tkSrcType').checked = true;
       sync();
     };
     const sync = () => {
       const s = src();
+      $('tkTplWrap').hidden = s !== 'template';
       $('tkTagWrap').hidden = s !== 'tag_prefix';
-      $('tkCsvWrap').hidden = s !== 'csv';
+      $('tkCsvWrap').hidden = s !== 'csv' && s !== 'template';
       $('tkFocusWrap').hidden = s === 'csv';
-      $('tkBuild').textContent = s === 'csv' ? 'Read CSV' : 'Build from Shopify';
+      $('tkCsvHelp').textContent = s === 'template'
+        ? 'Optional. Leave empty to sort your Shopify products, or upload a CSV with sku and title (product_type and tags help) to sort those instead.'
+        : 'Columns: sku, title, category, subcategory, product_handle, focus_groups, collection_handle. Download the current set below as a template.';
+      $('tkBuild').textContent = s === 'csv' || (s === 'template' && $('tkCsv').files[0]) ? 'Read CSV' : 'Build from Shopify';
     };
+    /* template picker: verticals, then brand starters */
+    const ch = TKPresets.choices(), sel = $('tkTpl');
+    const group = (label, items) => { const g = document.createElement('optgroup'); g.label = label; items.forEach(i => { const o = document.createElement('option'); o.value = i.id; o.textContent = i.templateName ? `${i.name} (${i.templateName})` : i.name; g.appendChild(o); }); sel.appendChild(g); };
+    group('Category templates', ch.templates);
+    group('Brand starters', ch.brands);
+    const applyTpl = () => {
+      const d = TKPresets.defaults(sel.value); if (!d) return;
+      if (d.name) $('tkName').value = d.name;
+      $('tkFocus').value = d.focusTags.join(', ');
+      $('tkNoStock').value = d.noStockCats.join(', ');
+      $('tkExclude').value = '';      // the previous store's excluded pages and SKU pattern do not carry over
+      $('tkNoStockRe').value = '';
+    };
+    sel.addEventListener('change', applyTpl);
+    $('tkCsv').addEventListener('change', sync);
     $('tkCat').addEventListener('toggle', () => { if ($('tkCat').open) fill(); });
     document.querySelectorAll('input[name="tkSrc"]').forEach(r => r.addEventListener('change', sync));
     if (!db) { $('tkBuild').disabled = true; status('Categories can only be changed where this page can save data.', 'bad'); }
@@ -123,10 +148,10 @@
       const counts = {}; Object.values(c.skus).forEach(s => { counts[s[1]] = (counts[s[1]] || 0) + 1; });
       const head = document.createElement('div');
       head.textContent = `${fmt(Object.keys(c.skus).length)} SKUs in ${fmt(c.cats.length)} categories, ${fmt(Object.keys(c.handles).length)} product pages` +
-        ((c.segments || []).length ? `, focus groups: ${c.segments.join(', ')}` : '') + (counts.Unmapped ? `. ${fmt(counts.Unmapped)} SKUs have no category and show as Unmapped.` : '.');
+        ((c.segments || []).length ? `, focus groups: ${c.segments.join(', ')}` : '') + (counts.Unmapped ? `. ${skusTxt(counts.Unmapped)} matched no category and ${counts.Unmapped === 1 ? 'shows' : 'show'} as Unmapped.` : '.');
       box.appendChild(head);
       const ul = document.createElement('ul');
-      c.cats.slice(0, 40).forEach(k => { const li = document.createElement('li'); li.textContent = `${k}: ${fmt(counts[k] || 0)} SKUs`; ul.appendChild(li); });
+      c.cats.slice(0, 40).forEach(k => { const li = document.createElement('li'); li.textContent = `${k}: ${skusTxt(counts[k] || 0)}`; ul.appendChild(li); });
       if (c.cats.length > 40) { const li = document.createElement('li'); li.textContent = `and ${c.cats.length - 40} more`; ul.appendChild(li); }
       box.appendChild(ul);
       if (errs.length) { status(errs.join(' '), 'bad'); $('tkSaveRow').hidden = true; candidate = null; return; }
@@ -156,17 +181,19 @@
       const collections = await pageAll(TKCatalog.COLLECTIONS_Q, 'collections', 'collections');
       const groupBy = src();
       if (groupBy === 'tag_prefix' && !$('tkTagPrefix').value.trim()) throw new Error('Enter the tag prefix that names the category, for example "Category: ".');
-      return TKCatalog.fromShopify(products, collections, { ...opts(), groupBy, tagPrefix: $('tkTagPrefix').value, focusTags: $('tkFocus').value.split(',') });
+      return TKCatalog.fromShopify(products, collections, { ...opts(), groupBy, template: $('tkTpl').value, tagPrefix: $('tkTagPrefix').value, focusTags: $('tkFocus').value.split(',') });
     }
 
     $('tkBuild').addEventListener('click', async () => {
       $('tkBuild').disabled = true; $('tkSaveRow').hidden = true; candidate = null; status('Working…');
       try {
         let c;
+        const f = $('tkCsv').files[0];
         if (src() === 'csv') {
-          const f = $('tkCsv').files[0];
           if (!f) throw new Error('Choose a CSV file first.');
           c = TKCatalog.fromCsv(await f.text(), opts());
+        } else if (src() === 'template' && f) {
+          c = TKCatalog.fromCsv(await f.text(), { ...opts(), template: $('tkTpl').value });
         } else c = await fromShopify();
         if (c) { c.builtAt = Date.now(); preview(c); }
       } catch (e) {

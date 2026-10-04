@@ -23,7 +23,7 @@ body { background: var(--paper, var(--tk-paper)); color: var(--ink, var(--tk-ink
 .tk-cat > summary .tk-sub { color: var(--tk-muted); font-size: 13px; overflow-wrap: anywhere }
 .tk-cat-body { display: grid; gap: 14px; padding: 4px 14px 14px; border-top: 1px solid var(--tk-line) }
 .tk-cat-body p { margin: 0; max-width: 72ch; color: var(--tk-muted); font-size: 13px }
-.tk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px }
+.tk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; align-items: start }
 .tk-field { display: grid; gap: 4px; min-width: 0; font-size: 13px }
 .tk-field > span { font-weight: 600 }
 .tk-field small { color: var(--tk-muted) }

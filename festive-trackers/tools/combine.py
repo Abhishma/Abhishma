@@ -121,7 +121,7 @@ def main(demo=False):
         for k, _, label, sub in TRACKERS)
     title = "Big Festive Days Demo" if demo else "Big Festive Days Trackers"
     shell = (SHELL / "shell.html").read_text(encoding="utf-8").replace("{{BUTTONS}}", buttons).replace("{{DEMO_BANNER}}", DEMO_BANNER if demo else "")
-    catalog_js = (ROOT / "tools" / "catalog.cjs").read_text(encoding="utf-8")
+    catalog_js = (ROOT / "tools" / "presets.cjs").read_text(encoding="utf-8") + "\n" + (ROOT / "tools" / "catalog.cjs").read_text(encoding="utf-8")
     boot_js = (SHELL / "boot.js").read_text(encoding="utf-8").replace("/*DEMO*/false", "true" if demo else "false")
     for js in (catalog_js, boot_js):
         if "</script" in js:
