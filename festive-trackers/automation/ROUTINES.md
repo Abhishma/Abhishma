@@ -8,7 +8,7 @@ Settings for both live in `automation/config.json`. Until `artifactUrl` (the com
 
 Each tracker page pulls data only while someone who has the Shopify and Linkrunner connectors keeps it open: a full pull every hour and a today-only tick every 2 minutes. The results are saved to the page's shared database. If nobody with the connectors opens the page, nothing gets saved, so viewers without connectors see stale numbers and the next connected viewer has to wait through a long backfill.
 
-The refresh routine fills in and finalises **past days** in that database on a schedule. It does not write anything for today, the projection, stock or returns. The page's live tier owns those, and they rely on state this job does not have.
+The refresh routine fills in and finalises **past days** in that database on a schedule. It does not write anything for today, the projection or stock. The page's live tier owns those, and they rely on state this job does not have. Returns are the exception: the store-wide tracker never fetches them itself, so the returns routine below builds them, today included.
 
 ## What the refresh routine writes
 
@@ -20,6 +20,14 @@ The refresh routine fills in and finalises **past days** in that database on a s
 Both records come from `automation/day-builder.mjs`. The script lifts each tracker's own query strings and shaping functions out of its HTML and runs them in a sandbox, so the routine writes byte-for-byte what the page would write. If a tracker's code changes, the next run picks the change up. If the code changes shape in a way the extractor cannot read, the script stops with an error and nothing is written.
 
 **Why `r4r` days stay non-final.** The All Categories page assigns product landing pages that are missing from its built-in map using product handles it learns during a live stock lookup. This job does not run that lookup, so a few unmapped pages fall into the `X` bucket. Because the day is left non-final, the page re-pulls it with full mapping the next time a connected viewer opens it. Until then, every number except that one landing-page split is already correct.
+
+## What the returns routine writes
+
+| Record | Written for | Built by |
+|---|---|---|
+| `returns/<date>` (store-wide tracker) | Today and yesterday every hour, plus any day since `backfillFrom` that has no record | `automation/returns-builder.mjs` |
+
+Each record holds one row per SKU, type and reason (`[sku, title, type, reason, units, value, [orders], {hour: [units, value]}]`) and hourly totals per type, which drive the D0 returns view. Types: Customer return, RTO (not delivered), Cancelled, Other refund. Reasons come from refund notes, cancellation reasons and order tags, read by the All categories tracker's own `retReason()`, so both trackers classify returns the same way. The All categories tracker pulls its own returns from Shopify and needs nothing from this routine.
 
 ## Refresh routine
 
@@ -36,6 +44,24 @@ Refresh the R4R festive trackers. Work in the r4r-festive-trackers repo.
 4. Make each call with the named connector tool (Shopify run-analytics-query, Linkrunner run_funnel) using the exact input. Save the raw payloads to /tmp/responses.json as {"<id>": payload}. If a connector errors, retry once. If it still fails, skip the trackers that need it and report it.
 5. Run `node automation/day-builder.mjs build <tracker> /tmp/responses.json <dates...>` for each tracker. Apply its output to artifactUrl with ArtifactData batches of up to 50 writes, in the order given (skus before days).
 6. Report one line per tracker: dates written, dates skipped and why. Do not commit anything.
+```
+
+## Returns routine
+
+Schedule: hourly at 5 past, 08:05 to 23:05 IST, 1 Oct to 10 Nov 2026. Cron: `CRON_TZ=Asia/Kolkata 5 8-23 * * *`.
+
+Prompt:
+
+```
+Build the store-wide tracker's returns records. Work in the r4r-festive-trackers repo.
+
+1. Read automation/config.json. If artifactUrl is empty, stop and report that.
+2. Today = current date in IST. Target dates = today, yesterday, and up to 5 more days from config.backfillFrom to yesterday that have no `returns` doc (list the `returns` collection with ArtifactData).
+3. Run `node automation/returns-builder.mjs plan-lines <dates...>`. Make each call with the Shopify run-analytics-query tool, exact input. Save payloads to /tmp/responses.json as {"<id>": payload}.
+4. Run `node automation/returns-builder.mjs plan-orders /tmp/responses.json <dates...>`. Make each call with the Shopify graphql_query tool, exact input. Add those payloads to /tmp/responses.json.
+5. Run `node automation/returns-builder.mjs build /tmp/responses.json <dates...>` and apply its output to artifactUrl with ArtifactData batches of up to 50 writes. A `returns` doc that already exists needs its current version as if_version: read it first.
+6. If Shopify rejects the hourly returns query, report the error message exactly and stop; do not guess a different query.
+7. Report one line: dates written and units returned per date. Do not commit anything.
 ```
 
 ## Daily digest routine

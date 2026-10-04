@@ -75,6 +75,7 @@ The pages only stay fresh while someone with the connectors has them open. `auto
 | Piece | Role |
 |---|---|
 | `day-builder.mjs` | Builds the exact `days`/`skus` records each page saves, by running the tracker's own query and shaping code against connector payloads (two passes: `plan`, then `build`) |
+| `returns-builder.mjs` | Builds the store-wide tracker's `returns/<date>` records from Shopify (returned lines by hour, then order notes and tags for the reason), hourly through the returns routine. The store-wide tracker only reads these |
 | `digest.mjs` | Turns saved records into a morning Markdown summary: GMV, orders and units vs baseline and vs the same day last week, channel split, web and app funnels, top 10 SKUs, landing groups, flags |
 | `ROUTINES.md` | Schedules, prompts and setup checklist for the refresh routine (06:10 and 14:10 IST) and the digest routine (08:50 IST) |
 | `config.json` | Tracker artifact URLs and backfill window |
