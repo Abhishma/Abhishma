@@ -303,7 +303,7 @@ dl.defs dd { margin: 0; color: var(--muted) }
     <button role="tab" data-t="day">Funnel</button>
     <button role="tab" data-t="cat">Category</button>
     <button role="tab" data-t="sku">SKU</button>
-    <button role="tab" data-t="ret">Returns</button>
+    <button role="tab" data-t="ret">Returns and cancellations</button>
     <button role="tab" data-t="src">Sources and GA4</button>
   </nav>
 
@@ -893,6 +893,8 @@ function renderD0() {
   return h + projTiles() + projTable('cat') + projTable('sku');
 }
 const ppChip = (a, b) => !fin(a) || !fin(b) ? '<span class="dchip flat">–</span>' : `<span class="dchip ${Math.abs(a - b) < 0.00005 ? 'flat' : a > b ? 'up' : 'down'}">${a > b ? '+' : ''}${((a - b) * 100).toFixed(2)} pp</span>`;
+/* the same chip for figures where a rise is bad (return rate): up is red */
+const ppChipInv = (a, b) => !fin(a) || !fin(b) ? '<span class="dchip flat">–</span>' : `<span class="dchip ${Math.abs(a - b) < 0.00005 ? 'flat' : a > b ? 'down' : 'up'}">${a > b ? '+' : ''}${((a - b) * 100).toFixed(2)} pp</span>`;
 
 /* ---------- store (db) ---------- */
 async function dbLoad() {
@@ -1282,9 +1284,46 @@ function renderCat() {
 const RKINDS = ['Customer return', 'RTO (not delivered)', 'Cancelled', 'Other refund'];
 /* D0 returns, laid out like the D0 tab: so far vs the same time on D-1 / D-7 / same date last month, projected full day,
    then reasons, categories and products for today. Hour-by-hour from returns/<date>.hrs and each row's {hour: [units, value]}. */
+/* When today has no returns saved yet (before the first hourly build, or a demo), show the latest day that has them,
+   as whole days against D-1, D-7 and the same date last month. */
+function retLatestDay() {
+  const R = S.returns || {};
+  const D = Object.keys(R).filter(d => d < today).sort().pop();
+  if (!D) return `<section class="panel"><div class="empty">Today's returns load with the next hourly refresh.</div></section>`;
+  const inCat = sku => !S.cat || catOf(sku) === S.cat;
+  const cmp = [[addD(D, -1), 'D-1'], [addD(D, -7), 'D-7'], [lastMonth(D), 'Last month']];
+  const soldDay = d => { const s = S.skus[d]; if (!s) return NaN; let u = 0; for (const r of s.rows) if (r[2] !== 'd' && CHANS().includes(r[2]) && inCat(r[0])) u += r[5]; return u; };
+  const sum = d => { if (!R[d]) return null; const o = { units: 0, value: 0, orders: new Set(), k: {}, cat: new Map(), sku: new Map() };
+    for (const r of R[d].rows) { if (!inCat(r[0])) continue; o.units += r[4]; o.value += r[5]; r[6].forEach(x => o.orders.add(x)); o.k[r[2]] = (o.k[r[2]] || 0) + r[4];
+      for (const [m, key] of [[o.cat, catOf(r[0])], [o.sku, r[0] || '(no SKU) ' + r[1]]]) { const x = m.get(key) || { units: 0, value: 0, title: r[1], k: {} }; x.units += r[4]; x.value += r[5]; x.k[r[2]] = (x.k[r[2]] || 0) + r[4]; m.set(key, x); } }
+    o.sold = soldDay(d); return o; };
+  const cur = sum(D), past = cmp.map(([d]) => sum(d));
+  const rows = [['Units returned', o => o.units, fN], ['Orders affected', o => o.orders.size, fN], ['Value (ex-GST)', o => o.value, fR], ...RKINDS.map(k => [`${k} (units)`, o => o.k[k] || 0, fN])];
+  const rate = o => (o ? div(o.units, o.sold) : NaN);
+  const tile = ([lab, f, fmt]) => `<div class="tile d0"><span class="eyebrow">${esc(lab)}</span><span class="v">${fmt(f(cur))}</span>
+      <div class="cmprow">${cmp.map(([d, l], i) => `<span class="cmpc"><span class="muted">${l}</span> ${past[i] ? chip(pct(f(cur), f(past[i])), `${l} (${fdw(d)})`, true) : '<span class="dchip flat">–</span>'}</span>`).join('')}</div></div>`;
+  const rateTile = `<div class="tile d0"><span class="eyebrow">Return rate (units returned ÷ units sold)</span><span class="v">${fP(rate(cur), 1)}</span>
+      <div class="cmprow">${cmp.map(([, l], i) => `<span class="cmpc"><span class="muted">${l}</span> ${ppChipInv(rate(cur), rate(past[i]))}</span>`).join('')}</div></div>`;
+  const head = `<tr><th>Metric</th><th class="n">${fd(D)}</th>${cmp.map(([d, l]) => `<th class="n">${l} · ${fd(d)}</th><th class="n">vs ${l}</th>`).join('')}</tr>`;
+  const line = ([lab, f, fmt]) => `<tr><td>${esc(lab)}</td><td class="n"><b>${fmt(f(cur))}</b></td>${past.map(p => `<td class="n">${p ? fmt(f(p)) : '<span class="muted">–</span>'}</td><td class="n">${p ? chip(pct(f(cur), f(p)), '', true) : '–'}</td>`).join('')}</tr>`;
+  const top = (title, key, label, n) => {
+    const m = cur[key], keys = [...m.keys()].sort((a, b) => m.get(b).units - m.get(a).units).slice(0, n);
+    return `<section class="panel"><div class="panel-head"><h2>${title}</h2><span class="small muted">Units returned on ${fd(D)} vs the same day each comparison</span></div>
+      <div class="tw" style="max-height:420px"><table><thead><tr><th>${label}</th>${key === 'sku' ? '<th>Product</th>' : ''}<th class="n">Units</th><th class="n">Value</th>${RKINDS.map(k => `<th class="n">${esc(k)}</th>`).join('')}${cmp.map(([, l]) => `<th class="n">${l}</th><th class="n">vs ${l}</th>`).join('')}</tr></thead><tbody>
+      ${keys.map(k => { const x = m.get(k); return `<tr><td${key === 'sku' ? ' class="num"' : ''}>${esc(k)}</td>${key === 'sku' ? `<td class="title">${esc(x.title)}</td>` : ''}<td class="n"><b>${fN(x.units)}</b></td><td class="n">${fR(x.value)}</td>${RKINDS.map(kk => `<td class="n">${x.k[kk] ? fN(x.k[kk]) : '<span class="muted">–</span>'}</td>`).join('')}${past.map(p => { const y = p && p[key].get(k); return `<td class="n">${p ? fN(y ? y.units : 0) : '–'}</td><td class="n">${p ? chip(pct(x.units, y ? y.units : 0), '', true) : '–'}</td>`; }).join('')}</tr>`; }).join('')}
+      </tbody></table></div></section>`;
+  };
+  return `<section class="panel"><div class="panel-head"><h2>Latest day returns, refunds and cancellations · ${fdw(D)}${S.cat ? ' · ' + esc(S.cat) : ''}</h2>
+      <span class="small muted">Today's returns are not saved yet, so this shows the latest day that has them, as whole days · a rise is red</span></div>
+    <div class="tiles">${rows.slice(0, 3).map(tile).join('')}${rateTile}${rows.slice(3).map(tile).join('')}</div></section>
+    <section class="panel"><div class="panel-head"><h2>${fd(D)} vs D-1, D-7 and last month</h2></div>
+    <div class="tw"><table><thead>${head}</thead><tbody>${rows.map(line).join('')}
+      <tr><td>Return rate (units returned ÷ units sold)</td><td class="n"><b>${fP(rate(cur), 1)}</b></td>${past.map(p => `<td class="n">${fP(rate(p), 1)}</td><td class="n">${ppChipInv(rate(cur), rate(p))}</td>`).join('')}</tr></tbody></table></div></section>` +
+    top(`${fd(D)} by category`, 'cat', 'Category', 20) + top(`${fd(D)} by product`, 'sku', 'SKU', 50);
+}
 function retD0() {
   const R = S.returns || {}, T = R[today];
-  if (!T) return `<section class="panel"><div class="empty">Today's returns load with the next hourly refresh.</div></section>`;
+  if (!T) return retLatestDay();
   const ts = T.fetchedAt, t = new Date(ts + 19800000), H = t.getUTCHours(), Mi = t.getUTCMinutes(), at = hhmm(ts);
   const cmp = [[addD(today, -1), 'D-1'], [addD(today, -7), 'D-7'], [lastMonth(today), 'Last month']];
   const inCat = sku => !S.cat || catOf(sku) === S.cat;
@@ -1318,7 +1357,7 @@ function retD0() {
   M.rate = V ? { key: 'rate', label: 'Return rate (units returned ÷ units sold)', fmt: v => fP(v, 1), inv: true, sf: div(M.units.sf, V.rows.units.sf), proj: div(M.units.proj, V.rows.units.proj),
     same: cmp.map((_, i) => div(M.units.same[i], V.rows.units.same[i])), full: cmp.map((_, i) => div(M.units.full[i], V.rows.units.full[i])) } : null;
   const list = [M.units, M.orders, M.value, M.rate, ...RKINDS.map(k => M[k])].filter(Boolean);
-  const chips = (r, cur, arr, tip) => cmp.map(([d, lab], i) => `<span class="cmpc"><span class="muted">${lab}</span> ${r.key === 'rate' ? ppChip(cur, arr[i]) : chip(pct(cur, arr[i]), `${lab} (${fdw(d)}) ${tip}`, true)}</span>`).join('');
+  const chips = (r, cur, arr, tip) => cmp.map(([d, lab], i) => `<span class="cmpc"><span class="muted">${lab}</span> ${r.key === 'rate' ? ppChipInv(cur, arr[i]) : chip(pct(cur, arr[i]), `${lab} (${fdw(d)}) ${tip}`, true)}</span>`).join('');
   const tile = r => `<div class="tile d0"><span class="eyebrow">${esc(r.label)}</span><span class="v">${r.fmt(r.sf)}</span>
       <span class="d">so far · projected full day <b>${r.fmt(r.proj)}</b></span>
       <div class="cmprow">${chips(r, r.sf, r.same, 'at the same time of day')}</div><span class="d">vs the same time (${at}) on those days · a rise is red</span></div>`;
@@ -1326,7 +1365,7 @@ function retD0() {
       <span class="small muted">Data as of ${at} IST · updated hourly · ${Math.round(share * 100)}% of a normal day's returns are usually booked by now</span></div>
     <div class="tiles">${list.map(tile).join('')}</div></section>`;
   const head = a => `<tr><th>Metric</th><th class="n">D0 ${a}</th>${cmp.map(([d, lab]) => `<th class="n">${lab} · ${fd(d)}</th><th class="n">vs ${lab}</th>`).join('')}</tr>`;
-  const line = (r, cur, arr) => `<tr><td>${esc(r.label)}</td><td class="n"><b>${fin(cur) ? r.fmt(cur) : '–'}</b></td>${arr.map(v => `<td class="n">${fin(v) ? r.fmt(v) : '<span class="muted">–</span>'}</td><td class="n">${r.key === 'rate' ? ppChip(cur, v) : chip(pct(cur, v), '', true)}</td>`).join('')}</tr>`;
+  const line = (r, cur, arr) => `<tr><td>${esc(r.label)}</td><td class="n"><b>${fin(cur) ? r.fmt(cur) : '–'}</b></td>${arr.map(v => `<td class="n">${fin(v) ? r.fmt(v) : '<span class="muted">–</span>'}</td><td class="n">${r.key === 'rate' ? ppChipInv(cur, v) : chip(pct(cur, v), '', true)}</td>`).join('')}</tr>`;
   h += `<section class="panel"><div class="panel-head"><h2>So far today vs the same time on D-1, D-7 and last month</h2><span class="small muted">Everything booked up to ${at} IST on each day</span></div>
     <div class="tw"><table><thead>${head('so far')}</thead><tbody>${list.map(r => line(r, r.sf, r.same)).join('')}</tbody></table></div></section>`;
   h += `<section class="panel"><div class="panel-head"><h2>Full day: D0 projected vs D-1, D-7 and last month</h2><span class="small muted">Today's projected close against what those days finished at</span></div>
@@ -1352,6 +1391,33 @@ function retD0() {
   h += detail('D0 by category', r => catOf(r[0]), null, { head: '<th>Category</th>', cells: g => `<td>${esc(g.k)}</td>`, why: true });
   h += detail('D0 by product', r => r[0] || '(no SKU) ' + r[1], null, { head: '<th>SKU</th><th>Product</th><th>Category</th>', cells: g => `<td class="num">${esc(g.k)}</td><td class="title" title="${esc(g.r[1])}">${esc(g.r[1])}</td><td>${esc(catOf(g.r[0]))}</td>`, why: true });
   return h;
+}
+/* Day by day and week by week (weeks run Monday to Sunday), for the range, type and category chosen above.
+   Units sold come from the same days' saved SKU lines; a day without saved sales shows its return rate as –. */
+function retPeriodTables(lines, dl) {
+  const soldDay = d => { const s = S.skus[d]; if (!s) return NaN; let u = 0; for (const r of s.rows) if (r[2] !== 'd' && CHANS().includes(r[2]) && (!S.cat || catOf(r[0]) === S.cat)) u += r[5]; return u; };
+  const monday = d => addD(d, -((new Date(d + 'T00:00:00Z').getUTCDay() + 6) % 7));
+  const roll = keyf => {
+    const m = new Map();
+    for (const d of dl) { const k = keyf(d); if (!m.has(k)) m.set(k, { k, n: 0, q: 0, val: 0, ords: new Set(), kinds: {}, why: {}, sold: 0, soldOk: true }); const g = m.get(k); g.n++; const s = soldDay(d); if (fin(s)) g.sold += s; else g.soldOk = false; }
+    for (const l of lines) { const g = m.get(keyf(l.d)); if (!g) continue; g.q += l.q; g.val += l.val; l.ords.forEach(o => g.ords.add(o)); g.kinds[l.k] = (g.kinds[l.k] || 0) + l.q; g.why[l.why] = (g.why[l.why] || 0) + l.q; }
+    return [...m.values()];
+  };
+  const topWhy = g => { const w = Object.entries(g.why).sort((a, b) => b[1] - a[1])[0]; return w ? `${esc(w[0])} (${fN(w[1])})` : '<span class="muted">–</span>'; };
+  const table = (title, sub, rows, label) => {
+    const tot = { q: 0, val: 0, ords: new Set(), kinds: {}, sold: 0, soldOk: true };
+    rows.forEach(g => { tot.q += g.q; tot.val += g.val; g.ords.forEach(o => tot.ords.add(o)); RKINDS.forEach(k => { tot.kinds[k] = (tot.kinds[k] || 0) + (g.kinds[k] || 0); }); tot.sold += g.sold; tot.soldOk = tot.soldOk && g.soldOk; });
+    const rate = g => (g.soldOk ? fP(div(g.q, g.sold), 1) : '<span class="muted" title="Sales not saved for every day">–</span>');
+    return `<section class="panel"><div class="panel-head"><h2>${title}</h2><span class="small muted">${sub}</span></div>
+      <div class="tw" style="max-height:520px"><table><thead><tr><th>${label}</th><th class="n">Orders affected</th><th class="n">Units</th><th class="n">vs previous (per day)</th><th class="n">Value (ex-GST)</th><th class="n">Units sold</th><th class="n">Return rate</th>${RKINDS.map(k => `<th class="n">${esc(k)}</th>`).join('')}<th>Top reason</th></tr></thead><tbody>
+      ${rows.map((g, i) => `<tr><td>${g.label}</td><td class="n">${fN(g.ords.size)}</td><td class="n"><b>${fN(g.q)}</b></td><td class="n">${i ? chip(pct(g.q / g.n, rows[i - 1].q / rows[i - 1].n), 'Units per day vs the previous row', true) : '<span class="muted">–</span>'}</td><td class="n">${fR(g.val)}</td><td class="n">${g.soldOk ? fN(g.sold) : '–'}</td><td class="n">${rate(g)}</td>${RKINDS.map(k => `<td class="n">${g.kinds[k] ? fN(g.kinds[k]) : '<span class="muted">–</span>'}</td>`).join('')}<td class="small">${topWhy(g)}</td></tr>`).join('')}
+      <tr><td><b>Total</b></td><td class="n"><b>${fN(tot.ords.size)}</b></td><td class="n"><b>${fN(tot.q)}</b></td><td></td><td class="n"><b>${fR(tot.val)}</b></td><td class="n"><b>${tot.soldOk ? fN(tot.sold) : '–'}</b></td><td class="n"><b>${rate(tot)}</b></td>${RKINDS.map(k => `<td class="n"><b>${fN(tot.kinds[k])}</b></td>`).join('')}<td></td></tr>
+      </tbody></table></div></section>`;
+  };
+  const daysR = roll(d => d).map(g => ({ ...g, label: fdw(g.k) }));
+  const weeksR = roll(monday).map(g => ({ ...g, label: `Week of ${fd(g.k)}${g.n < 7 ? ` <span class="muted small">(${g.n} day${g.n === 1 ? '' : 's'} in range)</span>` : ''}` }));
+  return table('Day by day', 'Each day of the range, by the day the refund or cancellation was booked · a rise vs the day before is red', daysR, 'Day') +
+    table('Week by week', 'Monday to Sunday weeks · partial weeks show how many of their days are in the range', weeksR, 'Week');
 }
 function renderReturns() {
   return retD0() + `<h2 style="margin:18px 0 6px">Selected range · ${fd(rangeDays()[0])} to ${fd(rangeDays().slice(-1)[0])}</h2>` + renderReturnsRange();
@@ -1389,6 +1455,7 @@ function renderReturnsRange() {
       ${t('Value (ex-GST)', fR(V), 'refunded or cancelled line value, after discounts')}
       ${kind === 'all' ? RKINDS.map(k => t(k, fN(byKind[k]), `${fP(div(byKind[k], U), 0)} of units`)).join('') : ''}
     </div></section>`;
+  h += retPeriodTables(lines, have);
   // by reason
   const reasons = group(l => l.k + '|' + l.why).sort((a, b) => b.q - a.q);
   h += `<section class="panel"><div class="panel-head"><h2>By reason</h2><span class="small muted">${fN(reasons.length)} reasons</span></div>
@@ -2168,7 +2235,7 @@ dl.defs dd { margin: 0; color: var(--muted) }
     <button role="tab" data-t="sku">SKU</button>
     <button role="tab" data-t="inv">Stock and DOH</button>
     <button role="tab" data-t="loss">Sales loss</button>
-    <button role="tab" data-t="ret">Returns</button>
+    <button role="tab" data-t="ret">Returns and cancellations</button>
     <button role="tab" data-t="src">Sources and GA4</button>
   </nav>
 
@@ -2991,6 +3058,8 @@ function renderD0() {
   return h + d0StockPanel() + projTiles() + projTable('cat') + projTable('sku');
 }
 const ppChip = (a, b) => !fin(a) || !fin(b) ? '<span class="dchip flat">–</span>' : `<span class="dchip ${Math.abs(a - b) < 0.00005 ? 'flat' : a > b ? 'up' : 'down'}">${a > b ? '+' : ''}${((a - b) * 100).toFixed(2)} pp</span>`;
+/* the same chip for figures where a rise is bad (return rate): up is red */
+const ppChipInv = (a, b) => !fin(a) || !fin(b) ? '<span class="dchip flat">–</span>' : `<span class="dchip ${Math.abs(a - b) < 0.00005 ? 'flat' : a > b ? 'down' : 'up'}">${a > b ? '+' : ''}${((a - b) * 100).toFixed(2)} pp</span>`;
 
 /* ---------- store (db) ---------- */
 async function dbLoad() {
@@ -3631,6 +3700,82 @@ function retAgg(dl) {
 }
 const soldUnits = (dl, test) => { const m = new Map(); for (const d of dl) { const s = S.skus[d]; if (!s) continue; for (const r of s.rows) if (r[2] !== 'd' && CHANS().includes(r[2]) && (!test || test(r[0]))) m.set(r[0], (m.get(r[0]) || 0) + r[5]); } return m; };
 const groupChips = g => RET_GROUPS.filter(x => g[x[0]]).map(x => `<span class="st" style="background:color-mix(in srgb, ${x[2]} 16%, transparent);color:${x[2] === 'var(--muted)' ? 'var(--muted)' : x[2]}" title="${esc(x[1])}">${esc(x[1].split(':')[0].split(' ')[0])} ${fN(g[x[0]])}</span>`).join(' ');
+/* Return types for the day, week and D0 views: the three that matter most, the rest grouped. */
+const RET_KIND = [['cancel', 'Cancelled'], ['rto', 'RTO'], ['return', 'Customer returns'], ['rest', 'Not shipped and other']];
+const kindOf = g => (g === 'cancel' || g === 'rto' || g === 'return' ? g : 'rest');
+const retSoldDay = d => { const s = S.skus[d]; if (!s) return NaN; let u = 0; for (const r of s.rows) if (r[2] !== 'd' && CHANS().includes(r[2]) && inSeg(r[0], S.cat)) u += r[5]; return u; };
+/* one day's returned lines, filtered like the rest of the tab */
+const retDay = d => (S.ret ? S.ret.lines.filter(l => l[0] === d && inSeg(l[2], S.cat) && CHANS().includes(l[3])) : []);
+function retSum(lines) {
+  const o = { units: 0, value: 0, orders: new Set(), k: { cancel: 0, rto: 0, return: 0, rest: 0 }, cat: new Map(), sku: new Map() };
+  for (const l of lines) {
+    const k = kindOf(retReason(l[1], l[2])[0]);
+    o.units += l[4]; o.value += l[5]; o.orders.add(l[1]); o.k[k] += l[4];
+    const add = (m, key) => { const x = m.get(key) || { units: 0, value: 0, k: { cancel: 0, rto: 0, return: 0, rest: 0 } }; x.units += l[4]; x.value += l[5]; x.k[k] += l[4]; m.set(key, x); };
+    add(o.cat, catOfSku(l[2])); add(o.sku, l[2] || '(no SKU)');
+  }
+  return o;
+}
+/* D0-style view: the latest day with returns booked (today when it has data) against D-1, D-7 and the same date last month. */
+function retD0View() {
+  if (!S.ret || !S.ret.lines.length) return '';
+  const last = S.ret.lines.reduce((m, l) => (l[0] <= today && l[0] > m ? l[0] : m), '');
+  const D = last || today, isToday = D === today;
+  const cmp = [[addD(D, -1), 'D-1'], [addD(D, -7), 'D-7'], [lastMonth(D), 'Last month']];
+  const have = d => d >= HIST_START && S.ret.lines.some(l => l[0] === d);
+  const cur = retSum(retDay(D)), past = cmp.map(([d]) => (have(d) ? retSum(retDay(d)) : null));
+  const sold = retSoldDay(D), soldP = cmp.map(([d]) => retSoldDay(d));
+  const rows = [
+    ['Units back', o => o.units, fN], ['Orders affected', o => o.orders.size, fN], ['Value refunded', o => o.value, fR],
+    ...RET_KIND.map(([k, lab]) => [lab + ' (units)', o => o.k[k], fN]),
+  ];
+  const tile = ([lab, f, fmt]) => `<div class="tile d0"><span class="eyebrow">${esc(lab)}</span><span class="v">${fmt(f(cur))}</span>
+      <div class="cmprow">${cmp.map(([d, l], i) => `<span class="cmpc"><span class="muted">${l}</span> ${past[i] ? chip(pct(f(cur), f(past[i])), `${l} (${fdw(d)})`, true) : '<span class="dchip flat">–</span>'}</span>`).join('')}</div></div>`;
+  const rateNow = div(cur.units, sold), rateP = cmp.map((_, i) => (past[i] ? div(past[i].units, soldP[i]) : NaN));
+  const rateTile = `<div class="tile d0"><span class="eyebrow">Return rate</span><span class="v">${fP(rateNow, 1)}</span>
+      <div class="cmprow">${cmp.map(([, l], i) => `<span class="cmpc"><span class="muted">${l}</span> ${ppChipInv(rateNow, rateP[i])}</span>`).join('')}</div></div>`;
+  const head = `<tr><th>Metric</th><th class="n">${isToday ? 'D0 so far' : fd(D)}</th>${cmp.map(([d, l]) => `<th class="n">${l} · ${fd(d)}</th><th class="n">vs ${l}</th>`).join('')}</tr>`;
+  const line = ([lab, f, fmt]) => `<tr><td>${esc(lab)}</td><td class="n"><b>${fmt(f(cur))}</b></td>${past.map(p => `<td class="n">${p ? fmt(f(p)) : '<span class="muted">–</span>'}</td><td class="n">${p ? chip(pct(f(cur), f(p)), '', true) : '–'}</td>`).join('')}</tr>`;
+  const top = (title, m, label, n) => {
+    const keys = [...m.keys()].sort((a, b) => m.get(b).units - m.get(a).units).slice(0, n);
+    const pm = past.map(p => (p ? (label === 'SKU' ? p.sku : p.cat) : null));
+    return `<section class="panel"><div class="panel-head"><h2>${title}</h2><span class="small muted">Units back on ${fd(D)} vs the same day each comparison</span></div>
+      <div class="tw" style="max-height:420px"><table><thead><tr><th>${label}</th>${label === 'SKU' ? '<th>Product</th>' : ''}<th class="n">Units</th><th class="n">Value</th>${RET_KIND.map(([, l]) => `<th class="n">${esc(l)}</th>`).join('')}${cmp.map(([, l]) => `<th class="n">${l}</th><th class="n">vs ${l}</th>`).join('')}</tr></thead><tbody>
+      ${keys.map(k => { const x = m.get(k); return `<tr><td${label === 'SKU' ? ' class="num"' : ''}>${esc(k)}</td>${label === 'SKU' ? `<td class="title">${esc((SCOPE[k] || [''])[0])}</td>` : ''}<td class="n"><b>${fN(x.units)}</b></td><td class="n">${fR(x.value)}</td>${RET_KIND.map(([kk]) => `<td class="n">${x.k[kk] ? fN(x.k[kk]) : '<span class="muted">–</span>'}</td>`).join('')}${pm.map(p => { const y = p && p.get(k); return `<td class="n">${p ? fN(y ? y.units : 0) : '–'}</td><td class="n">${p ? chip(pct(x.units, y ? y.units : 0), '', true) : '–'}</td>`; }).join('')}</tr>`; }).join('') || `<tr><td colspan="9" class="empty">Nothing came back on ${fd(D)}.</td></tr>`}
+      </tbody></table></div></section>`;
+  };
+  return `<section class="panel"><div class="panel-head"><h2>${isToday ? 'D0' : 'Latest day'} returns and cancellations · ${fdw(D)}${S.cat ? ' · ' + esc(S.cat) : ''}</h2>
+      <span class="small muted">${isToday ? 'Today so far' : 'The latest day with returns booked'} vs D-1, D-7 and the same date last month (whole days) · a rise is red</span></div>
+    <div class="tiles">${[rows[0], rows[1], rows[2]].map(tile).join('')}${rateTile}${rows.slice(3).map(tile).join('')}</div></section>
+    <section class="panel"><div class="panel-head"><h2>${isToday ? 'D0' : fd(D)} vs D-1, D-7 and last month</h2></div>
+    <div class="tw"><table><thead>${head}</thead><tbody>${rows.map(line).join('')}
+      <tr><td>Return rate (units back ÷ units sold)</td><td class="n"><b>${fP(rateNow, 1)}</b></td>${rateP.map((r, i) => `<td class="n">${fP(r, 1)}</td><td class="n">${ppChipInv(rateNow, r)}</td>`).join('')}</tr></tbody></table></div></section>` +
+    top(`${isToday ? 'D0' : fd(D)} by category`, cur.cat, 'Category', 20) + top(`${isToday ? 'D0' : fd(D)} by SKU`, cur.sku, 'SKU', 50) +
+    `<h2 style="margin:18px 0 6px">Selected range · ${fd(rangeDays()[0])} to ${fd(rangeDays().slice(-1)[0])}</h2>`;
+}
+/* Day by day and week by week for the selected range (weeks run Monday to Sunday). */
+function retPeriodTables(lines, dl) {
+  const monday = d => addD(d, -((new Date(d + 'T00:00:00Z').getUTCDay() + 6) % 7));
+  const roll = keyf => {
+    const m = new Map();
+    for (const d of dl) { const k = keyf(d); if (!m.has(k)) m.set(k, { k, n: 0, lines: [], sold: 0, soldOk: true }); const g = m.get(k); g.n++; const s = retSoldDay(d); if (fin(s)) g.sold += s; else g.soldOk = false; }
+    for (const l of lines) { const g = m.get(keyf(l[0])); if (g) g.lines.push(l); }
+    return [...m.values()].map(g => ({ ...g, s: retSum(g.lines) }));
+  };
+  const table = (title, sub, rows, label) => {
+    const all = retSum(rows.flatMap(g => g.lines)), soldAll = rows.reduce((x, g) => x + g.sold, 0), okAll = rows.every(g => g.soldOk);
+    const rate = (u, s, ok) => (ok ? fP(div(u, s), 1) : '<span class="muted" title="Sales not saved for every day">–</span>');
+    const cells = (o, sold, ok) => `<td class="n">${fN(o.orders.size)}</td><td class="n"><b>${fN(o.units)}</b></td>`;
+    return `<section class="panel"><div class="panel-head"><h2>${title}</h2><span class="small muted">${sub}</span></div>
+      <div class="tw" style="max-height:520px"><table><thead><tr><th>${label}</th><th class="n">Orders</th><th class="n">Units back</th><th class="n">vs previous (per day)</th><th class="n">Value</th><th class="n">Units sold</th><th class="n">Return rate</th>${RET_KIND.map(([, l]) => `<th class="n">${esc(l)}</th>`).join('')}</tr></thead><tbody>
+      ${rows.map((g, i) => `<tr><td>${g.label}</td>${cells(g.s)}<td class="n">${i ? chip(pct(g.s.units / g.n, rows[i - 1].s.units / rows[i - 1].n), 'Units per day vs the previous row', true) : '<span class="muted">–</span>'}</td><td class="n">${fR(g.s.value)}</td><td class="n">${g.soldOk ? fN(g.sold) : '–'}</td><td class="n">${rate(g.s.units, g.sold, g.soldOk)}</td>${RET_KIND.map(([k]) => `<td class="n">${g.s.k[k] ? fN(g.s.k[k]) : '<span class="muted">–</span>'}</td>`).join('')}</tr>`).join('')}
+      <tr><td><b>Total</b></td><td class="n"><b>${fN(all.orders.size)}</b></td><td class="n"><b>${fN(all.units)}</b></td><td></td><td class="n"><b>${fR(all.value)}</b></td><td class="n"><b>${okAll ? fN(soldAll) : '–'}</b></td><td class="n"><b>${rate(all.units, soldAll, okAll)}</b></td>${RET_KIND.map(([k]) => `<td class="n"><b>${fN(all.k[k])}</b></td>`).join('')}</tr>
+      </tbody></table></div></section>`;
+  };
+  return table('Day by day', 'By the day the refund or cancellation was booked · a rise vs the day before is red', roll(d => d).map(g => ({ ...g, label: fdw(g.k) })), 'Day') +
+    table('Week by week', 'Monday to Sunday weeks · partial weeks show how many of their days are in the range',
+      roll(monday).map(g => ({ ...g, label: `Week of ${fd(g.k)}${g.n < 7 ? ` <span class="muted small">(${g.n} day${g.n === 1 ? '' : 's'} in range)</span>` : ''}` })), 'Week');
+}
 function renderRet() {
   if (!S.ret) return `<section class="panel"><div class="empty">${S.mcp ? 'Loading returns and refund notes from Shopify…' : 'No returns data saved yet. It is read from Shopify by anyone who opens this page with the Shopify connector, then shared here.'}</div></section>`;
   const dl = rangeDays(), R = retAgg(dl);
@@ -3638,7 +3783,7 @@ function renderRet() {
   const loaded = R.lines.filter(l => S.retInfo && S.retInfo[l[1]]).length;
   const top = Object.entries(R.byGroup).sort((a, b) => b[1].units - a[1].units)[0];
   const tile = (cls, label, v, sub) => `<div class="tile ${cls}"><span class="eyebrow">${label}</span><span class="v">${v}</span><span class="d">${sub}</span></div>`;
-  let h = `<section class="panel"><div class="panel-head"><h2>Returns, RTO and cancellations${S.cat ? ' · ' + esc(S.cat) : ''}</h2><span class="small muted">${fd(dl[0])} to ${fd(dl[dl.length - 1])}, by the day the refund was booked · reasons for ${fP(div(loaded, R.lines.length), 0)} of lines loaded · updated ${hhmm(S.ret.fetchedAt)} IST</span></div>
+  let h = retD0View() + `<section class="panel"><div class="panel-head"><h2>Returns, RTO and cancellations${S.cat ? ' · ' + esc(S.cat) : ''}</h2><span class="small muted">${fd(dl[0])} to ${fd(dl[dl.length - 1])}, by the day the refund was booked · reasons for ${fP(div(loaded, R.lines.length), 0)} of lines loaded · updated ${hhmm(S.ret.fetchedAt)} IST</span></div>
     <div class="tiles">
       ${tile(R.units ? 'alarm' : '', 'Units returned or cancelled', fN(R.units), `${fN(R.lines.length)} lines in ${fN(R.orders.size)} orders`)}
       ${tile('', 'Value refunded', fR(R.value), 'net of discounts, ex-GST (Shopify returns)')}
@@ -3648,6 +3793,7 @@ function renderRet() {
       ${tile('', 'Cancelled before dispatch', fN((R.byGroup.cancel || {}).units || 0), 'units')}
       ${tile('', 'Biggest reason', top ? esc(RET_LABEL[top[0]].split(':')[0]) : '–', top ? `${fN(top[1].units)} units · ${fP(div(top[1].units, R.units), 0)}` : '')}
     </div></section>`;
+  h += retPeriodTables(R.lines, dl);
   // reasons
   const gRows = RET_GROUPS.filter(g => R.byGroup[g[0]]).map(([k, lab, col]) => {
     const x = R.byGroup[k];
