@@ -1,0 +1,1843 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Big Festive Days Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sale masthead with a 39-day strip, then a tabbed working area (day, category, SKU, sources) built around one wide data table per view. */
+:root {
+  --paper: #F5F6F8; --card: #FFFFFF; --ink: #16181D; --muted: #5B6270; --line: #E1E4EA; --soft: #EEF0F4;
+  --web: #CF7300; --app: #0B7580; --other: #9AA1AD; --flash: #B8236F;
+  --good: #1D8049; --bad: #BF3B26; --warn: #A86A00;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #101217; --card: #171A20; --ink: #ECEEF2; --muted: #9AA1AD; --line: #2A2E37; --soft: #1E222A;
+  --web: #F09A2A; --app: #33B7C2; --other: #6B7280; --flash: #E25C9F;
+  --good: #4CC27D; --bad: #F07A63; --warn: #E3AE4A; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #101217; --card: #171A20; --ink: #ECEEF2; --muted: #9AA1AD; --line: #2A2E37; --soft: #1E222A;
+  --web: #F09A2A; --app: #33B7C2; --other: #6B7280; --flash: #E25C9F;
+  --good: #4CC27D; --bad: #F07A63; --warn: #E3AE4A; color-scheme: dark }
+
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font: 14px/1.5 var(--f-body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 48px; display: grid; gap: 18px; }
+h1, h2, h3 { font-family: var(--f-display); margin: 0; text-wrap: balance; letter-spacing: -0.01em }
+h1 { font-size: clamp(26px, 4vw, 38px); line-height: 1.05 }
+h2 { font-size: 18px }
+h3 { font-size: 15px }
+.num, td.n, th.n { font-family: var(--f-mono); font-variant-numeric: tabular-nums }
+.muted { color: var(--muted) }
+.small { font-size: 12.5px }
+.eyebrow { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600 }
+button, select, input { font: inherit; color: inherit }
+button { cursor: pointer }
+:focus-visible { outline: 2px solid var(--app); outline-offset: 2px }
+
+/* masthead */
+.mast { display: grid; gap: 14px }
+.mast-top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between }
+.mast-title { display: grid; gap: 4px; min-width: 0 }
+.offers { display: flex; flex-wrap: wrap; gap: 6px }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); font-size: 12px; white-space: nowrap }
+.chip .dot { width: 8px; height: 8px; border-radius: 50% }
+.countdown { font-family: var(--f-display); font-size: 20px; font-weight: 700 }
+.strip { display: grid; grid-template-columns: repeat(39, minmax(0, 1fr)); gap: 2px; }
+.strip button { height: 30px; border: 0; padding: 0; border-radius: 3px; background: var(--soft); position: relative }
+.strip button.has { background: color-mix(in srgb, var(--web) 28%, var(--soft)) }
+.strip button.flash { box-shadow: inset 0 -4px 0 var(--flash) }
+.strip button.today { outline: 2px solid var(--ink); outline-offset: 1px }
+.strip button.sel { background: var(--web) }
+.strip-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--muted); justify-content: space-between }
+
+/* controls */
+.bar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden }
+.seg button { border: 0; background: transparent; padding: 5px 11px; font-size: 13px }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper) }
+.seg button:disabled { opacity: .4; cursor: not-allowed }
+.bar label { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted) }
+.bar input[type=date], .bar select, .bar input[type=search] { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; padding: 4px 8px; font-size: 13px; max-width: 100% }
+.btn { border: 1px solid var(--line); background: var(--paper); border-radius: 7px; padding: 5px 11px; font-size: 13px }
+.btn.primary { background: var(--ink); color: var(--paper); border-color: var(--ink) }
+.spacer { flex: 1 1 auto }
+
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); overflow-x: auto }
+.tabs button { border: 0; background: none; padding: 9px 14px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--web) }
+
+/* sources line */
+.sources { display: flex; flex-wrap: wrap; gap: 6px }
+.src { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; padding: 3px 9px; border-radius: 6px; background: var(--card); border: 1px solid var(--line) }
+.src i { width: 7px; height: 7px; border-radius: 50%; background: var(--other) }
+.src.ok i { background: var(--good) } .src.load i { background: var(--warn) } .src.err i { background: var(--bad) }
+.src.err { border-color: color-mix(in srgb, var(--bad) 45%, var(--line)) }
+
+/* kpis */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px }
+.kpi { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; min-width: 0 }
+.kpi .v { font-family: var(--f-mono); font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.kpi .d { font-size: 12px }
+.up { color: var(--good) } .down { color: var(--bad) }
+
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 10px; min-width: 0 }
+.panel-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; justify-content: space-between }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px }
+
+/* tables */
+.tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px }
+table { border-collapse: collapse; width: 100%; font-size: 13px }
+th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap }
+th { font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--soft); position: sticky; top: 0 }
+th.n, td.n { text-align: right }
+th.sortable { cursor: pointer }
+tbody tr:hover td { background: color-mix(in srgb, var(--web) 6%, transparent) }
+tr.pick td { cursor: pointer }
+tr.sel td { background: color-mix(in srgb, var(--app) 12%, transparent) }
+tfoot td { font-weight: 600; background: var(--soft) }
+tfoot tr.base td { font-weight: 500; color: var(--muted) }
+td.title { max-width: 360px; overflow: hidden; text-overflow: ellipsis }
+td.na { color: var(--muted) }
+.pill { display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: .03em; padding: 1px 6px; border-radius: 4px; margin-left: 6px; vertical-align: 1px }
+.pill.flash { background: color-mix(in srgb, var(--flash) 18%, transparent); color: var(--flash) }
+.pill.payday { background: color-mix(in srgb, var(--app) 16%, transparent); color: var(--app) }
+.pill.pre { background: var(--soft); color: var(--muted) }
+.pill.part { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn) }
+.heat td.n { color: var(--ink) }
+.heat th:first-child, .heat td:first-child { position: sticky; left: 0; background: var(--card); z-index: 1 }
+.heat th:first-child { background: var(--soft); z-index: 2 }
+.heat td.tot, .heat th.tot { border-left: 2px solid var(--line); font-weight: 600 }
+
+/* summary tiles */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 8px; display: grid; gap: 2px; min-width: 0 }
+.tile .v { font-family: var(--f-mono); font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.tile .d { font-size: 12px; color: var(--muted) }
+.tile svg { width: 100%; height: 34px; display: block; margin-top: 4px }
+.bar-cell { position: relative }
+.bar-cell i { position: absolute; left: 0; top: 4px; bottom: 4px; background: color-mix(in srgb, var(--web) 18%, transparent); border-radius: 2px; z-index: 0 }
+.bar-cell span { position: relative; z-index: 1 }
+.dchip { display: inline-block; min-width: 54px; text-align: right; padding: 1px 6px; border-radius: 5px; font-family: var(--f-mono); font-size: 12px }
+.dchip.up { background: color-mix(in srgb, var(--good) 14%, transparent) }
+.dchip.down { background: color-mix(in srgb, var(--bad) 13%, transparent) }
+.dchip.flat { color: var(--muted) }
+.cmp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px }
+.cmp-card { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; gap: 6px; background: var(--card) }
+.cmp-card .row { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px }
+.stack { display: grid; gap: 14px }
+.tile.proj { border-color: color-mix(in srgb, var(--web) 45%, var(--line)); background: color-mix(in srgb, var(--web) 5%, var(--card)) }
+.tile.proj .v { font-size: 26px }
+.tile.d0 { gap: 4px }
+.tile.d0 .v { font-size: 28px }
+.cmprow { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px }
+.cmpc { display: inline-flex; align-items: center; gap: 4px; font-size: 12px }
+
+.chart svg { display: block; width: 100%; height: auto }
+.chart text { fill: var(--muted); font: 11px var(--f-mono) }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted) }
+.legend span { display: inline-flex; align-items: center; gap: 6px }
+.legend b { width: 10px; height: 10px; border-radius: 2px; display: inline-block }
+
+.note { font-size: 12.5px; color: var(--muted); max-width: 90ch }
+.note b { color: var(--ink); font-weight: 600 }
+.alert { border: 1px solid color-mix(in srgb, var(--bad) 40%, var(--line)); background: color-mix(in srgb, var(--bad) 7%, var(--card)); border-radius: 10px; padding: 10px 12px; font-size: 13px }
+.empty { padding: 28px 12px; text-align: center; color: var(--muted) }
+dl.defs { display: grid; grid-template-columns: minmax(120px, 200px) minmax(0, 1fr); gap: 8px 16px; margin: 0; font-size: 13px }
+dl.defs dt { font-weight: 600 }
+dl.defs dd { margin: 0; color: var(--muted) }
+@media (max-width: 560px) { dl.defs { grid-template-columns: minmax(0, 1fr) } .strip button { height: 22px } }
+@media (prefers-reduced-motion: no-preference) { .strip button, .seg button, .tabs button { transition: background .15s } }
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="mast-top">
+      <div class="mast-title">
+        <span class="eyebrow">R for Rabbit · D2C web + app</span>
+        <h1>Big Festive Days</h1>
+        <span class="muted">Lowest Price of the Year · 1 Oct to 8 Nov 2026 · 39 sale days</span>
+      </div>
+      <div style="display:grid;gap:6px;justify-items:end">
+        <span class="countdown" id="countdown"></span>
+        <div class="offers">
+          <span class="chip"><span class="dot" style="background:var(--web)"></span>Web 10% sitewide</span>
+          <span class="chip"><span class="dot" style="background:var(--app)"></span>App 12% sitewide</span>
+          <span class="chip"><span class="dot" style="background:var(--flash)"></span>Flash: web 12% / app 15% + free gift</span>
+        </div>
+      </div>
+    </div>
+    <div class="strip" id="strip" aria-label="Sale days, click one to view that day"></div>
+    <div class="strip-legend"><span>1 Oct</span><span>Flash Sale 1 · 7-8 Oct</span><span>Flash Sale 2 · 17-18 Oct</span><span>Payday week · 28 Oct-7 Nov</span><span>8 Nov</span></div>
+  </header>
+
+  <div class="bar" id="bar">
+    <div class="seg" id="presets" role="group" aria-label="Date range">
+      <button data-p="sale">Whole sale</button>
+      <button data-p="f1">Flash 1</button>
+      <button data-p="f2">Flash 2</button>
+      <button data-p="pay">Payday wk</button>
+      <button data-p="base">Pre-sale 14d</button>
+      <button data-p="l7">Last 7d</button>
+    </div>
+    <label for="from">From <input type="date" id="from"></label>
+    <label for="to">To <input type="date" id="to"></label>
+    <label for="catSel">Category <select id="catSel"><option value="">All categories</option></select></label>
+    <span class="spacer"></span>
+    <div class="seg" id="plat" role="group" aria-label="Platform">
+      <button data-v="total">Total</button><button data-v="web">Web</button><button data-v="app">App</button>
+    </div>
+    <div class="seg" id="srcSeg" role="group" aria-label="Funnel source">
+      <button data-v="live" title="Web funnel from Shopify sessions, app funnel from Linkrunner">Shopify + Linkrunner</button>
+      <button data-v="ga4" title="Funnel from imported GA4 exports">GA4</button>
+    </div>
+    <button class="btn primary" id="refresh">Refresh data</button>
+    <button class="btn" id="xlsx" hidden>Download Excel</button>
+    <span class="small muted" id="xlsxMsg" role="status"></span>
+  </div>
+
+  <div class="sources" id="sources"></div>
+  <div id="pageAlert" hidden></div>
+
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-t="d0">D0 (today)</button>
+    <button role="tab" data-t="sum">Summary</button>
+    <button role="tab" data-t="cmp">Comparison</button>
+    <button role="tab" data-t="day">Funnel</button>
+    <button role="tab" data-t="cat">Category</button>
+    <button role="tab" data-t="sku">SKU</button>
+    <button role="tab" data-t="ret">Returns</button>
+    <button role="tab" data-t="src">Sources and GA4</button>
+  </nav>
+
+  <main id="main"></main>
+</div>
+
+<script>
+(() => {
+'use strict';
+const CATS = ["Baby Gear", "Baby and Kids Care", "Clothing", "Diapering", "Feeding Nursing and Nursery", "Furniture", "Gift Cards", "Ride ons and Toys", "Unmapped"];
+const SKUMAP = {};   // store data not included in this copy; set categories under Categories (tools/catalog.cjs)
+const HMAP = {"p":{},"c":{}};   // store data not included in this copy; set categories under Categories (tools/catalog.cjs)
+const DATA_V = 4;                                // bump when the saved day shape changes
+/* Parenting tools (the /pages/parenting-tools hub and the 18 tools it links to) are left out of every sessions figure:
+   they draw 17-19% of web sessions but almost no carts or orders. Shopify only knows a session's landing page,
+   so the rule is: sessions that LANDED on one of these pages are excluded. */
+const TOOL_PAGES = ['/pages/parenting-tools', '/pages/parenting-gpt', '/pages/astrology-birth-chart-calculator', '/pages/baby-name-generator', '/pages/numerology-calculator', '/pages/chinese-gender-predictor', '/pages/nakshatra-calculator', '/pages/online-pregnancy-test', '/pages/pregnancy-due-date-calculator', '/pages/immunization-scheduler-and-chart', '/pages/period-calculator', '/pages/contraction-calculator', '/pages/c-section-checklist', '/pages/diaper-bag-checklist', '/pages/child-blood-type-calculator', '/pages/breast-milk-calculator', '/pages/baby-cost-calculator', '/pages/child-growth-percentile-calculator', '/pages/baby-eye-color-calculator'];
+const NO_TOOLS = `landing_page_path NOT IN (${TOOL_PAGES.map(p => `'${p}'`).join(', ')})`;
+const OTHER_PAGES = 'Home, search and other pages', MIXED = 'Multi-category collections', UNMAPPED_PAGES = 'Unmapped product pages';
+const SALE = { start: '2026-10-01', end: '2026-11-08' };
+const BASE = { start: '2026-09-17', end: '2026-09-30' };
+const FLASH = ['2026-10-07', '2026-10-08', '2026-10-17', '2026-10-18'];
+const PAYDAY = { start: '2026-10-28', end: '2026-11-07' };
+const SHOP = 'Shopify', LR = 'Linkrunner';
+const NO_SKU = 'No SKU (adjustments)', NOT_MAPPED = 'Not in catalogue map';
+
+/* ---------- dates ---------- */
+const today = new Date(Date.now() + 19800000).toISOString().slice(0, 10); // IST
+const addD = (s, n) => { const d = new Date(s + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+const days = (a, b) => { const out = []; for (let d = a; d <= b; d = addD(d, 1)) out.push(d); return out; };
+const yesterday = addD(today, -1);
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const fd = s => { const d = new Date(s + 'T00:00:00Z'); return d.getUTCDate() + ' ' + MON[d.getUTCMonth()]; };
+const fdw = s => DOW[new Date(s + 'T00:00:00Z').getUTCDay()] + ' ' + fd(s);
+const clampToday = s => (s > today ? today : s);
+const saleDay = s => Math.round((Date.parse(s) - Date.parse(SALE.start)) / 864e5) + 1;
+function phase(d) {
+  if (FLASH.includes(d)) return d < '2026-10-10' ? ['flash', 'Flash 1'] : ['flash', 'Flash 2'];
+  if (d >= PAYDAY.start && d <= PAYDAY.end) return ['payday', 'Payday wk'];
+  if (d < SALE.start) return ['pre', 'Pre-sale'];
+  if (d > SALE.end) return ['pre', 'Post-sale'];
+  return null;
+}
+
+/* ---------- format ---------- */
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fin = v => typeof v === 'number' && isFinite(v);
+const fN = v => fin(v) ? Math.round(v).toLocaleString('en-IN') : '–';
+const fR = v => {
+  if (!fin(v)) return '–';
+  const a = Math.abs(v);
+  if (a >= 1e7) return '₹' + (v / 1e7).toFixed(2) + ' cr';
+  if (a >= 1e5) return '₹' + (v / 1e5).toFixed(2) + ' L';
+  return '₹' + Math.round(v).toLocaleString('en-IN');
+};
+const fP = (v, dp = 2) => fin(v) ? (v * 100).toFixed(dp) + '%' : '–';
+const div = (a, b) => (fin(a) && fin(b) && b > 0 ? a / b : NaN);
+const delta = (v, b) => {
+  if (!fin(v) || !fin(b) || b === 0) return '<span class="muted">–</span>';
+  const p = v / b - 1;
+  return `<span class="${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '+' : ''}${(p * 100).toFixed(0)}%</span>`;
+};
+
+/* ---------- state ---------- */
+const S = {
+  from: null, to: null, plat: 'total', src: 'live', tab: 'd0', cat: '', anchor: null,
+  days: {}, skus: {}, ga4: {},
+  selCat: null, selSku: null, skuQ: '', skuCat: '', skuSort: 'net',
+  status: {
+    [SHOP]: { st: 'idle', msg: 'Waiting' },
+    [LR]: { st: 'idle', msg: 'Waiting' },
+    db: { st: 'idle', msg: 'Waiting' },
+  },
+  mcp: null, db: null, canWrite: null, busy: false,
+};
+try { const t = localStorage.getItem('bfd.tab2'); if (t) S.tab = t; } catch (e) {}
+if (/^#(d0|sum|cmp|day|cat|sku|src)$/.test(location.hash)) S.tab = location.hash.slice(1);
+if (!['d0', 'sum', 'cmp', 'day', 'cat', 'sku', 'ret', 'src'].includes(S.tab)) S.tab = 'd0';
+
+function preset(p) {
+  const clip = (a, b) => [a, b > today ? (today >= a ? today : b) : b];
+  if (p === 'sale') return clip(SALE.start, SALE.end);
+  if (p === 'f1') return ['2026-10-07', '2026-10-08'];
+  if (p === 'f2') return ['2026-10-17', '2026-10-18'];
+  if (p === 'pay') return clip(PAYDAY.start, PAYDAY.end);
+  if (p === 'base') return clip(BASE.start, BASE.end);
+  if (p === 'l7') return [addD(today, -6), today];
+}
+[S.from, S.to] = today >= SALE.start ? preset('sale') : preset('base');
+
+/* ---------- data shaping ---------- */
+const chKey = c => c === 'Online Store' ? 'w' : c === 'Appmaker.xyz - Mobile app' ? 'a' : c === 'Draft Orders' ? 'd' : 'o';
+function rowsOf(payload) {
+  let p = payload;
+  if (typeof p === 'string') { try { p = JSON.parse(p); } catch (e) { return []; } }
+  if (p && !p.rows && p.data) p = p.data;
+  if (!p || !Array.isArray(p.rows) || !Array.isArray(p.columns)) throw { code: 'shape', message: 'Unexpected response shape from the connector.' };
+  const cols = p.columns.map(c => c.name);
+  return p.rows.map(r => Object.fromEntries(cols.map((c, i) => [c, r[i]])));
+}
+const num = v => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
+const catOf = sku => !sku ? NO_SKU : (SKUMAP[sku] !== undefined ? CATS[SKUMAP[sku]] : NOT_MAPPED);
+
+/* day metrics for a platform and source */
+function dayMetrics(d, plat, src) {
+  const D = S.days[d];
+  const g = S.ga4[d];
+  const m = { users: NaN, sessions: NaN, atc: NaN, checkout: NaN, orders: NaN, aovW: NaN, aovA: NaN, net: NaN, proxy: false };
+  if (D && D.shop) {
+    const sh = D.shop;
+    const w = sh.w || {}, a = sh.a || {}, o = sh.o || {};
+    m.aovW = div(w.aovSum, w.orders); m.aovA = div(a.aovSum, a.orders);
+    m.ordersW = w.orders || 0; m.ordersA = a.orders || 0; m.ordersO = o.orders || 0;
+    m.netW = w.net || 0; m.netA = a.net || 0; m.netO = o.net || 0;
+    m.aovSumW = w.aovSum || 0; m.aovSumA = a.aovSum || 0;
+    m.orders = plat === 'web' ? m.ordersW : plat === 'app' ? m.ordersA : m.ordersW + m.ordersA + m.ordersO;
+    m.net = plat === 'web' ? m.netW : plat === 'app' ? m.netA : m.netW + m.netA + m.netO;
+  }
+  let web = null, app = null;
+  if (src === 'ga4') {
+    if (g) { web = g.web || null; app = g.app || null; if (!web && !app && g.all && plat === 'total') web = g.all; }
+  } else {
+    if (D && D.sess) web = { users: D.sess.visitors, sessions: D.sess.sessions, atc: D.sess.atc, checkout: D.sess.checkout };
+    if (D && D.app) { app = { users: D.app.open, sessions: D.app.open, atc: D.app.atc, checkout: D.app.checkout }; }
+  }
+  const pick = plat === 'web' ? [web] : plat === 'app' ? [app] : [web, app];
+  if (pick.every(Boolean)) {
+    for (const k of ['users', 'sessions', 'atc', 'checkout']) m[k] = pick.reduce((s, x) => s + (fin(x[k]) ? x[k] : 0), 0);
+  }
+  m.proxy = src === 'live' && plat !== 'web';
+  return m;
+}
+function sumMetrics(list) {
+  const t = { users: 0, sessions: 0, atc: 0, checkout: 0, orders: 0, net: 0, aovSumW: 0, aovSumA: 0, ordersW: 0, ordersA: 0, ordersF: 0, n: 0, nf: 0 };
+  for (const m of list) {
+    if (fin(m.orders)) { t.orders += m.orders; t.net += m.net; t.aovSumW += m.aovSumW; t.aovSumA += m.aovSumA; t.ordersW += m.ordersW; t.ordersA += m.ordersA; t.n++; }
+    if (fin(m.sessions)) { t.users += m.users; t.sessions += m.sessions; t.atc += m.atc; t.checkout += m.checkout; t.nf++; if (fin(m.orders)) t.ordersF += m.orders; }
+  }
+  t.aovW = div(t.aovSumW, t.ordersW); t.aovA = div(t.aovSumA, t.ordersA);
+  t.conv = div(t.ordersF, t.sessions); // only days that have both a funnel and orders
+  return t;
+}
+const rangeDays = () => days(S.from, clampToday(S.to) < S.from ? S.from : clampToday(S.to));
+const baseDays = () => days(BASE.start, clampToday(BASE.end) < BASE.start ? BASE.start : clampToday(BASE.end)).filter(d => d < today);
+
+/* sku lines in range: aggregate rows */
+function skuAgg(dlist) {
+  const by = new Map();
+  for (const d of dlist) {
+    const s = S.skus[d]; if (!s) continue;
+    for (const [sku, title, ch, orders, net, units, gross = 0, rev = 0] of s.rows) {
+      if (ch === 'd' && !hasD()) continue;
+      const k = sku || '(none)';
+      let r = by.get(k);
+      if (!r) { r = { sku, title, cat: catOf(sku), oW: 0, oA: 0, oO: 0, nW: 0, nA: 0, nO: 0, units: 0, gross: 0, rev: 0 }; by.set(k, r); }
+      if (title && !r.title) r.title = title;
+      if (ch === 'w') { r.oW += orders; r.nW += net; } else if (ch === 'a') { r.oA += orders; r.nA += net; } else { r.oO += orders; r.nO += net; }
+      r.units += units; r.gross += gross; r.rev += rev;
+    }
+  }
+  return [...by.values()].map(r => ({ ...r, orders: r.oW + r.oA + r.oO, net: r.nW + r.nA + r.nO }));
+}
+function lineDay(d, test) {
+  const s = S.skus[d]; if (!s) return null;
+  const r = { oW: 0, oA: 0, oO: 0, nW: 0, nA: 0, nO: 0, units: 0, gross: 0, rev: 0 };
+  for (const [sku, , ch, orders, net, units, gross = 0, rev = 0] of s.rows) {
+    if ((ch === 'd' && !hasD()) || !test(sku)) continue;
+    if (ch === 'w') { r.oW += orders; r.nW += net; } else if (ch === 'a') { r.oA += orders; r.nA += net; } else { r.oO += orders; r.nO += net; }
+    r.units += units; r.gross += gross; r.rev += rev;
+  }
+  r.orders = r.oW + r.oA + r.oO; r.net = r.nW + r.nA + r.nO;
+  return r;
+}
+
+/* ---------- summary + comparison maths ---------- */
+const CHANS = () => S.plat === 'web' ? ['w'] : S.plat === 'app' ? ['a'] : ['w', 'a', 'o', 'd'];   // Total = Shopify's own total, Draft Orders included
+const hasD = () => CHANS().includes('d');
+function lastMonth(d) {
+  const [y, m, dd] = d.split('-').map(Number);
+  const pm = m === 1 ? 12 : m - 1, py = m === 1 ? y - 1 : y;
+  const dim = new Date(Date.UTC(py, pm, 0)).getUTCDate();
+  return `${py}-${String(pm).padStart(2, '0')}-${String(Math.min(dd, dim)).padStart(2, '0')}`;
+}
+const anchor = () => S.anchor || (clampToday(S.to) >= today ? today : clampToday(S.to));   // D0 = today by default
+const cmpDays = () => { const a = anchor(); return [a, addD(a, -1), addD(a, -7), lastMonth(a)]; };
+
+/* category units / GMV / order lines for one day, on the selected platform */
+function catDay(d) {
+  const s = S.skus[d]; if (!s) return null;
+  const ch = CHANS(); const m = {};
+  for (const r of s.rows) {
+    if (!ch.includes(r[2])) continue;
+    const c = catOf(r[0]);
+    const x = m[c] || (m[c] = { units: 0, gmv: 0, gross: 0, orders: 0, rev: 0 });
+    x.units += r[5]; x.gmv += r[4]; x.gross += r[6] || 0; x.orders += r[3]; x.rev += r[7] || 0;   // GMV = net sales; rev = sales reversals
+    if (r[2] === 'd') x.draft = (x.draft || 0) + r[3];
+  }
+  return m;
+}
+/* category web landing sessions for one day: {cat: [sessions, cart sessions, completed]} */
+function lpDay(d) {
+  const D = S.days[d]; if (!D || !D.lp || S.plat === 'app') return null;
+  const out = {}; let s = 0, c = 0;
+  for (const [k, v] of Object.entries(D.lp)) { out[k] = v; s += v[0]; c += v[2]; }
+  if (D.sess) out[OTHER_PAGES] = [Math.max(0, D.sess.sessions - s), 0, Math.max(0, (D.sess.completed || 0) - c)];
+  return out;
+}
+/* one day's summary numbers for the whole store or the selected category */
+function dayStat(d) {
+  const D = S.days[d]; if (!D || !D.shop) return null;
+  if (!S.cat) {
+    const t = { units: 0, gmv: 0, gross: 0, orders: 0, rev: 0, cust: 0, newC: 0, retC: 0, draft: 0 };
+    for (const k of CHANS()) {
+      const x = D.shop[k] || {};
+      t.units += x.units ?? NaN; t.gmv += x.net ?? NaN; t.gross += x.gross ?? NaN; t.orders += x.orders || 0; t.rev += x.rev ?? NaN;
+      t.cust += x.cust ?? NaN; t.newC += x.newC ?? NaN; t.retC += x.retC ?? NaN;
+      if (k === 'd') t.draft += x.orders || 0;
+    }
+    t.traffic = dayMetrics(d, S.plat, S.src).sessions;
+    t.cn = t.orders - t.draft; t.cd = t.traffic; t.conv = div(t.cn, t.cd);   // conversion: Draft Orders have no session
+    return t;
+  }
+  const cd = catDay(d), x = (cd && cd[S.cat]) || { units: 0, gmv: 0, gross: 0, orders: 0, rev: 0 };
+  const lp = lpDay(d), l = lp ? (lp[S.cat] || [0, 0, 0]) : null;
+  return { units: cd ? x.units : NaN, gmv: cd ? x.gmv : NaN, gross: cd ? x.gross : NaN, orders: cd ? x.orders : NaN, rev: cd ? x.rev : NaN, draft: cd ? (x.draft || 0) : NaN,
+    traffic: l ? l[0] : NaN, cn: l ? l[2] : NaN, cd: l ? l[0] : NaN, conv: l ? div(l[2], l[0]) : NaN,
+    cust: NaN, newC: NaN, retC: NaN };
+}
+function sumStats(list) {
+  const t = { units: 0, gmv: 0, gross: 0, orders: 0, rev: 0, traffic: 0, cust: 0, newC: 0, retC: 0, draft: 0, cn: 0, cd: 0, n: 0 };
+  for (const s of list) {
+    if (!s) continue; t.n++;
+    for (const k of ['units', 'gmv', 'gross', 'orders', 'rev', 'cust', 'newC', 'retC', 'draft']) t[k] += s[k];
+    if (fin(s.cd) && fin(s.cn)) { t.traffic += s.traffic; t.cn += s.cn; t.cd += s.cd; }
+  }
+  t.conv = div(t.cn, t.cd);
+  if (!t.cd) t.traffic = NaN;
+  return t;
+}
+const pct = (a, b) => (fin(a) && fin(b) && b !== 0 ? a / b - 1 : NaN);
+const chip = (p, title, inv) => !fin(p) ? `<span class="dchip flat" title="${esc(title || 'No comparison data')}">–</span>`
+  : `<span class="dchip ${Math.abs(p) < 0.005 ? 'flat' : (p > 0) !== !!inv ? 'up' : 'down'}" title="${esc(title || '')}">${p > 0 ? '+' : ''}${(p * 100).toFixed(1)}%</span>`;
+function spark(vals, color) {
+  const v = vals.map(x => (fin(x) ? x : null));
+  const ok = v.filter(x => x !== null); if (ok.length < 2) return '<svg viewBox="0 0 100 34" aria-hidden="true"></svg>';
+  const mx = Math.max(...ok), mn = Math.min(0, ...ok), W = 100, H = 34, st = W / (v.length - 1 || 1);
+  const pts = v.map((x, i) => x === null ? null : [i * st, H - 3 - (H - 6) * (x - mn) / ((mx - mn) || 1)]);
+  const line = pts.filter(Boolean).map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('');
+  const f = pts.filter(Boolean), last = f[f.length - 1];
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${line}L${last[0].toFixed(1)} ${H}L${f[0][0].toFixed(1)} ${H}Z" fill="${color}" opacity="0.12"/><path d="${line}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke"/><circle cx="${last[0]}" cy="${last[1]}" r="2.2" fill="${color}"/></svg>`;
+}
+
+/* ---------- connectors ---------- */
+const ERR_COPY = {
+  needs_reauth: s => `Reconnect ${s} in claude.ai Settings, Connectors.`,
+  server_not_connected: s => `Add the ${s} connector in claude.ai Settings, Connectors, to load live ${s} data.`,
+  selection_required: s => `You have more than one ${s} connection. Pick one when Claude asks, then refresh.`,
+  not_in_manifest: s => `${s} access is off for this page. Turn it on from the page's connector settings to load live data.`,
+  blocked_by_policy: s => `Your organisation's policy blocks this ${s} tool for you.`,
+  approval_required: s => `Your organisation requires approval for each ${s} call, which this page cannot request.`,
+  server_not_found: s => `The ${s} connector no longer exists. Re-add it in Settings, Connectors.`,
+  server_unavailable: s => `${s} did not respond. Try Refresh data in a minute.`,
+  tool_error: (s, e) => `${s} returned an error: ${e.message || 'no details'}.`,
+  shape: (s, e) => `${s}: ${e.message}`,
+};
+const LIFECYCLE = ['not_granted', 'capability_disabled', 'capability_removed'];
+function errMsg(server, e) {
+  const f = ERR_COPY[e && e.code];
+  return f ? f(server, e) : `${server} could not be reached (${esc(e && (e.code || e.message) || 'unknown error')}). Try Refresh data.`;
+}
+async function call(server, tool, input) {
+  const opts = { cache: { staleTime: 60000, gcTime: 86400000 } };
+  try { return (await S.mcp.callTool(server, tool, input, opts)).payload; }
+  catch (e) {
+    if (e && e.retryable) {
+      await new Promise(r => setTimeout(r, Math.min(e.retryAfterMs || 0, 60000) || 1200 + Math.random() * 1500));
+      return (await S.mcp.callTool(server, tool, input, opts)).payload;
+    }
+    throw e;
+  }
+}
+const shopQ = q => call(SHOP, 'run-analytics-query', { query: q }).then(rowsOf);
+
+async function fetchShopRange(a, b) {
+  const [sales, sess] = await Promise.all([
+    shopQ(`FROM sales SHOW orders, net_sales, average_order_value, quantity_ordered, gross_sales, sales_reversals, customers, new_customers, returning_customers GROUP BY sales_channel TIMESERIES day SINCE ${a} UNTIL ${b} LIMIT 10000`),
+    shopQ(`FROM sessions SHOW sessions, online_store_visitors, sessions_with_cart_additions, sessions_that_reached_checkout, sessions_that_completed_checkout WHERE ${NO_TOOLS} TIMESERIES day SINCE ${a} UNTIL ${b} LIMIT 10000`),
+  ]);
+  const out = {};
+  const blank = () => ({ orders: 0, net: 0, aovSum: 0, units: 0, gross: 0, rev: 0, cust: 0, newC: 0, retC: 0 });
+  for (const d of days(a, b)) out[d] = { shop: { w: blank(), a: blank(), o: blank(), d: blank() }, sess: null };
+  for (const r of sales) {
+    const d = String(r.day).slice(0, 10); if (!out[d]) continue;
+    const k = chKey(r.sales_channel); const o = num(r.orders);
+    const x = out[d].shop[k]; x.orders += o; x.net += num(r.net_sales); x.aovSum += num(r.average_order_value) * o;
+    x.units += num(r.quantity_ordered); x.gross += num(r.gross_sales); x.rev -= num(r.sales_reversals);
+    x.cust += num(r.customers); x.newC += num(r.new_customers); x.retC += num(r.returning_customers);
+  }
+  for (const r of sess) {
+    const d = String(r.day).slice(0, 10); if (!out[d]) continue;
+    out[d].sess = { sessions: num(r.sessions), visitors: num(r.online_store_visitors), atc: num(r.sessions_with_cart_additions), checkout: num(r.sessions_that_reached_checkout), completed: num(r.sessions_that_completed_checkout) };
+  }
+  return out;
+}
+async function fetchSkuDay(d) {
+  const rows = await shopQ(`FROM sales SHOW orders, net_sales, quantity_ordered, gross_sales, sales_reversals GROUP BY product_variant_sku, product_title, sales_channel SINCE ${d} UNTIL ${d} ORDER BY net_sales DESC LIMIT 5000`);
+  return rows.map(r => [r.product_variant_sku || '', String(r.product_title || '').slice(0, 90), chKey(r.sales_channel), num(r.orders), Math.round(num(r.net_sales) * 100) / 100, num(r.quantity_ordered), Math.round(num(r.gross_sales) * 100) / 100, Math.round(-num(r.sales_reversals) * 100) / 100]);
+}
+/* web traffic by category: sessions that landed on the category's product or collection pages */
+function catOfPath(p) {
+  const path = String(p || '').split('?')[0].toLowerCase();
+  let m = path.match(/\/products\/([^/]+)/);
+  if (m) { const i = HMAP.p[m[1]]; return i === undefined ? UNMAPPED_PAGES : CATS[i]; }
+  m = path.match(/^\/collections\/([^/]+)\/?$/);
+  if (m) { const i = HMAP.c[m[1]]; return i === undefined || i < 0 ? MIXED : CATS[i]; }
+  return OTHER_PAGES;
+}
+async function fetchLpDay(d) {
+  const rows = await shopQ(`FROM sessions SHOW sessions, sessions_with_cart_additions, sessions_that_completed_checkout WHERE landing_page_path CONTAINS '/products/' OR landing_page_path CONTAINS '/collections/' GROUP BY landing_page_path SINCE ${d} UNTIL ${d} ORDER BY sessions DESC LIMIT 5000`);
+  const lp = {};
+  for (const r of rows) {
+    const c = catOfPath(r.landing_page_path);
+    const x = lp[c] || (lp[c] = [0, 0, 0]);
+    x[0] += num(r.sessions); x[1] += num(r.sessions_with_cart_additions); x[2] += num(r.sessions_that_completed_checkout);
+  }
+  return lp;
+}
+async function fetchAppDay(d) {
+  const p = await call(LR, 'run_funnel', {
+    from: d, to: d,
+    steps: ['App Open', 'Product Added to Cart', 'Checkout Started', 'Purchase'].map(n => ({ events: [{ event_type: 'event', event_name: n }] })),
+  });
+  let x = p; if (typeof x === 'string') { try { x = JSON.parse(x); } catch (e) {} }
+  if (x && !x.steps && x.data) x = x.data;
+  if (!x || !Array.isArray(x.steps)) throw { code: 'shape', message: 'Unexpected funnel response.' };
+  const u = x.steps.map(s => num(s.users));
+  return { open: u[0], atc: u[1], checkout: u[2], purchase: u[3] };
+}
+
+/* ---------- projection + D0 (today) ----------
+   History used, all from Shopify, Draft Orders out of the curves and run-rate (added as booked), GMV = net sales:
+   - HOUR: hour-by-hour units, net sales, orders, customers and web sessions from the same date last
+     month (and no later than 1 Aug 2026) to now. Every complete day gives the usual share of a day that is in by each hour.
+   - DAY: the same days give a day-of-week factor (each weekday vs the average day), after
+     dividing out the marketing calendar uplift so sale days do not distort it.
+   Today (D0) = so far ÷ usual share in by now; until ~30% of a normal day is in it leans on the
+   underlying run-rate × today's weekday factor × today's calendar uplift.
+   Month end = month to yesterday + today's projection + each remaining day at
+   underlying run-rate × its weekday factor × its calendar uplift.
+   Underlying run-rate = last 7 days ÷ the sum of their own weekday × uplift weights. */
+const PROJ_MS = 55 * 60 * 1000;           // re-pull the projection inputs at most hourly
+const PROJ_V = 8;   // 8: SKU month-to-date and last-7-day lines carry Draft Orders (channel d)
+const HIST_START = '2026-08-01';        // hour and day history used for curves, weekday factors and comparisons
+/* marketing calendar uplift per day: forecast D2C revenue ÷ current run-rate (14-27 Sep). Days it does not cover count as 1.0 */
+const UPLIFT = {"source":"Not included in this copy: add a daily uplift table","days":{}};   // store data not included in this copy; set categories under Categories (tools/catalog.cjs)
+const upl = d => (UPLIFT.days[d] ? UPLIFT.days[d][0] : 1);
+const nowIST = () => new Date(Date.now() + 19800000);
+const monthStart = d => d.slice(0, 8) + '01';
+const daysInMonth = d => { const [y, m] = d.split('-').map(Number); return new Date(Date.UTC(y, m, 0)).getUTCDate(); };
+const MONTH_NAME = d => ['January','February','March','April','May','June','July','August','September','October','November','December'][Number(d.slice(5, 7)) - 1];
+const K = { u: 0, g: 1, o: 2, c: 3, s: 4, r: 5, gg: 6 };   // units, GMV (net sales), orders, customers, web sessions, sales reversals, GMV (gross sales)
+async function fetchProjection() {
+  const y = yesterday, ms = monthStart(today);
+  const hFrom = [HIST_START, lastMonth(today), ms].sort()[0];   // history from 1 Aug 2026
+  const skuQ = (a, b, titles) => shopQ(`FROM sales SHOW quantity_ordered, net_sales, gross_sales GROUP BY product_variant_sku, ${titles ? 'product_title, ' : ''}sales_channel SINCE ${a} UNTIL ${b} ORDER BY net_sales DESC LIMIT 10000`)
+    .then(rows => rows.map(r => [r.product_variant_sku || '', titles ? String(r.product_title || '').slice(0, 60) : '', chKey(r.sales_channel), num(r.quantity_ordered), Math.round(num(r.net_sales)), Math.round(num(r.gross_sales))]));
+  // every query carries a LIMIT: without one Shopify stops at 1,000 rows and the newest hours are lost
+  const [hs, hw, mtd, t7] = await Promise.all([
+    shopQ(`FROM sales SHOW orders, net_sales, quantity_ordered, customers, sales_reversals, gross_sales WHERE sales_channel != 'Draft Orders' TIMESERIES hour SINCE ${hFrom} UNTIL ${today} LIMIT 10000`),
+    shopQ(`FROM sessions SHOW sessions WHERE ${NO_TOOLS} TIMESERIES hour SINCE ${hFrom} UNTIL ${today} LIMIT 10000`),
+    ms <= y ? skuQ(ms, y, true) : Promise.resolve([]),
+    skuQ(addD(y, -6), y, false),
+  ]);
+  const hours = {};   // IST date -> 24 x [units, net sales, orders, customers, web sessions]
+  const slot = ts => {
+    const t = new Date(Date.parse(ts) + 19800000), d = t.toISOString().slice(0, 10);
+    const a = hours[d] || (hours[d] = Array.from({ length: 24 }, () => [0, 0, 0, 0, 0, 0, 0]));
+    return a[t.getUTCHours()];
+  };
+  for (const r of hs) { const x = slot(r.hour); x[0] += num(r.quantity_ordered); x[1] += Math.round(num(r.net_sales)); x[2] += num(r.orders); x[3] += num(r.customers); x[5] += Math.round(-num(r.sales_reversals)); x[6] += Math.round(num(r.gross_sales)); }
+  for (const r of hw) slot(r.hour)[4] += num(r.sessions);
+  S.proj = { v: PROJ_V, date: today, fetchedAt: Date.now(), hours, mtd, t7 };
+  if (S.db && S.canWrite !== false) { try { await S.db.doc('proj/latest').set(S.proj); } catch (e) { /* too large or read-only: projection still works for this viewer */ } }
+}
+/* curves and weekday factors derived from the hourly history (cached per pull) */
+let _pm = null, _pmKey = 0;
+function projModel() {
+  const P = S.proj;
+  if (!P || P.v !== PROJ_V || P.date !== today || !P.hours) return null;
+  if (_pm && _pmKey === P.fetchedAt) return _pm;
+  const tot = (d, k) => (P.hours[d] ? P.hours[d].reduce((s, h) => s + (h[k] || 0), 0) : NaN);
+  const cdays = Object.keys(P.hours).filter(d => d < today).sort();   // every complete day since HIST_START
+  const ks = [0, 1, 2, 3, 4, 5, 6];
+  const flat = k => k === 4 || k === 5;   // web sessions and reversals do not follow the sales uplift
+  const cum = ks.map(k => { const a = Array(24).fill(0); for (const d of cdays) P.hours[d].forEach((h, i) => { a[i] += Math.max(0, h[k] || 0); }); const t = a.reduce((s, v) => s + v, 0) || 1; let c = 0; return a.map(v => (c += v) / t); });
+  const wd = d => new Date(d + 'T00:00:00Z').getUTCDay();
+  const dow = ks.map(k => {
+    const s = Array(7).fill(0), n = Array(7).fill(0); let all = 0;
+    for (const d of cdays) { const v = tot(d, k) / (flat(k) ? 1 : upl(d)); s[wd(d)] += v; n[wd(d)]++; all += v; }
+    const mean = all / (cdays.length || 1) || 1;
+    return s.map((v, i) => (n[i] ? (v / n[i]) / mean : 1));
+  });
+  const wk = (d, k) => (flat(k) ? 1 : upl(d)) * dow[k][wd(d)];   // how big day d usually is vs an average day
+  const t7 = days(addD(yesterday, -6), yesterday);
+  const base = k => { let s = 0, w = 0; for (const d of t7) { const v = tot(d, k); if (fin(v)) { s += v; w += wk(d, k); } } return w ? s / w : NaN; };
+  const left = daysInMonth(today) - Number(today.slice(8, 10));
+  const rest = left > 0 ? days(addD(today, 1), addD(today, left)) : [];
+  _pm = { tot, cum, dow, wk, t7, base, left, rest, cdays }; _pmKey = P.fetchedAt;
+  return _pm;
+}
+/* share of a normal day usually in by time ts (ms), for curve k */
+function dayShare(cum, ts) {
+  const t = new Date(ts + 19800000), H = t.getUTCHours(), m = t.getUTCMinutes();
+  const prev = H > 0 ? cum[H - 1] : 0;
+  return prev + (cum[H] - prev) * (m / 60);
+}
+const blendProj = (sf, f, b) => { const w = Math.max(0, Math.min(1, f / 0.3)); const pace = f > 0.001 ? sf / f : b; return Math.max(sf, fin(b) ? w * pace + (1 - w) * b : pace); };
+
+/* whole-store D0 view: so far, same time on D-1 / D-7 / last month, projected full day, month end */
+function d0View() {
+  const P = S.proj, M = projModel(); if (!M) return null;
+  const ts = P.fetchedAt, t = new Date(ts + 19800000), H = t.getUTCHours(), Mi = t.getUTCMinutes();
+  const cmp = [[addD(today, -1), 'D-1'], [addD(today, -7), 'D-7'], [lastMonth(today), 'Last month']];
+  const soFar = k => M.tot(today, k) || 0;
+  const sameTime = (d, k) => { const a = P.hours[d]; if (!a) return NaN; let s = 0; for (let i = 0; i < H; i++) s += a[i][k] || 0; return s + (a[H][k] || 0) * Mi / 60; };
+  const share = k => dayShare(M.cum[k], ts);
+  const proj = k => blendProj(soFar(k), share(k), M.base(k) * M.wk(today, k));
+  const app = d => { const D = S.days[d]; return D && D.app && fin(D.app.open) ? D.app.open : NaN; };
+  // Draft Orders: hour data leaves them out, so they are added as booked (day totals) and never projected forward
+  const DF = { [K.u]: 'units', [K.g]: 'net', [K.gg]: 'gross', [K.o]: 'orders', [K.c]: 'cust', [K.r]: 'rev' };
+  const dr = (d, k) => { const x = DF[k] && S.days[d] && S.days[d].shop && S.days[d].shop.d; return x && fin(x[DF[k]]) ? x[DF[k]] : 0; };
+  const fS = share(K.s);
+  const appSf = app(today), appProj = fin(appSf) && fS > 0.05 ? Math.max(appSf, appSf / fS) : NaN;
+  const row = (key, label, fmt, k, inv) => ({ key, label, fmt, inv: !!inv, sfX: soFar(k), projX: proj(k), draft: dr(today, k), sf: soFar(k) + dr(today, k), proj: proj(k) + dr(today, k),
+    same: cmp.map(([d]) => sameTime(d, k)), full: cmp.map(([d]) => M.tot(d, k) + dr(d, k)), fullX: cmp.map(([d]) => M.tot(d, k)) });
+  const rows = {
+    units: row('units', 'Units', fN, K.u), gross: row('gross', 'GMV (gross sales)', fR, K.gg), gmv: row('gmv', 'GMV (net sales)', fR, K.g),
+    orders: row('orders', 'Orders', fN, K.o), cust: row('cust', 'Customers', fN, K.c),
+    web: row('web', 'Web sessions', fN, K.s), rev: row('rev', 'Sales reversals', fR, K.r, true),
+  };
+  // traffic = web sessions + app openers; conversion = orders ÷ traffic (full-day basis only: app openers have no hourly data)
+  const ratio = (a, b) => ({ sf: div(a.sf, b.sf), sfX: div(a.sfX, b.sfX), proj: div(a.proj, b.proj), same: a.same.map((v, i) => div(v, b.same[i])), full: a.full.map((v, i) => div(v, b.full[i])) });
+  rows.asp = { key: 'asp', label: 'ASP (net sales ÷ units)', fmt: fR, ...ratio(rows.gmv, rows.units) };
+  const trafFull = cmp.map(([d], i) => rows.web.full[i] + app(d));
+  const traffic = { key: 'traffic', label: 'Traffic (web sessions + app openers)', fmt: fN, sf: rows.web.sf + (fin(appSf) ? appSf : NaN), proj: rows.web.proj + appProj, same: [NaN, NaN, NaN], full: trafFull };
+  const conv = { key: 'conv', label: 'Conversion % (orders excl. Draft Orders ÷ traffic)', fmt: v => fP(v), sf: div(rows.orders.sfX, traffic.sf), proj: div(rows.orders.projX, traffic.proj), same: [NaN, NaN, NaN], full: cmp.map((_, i) => div(rows.orders.fullX[i], trafFull[i])) };
+  for (const r of [traffic, conv]) r.sfX = r.sf;
+  // month end (store)
+  const ms = monthStart(today), mdays = ms <= yesterday ? days(ms, yesterday) : [];
+  const month = k => { const mtd = mdays.reduce((s, d) => s + (fin(M.tot(d, k)) ? M.tot(d, k) : 0) + dr(d, k), 0); const b = M.base(k); return { mtd, end: mtd + proj(k) + dr(today, k) + M.rest.reduce((s, d) => s + b * M.wk(d, k), 0), missing: mdays.filter(d => !P.hours[d]).length }; };
+  return { ts, cmp, rows, traffic, conv, share, fG: share(K.g), mU: month(K.u), mG: month(K.g), mGG: month(K.gg), mO: month(K.o), baseU: M.base(K.u), baseG: M.base(K.g), wToday: M.wk(today, K.g), left: M.left, month: MONTH_NAME(today) };
+}
+
+/* projections for every category and SKU (and the store on a platform filter), from SKU order lines */
+function projAll() {
+  const P = S.proj, M = projModel(); const tdy = S.skus[today];
+  if (!M || !tdy) return null;
+  const ch = CHANS(), at = tdy.fetchedAt || P.fetchedAt;
+  const fG = dayShare(M.cum[K.g], at), fU = dayShare(M.cum[K.u], at), fGG = dayShare(M.cum[K.gg], at);
+  const sumW = (list, k) => list.reduce((s, d) => s + M.wk(d, k), 0);
+  const w7U = sumW(M.t7, K.u), w7G = sumW(M.t7, K.g), wRU = sumW(M.rest, K.u), wRG = sumW(M.rest, K.g);
+  const wTU = M.wk(today, K.u), wTG = M.wk(today, K.g), wTGG = M.wk(today, K.gg);
+  const w7GG = sumW(M.t7, K.gg), wRGG = sumW(M.rest, K.gg);
+  const blank = () => ({ sfU: 0, sfG: 0, sfGG: 0, dU: 0, dG: 0, dGG: 0, mtdU: 0, mtdG: 0, mtdGG: 0, t7U: 0, t7G: 0, t7GG: 0, title: '' });
+  const store = blank(), cats = new Map(), skus = new Map();
+  const add = (sku, title, k1, k2, units, gmv, k3, gross) => {
+    for (const [m, key] of [[null, null], [cats, catOf(sku)], [skus, sku]]) {
+      let x = store;
+      if (m) { if (m === skus && !sku) continue; x = m.get(key); if (!x) { x = blank(); m.set(key, x); } }
+      x[k1] += units; x[k2] += gmv; x[k3] += gross || 0; if (title && !x.title) x.title = title;
+    }
+  };
+  // Draft Orders count in so-far and month-to-date as booked, but never drive the run-rate or get projected forward
+  for (const r of tdy.rows) if (ch.includes(r[2])) { if (r[2] === 'd') add(r[0], r[1], 'dU', 'dG', r[5], r[4], 'dGG', r[6]); else add(r[0], r[1], 'sfU', 'sfG', r[5], r[4], 'sfGG', r[6]); }
+  for (const r of P.mtd) if (ch.includes(r[2])) add(r[0], r[1], 'mtdU', 'mtdG', r[3], r[4], 'mtdGG', r[5]);
+  for (const r of P.t7) if (ch.includes(r[2]) && r[2] !== 'd') add(r[0], r[1], 't7U', 't7G', r[3], r[4], 't7GG', r[5]);
+  const finish = x => {
+    x.baseU = x.t7U / w7U; x.baseG = x.t7G / w7G;          // underlying run-rate per average day
+    x.d0U = blendProj(x.sfU, fU, x.baseU * wTU) + x.dU; x.d0G = blendProj(x.sfG, fG, x.baseG * wTG) + x.dG;
+    x.baseGG = x.t7GG / w7GG; x.d0GG = blendProj(x.sfGG, fGG, x.baseGG * wTGG) + x.dGG;
+    x.sfU += x.dU; x.sfG += x.dG; x.sfGG += x.dGG;
+    x.mU = x.mtdU + x.d0U + x.baseU * wRU; x.mG = x.mtdG + x.d0G + x.baseG * wRG; x.mGG = x.mtdGG + x.d0GG + x.baseGG * wRGG;
+    return x;
+  };
+  finish(store); cats.forEach(finish); skus.forEach(finish);
+  return { store, cats, skus, fG, fU, left: M.left, asOf: at, month: MONTH_NAME(today) };
+}
+const hhmm = ts => new Date(ts + 19800000).toISOString().slice(11, 16);
+const PROJ_NOTE = () => `Today (D0) = sales so far ÷ the share of a normal day that is usually in by this time (hour-by-hour pattern of every day since 1 Aug 2026). Until about 30% of a normal day is in, it leans on the underlying run-rate × today's weekday factor × today's marketing calendar uplift. Month end = sales up to yesterday + today's projection + each remaining day at run-rate × its weekday factor × its calendar uplift. Run-rate = last 7 days, with their own weekday and uplift weights divided out. GMV is shown two ways: gross sales (before discounts and returns) and net sales (after them), both ex-GST. Draft Orders are counted as booked (so far and month to date) but are not projected forward, and they do not count in the run-rate. Uplift source: ${esc(UPLIFT.source)}.`;
+/* the four projection tiles: store (hourly history) when unfiltered, otherwise the filtered SKU-line view */
+function ordersProj(chans) {
+  const M = projModel(), T = S.days[today]; if (!M || !T || !T.shop) return null;
+  const o = (d, c) => { const x = S.days[d] && S.days[d].shop && S.days[d].shop[c]; return x && fin(x.orders) ? x.orders : NaN; };
+  const sum = (d, cs) => cs.reduce((s, c) => s + (fin(o(d, c)) ? o(d, c) : 0), 0);
+  const nd = chans.filter(c => c !== 'd'), dd = chans.includes('d') ? ['d'] : [];
+  const at = typeof T.fetchedAt === 'number' ? T.fetchedAt : Date.parse(T.fetchedAt) || (S.proj && S.proj.fetchedAt);
+  let s7 = 0, w7 = 0; for (const d of M.t7) if (S.days[d] && S.days[d].shop) { s7 += sum(d, nd); w7 += M.wk(d, K.o); }
+  const base = w7 ? s7 / w7 : NaN, sfX = sum(today, nd), dr = sum(today, dd);
+  const d0 = blendProj(sfX, dayShare(M.cum[K.o], at), base * M.wk(today, K.o)) + dr;
+  const ms = monthStart(today), mtd = ms <= yesterday ? days(ms, yesterday).reduce((s, d) => s + sum(d, chans), 0) : 0;
+  return { sf: sfX + dr, d0, mtd, end: mtd + d0 + M.rest.reduce((s, d) => s + (fin(base) ? base : 0) * M.wk(d, K.o), 0) };
+}
+function projTiles() {
+  const V = d0View(), pa = projAll();
+  const filtered = !!S.cat || S.plat !== 'total';
+  let x = null, asOf = 0, share = NaN, month = MONTH_NAME(today), left = 0;
+  let ord = null;
+  if (!filtered && V) ord = { sf: V.rows.orders.sf, d0: V.rows.orders.proj, mtd: V.mO.mtd, end: V.mO.end };
+  else if (!S.cat) ord = ordersProj(CHANS());
+  if (!filtered && V) { x = { sfU: V.rows.units.sf, sfG: V.rows.gmv.sf, sfGG: V.rows.gross.sf, d0U: V.rows.units.proj, d0G: V.rows.gmv.proj, d0GG: V.rows.gross.proj, mtdU: V.mU.mtd, mtdG: V.mG.mtd, mtdGG: V.mGG.mtd, mU: V.mU.end, mG: V.mG.end, mGG: V.mGG.end }; asOf = V.ts; share = V.fG; left = V.left; }
+  else if (filtered && pa) { x = S.cat ? pa.cats.get(S.cat) : pa.store; asOf = pa.asOf; share = pa.fG; left = pa.left; }
+  if (!x) return `<section class="panel"><div class="empty">${!V && !pa ? (S.mcp ? 'Working out today\'s and this month\'s projection…' : 'The projection needs live Shopify data. Open this page with the Shopify connector to calculate it.') : `No ${esc(S.cat || 'matching')} sales this month yet.`}</div></section>`;
+  const t = (label, v, sub) => `<div class="tile proj"><span class="eyebrow">${label}</span><span class="v">${v}</span><span class="d">${sub}</span></div>`;
+  const scope = [S.cat, S.plat !== 'total' ? (S.plat === 'web' ? 'Web' : 'App') : ''].filter(Boolean).join(' · ');
+  return `<section class="panel"><div class="panel-head"><h2>Projection${scope ? ' · ' + esc(scope) : ''}</h2><span class="small muted">D0 = ${fdw(today)}, data as of ${hhmm(asOf)} IST · today updates every 2 minutes · ${Math.round(share * 100)}% of a normal day's GMV is usually in by now</span></div>
+    <div class="tiles">
+      ${t('D0 projected GMV (gross sales)', fR(x.d0GG), `${fR(x.sfGG)} so far`)}
+      ${t('D0 projected GMV (net sales)', fR(x.d0G), `${fR(x.sfG)} so far`)}
+      ${t('D0 projected units', fN(x.d0U), `${fN(x.sfU)} so far`)}
+      ${ord ? t('D0 projected orders', fN(ord.d0), `${fN(ord.sf)} so far`) : ''}
+      ${t(`${month} end projected GMV (gross sales)`, fR(x.mGG), `${fR(x.mtdGG)} to yesterday + today + ${left} day${left === 1 ? '' : 's'} left`)}
+      ${t(`${month} end projected GMV (net sales)`, fR(x.mG), `${fR(x.mtdG)} to yesterday + today + ${left} day${left === 1 ? '' : 's'} left`)}
+      ${t(`${month} end projected units`, fN(x.mU), `${fN(x.mtdU)} to yesterday + today + ${left} day${left === 1 ? '' : 's'} left`)}
+      ${ord ? t(`${month} end projected orders`, fN(ord.end), `${fN(ord.mtd)} to yesterday + today + ${left} day${left === 1 ? '' : 's'} left`) : ''}
+    </div>
+    <p class="note">${PROJ_NOTE()}</p></section>`;
+}
+function projTable(kind) {
+  const pa = projAll();
+  if (!pa) return '';
+  let items = kind === 'cat' ? [...pa.cats].map(([k, x]) => ({ key: k, label: k, ...x })) : [...pa.skus].map(([k, x]) => ({ key: k, label: k, ...x, cat: catOf(k) }));
+  if (kind === 'cat') items = items.filter(i => i.key !== NO_SKU && (!S.cat || i.key === S.cat));
+  else {
+    if (S.cat) items = items.filter(i => i.cat === S.cat);
+    const q = S.skuQ.trim().toLowerCase();
+    if (q) items = items.filter(i => i.key.toLowerCase().includes(q) || (i.title || '').toLowerCase().includes(q));
+  }
+  items.sort((a, b) => b.mG - a.mG);
+  const n = items.length; const shown = kind === 'sku' ? items.slice(0, 300) : items;
+  const cells = x => `<td class="n">${fN(x.sfU)}</td><td class="n">${fR(x.sfGG)}</td><td class="n">${fR(x.sfG)}</td><td class="n"><b>${fN(x.d0U)}</b></td><td class="n"><b>${fR(x.d0GG)}</b></td><td class="n"><b>${fR(x.d0G)}</b></td><td class="n">${fN(x.mtdU)}</td><td class="n">${fR(x.mtdGG)}</td><td class="n">${fR(x.mtdG)}</td><td class="n"><b>${fN(x.mU)}</b></td><td class="n"><b>${fR(x.mGG)}</b></td><td class="n"><b>${fR(x.mG)}</b></td>`;
+  const rows = shown.map(i => kind === 'cat' ? `<tr><td>${esc(i.label)}</td>${cells(i)}</tr>` : `<tr><td class="num">${esc(i.key)}</td><td class="title" title="${esc(i.title)}">${esc(i.title)}</td><td>${esc(i.cat)}</td>${cells(i)}</tr>`).join('');
+  const lead = kind === 'cat' ? '<th>Category</th>' : '<th>SKU</th><th>Product</th><th>Category</th>';
+  const tot = kind === 'cat' && !S.cat ? `<tfoot><tr><td>All categories</td>${cells(items.reduce((s, i) => { for (const k of ['sfU', 'sfG', 'sfGG', 'd0U', 'd0G', 'd0GG', 'mtdU', 'mtdG', 'mtdGG', 'mU', 'mG', 'mGG']) s[k] += i[k] || 0; return s; }, { sfU: 0, sfG: 0, sfGG: 0, d0U: 0, d0G: 0, d0GG: 0, mtdU: 0, mtdG: 0, mtdGG: 0, mU: 0, mG: 0, mGG: 0 }))}</tr></tfoot>` : '';
+  return `<section class="panel"><div class="panel-head"><h2>Projection by ${kind === 'cat' ? 'category' : 'SKU'} · D0 and ${pa.month} end</h2><span class="small muted">as of ${hhmm(pa.asOf)} IST${kind === 'sku' ? ` · ${fN(n)} SKUs${n > 300 ? ', top 300 by projected month GMV' : ''}` : ''}</span></div>
+    <div class="tw"${kind === 'sku' ? ' style="max-height:520px"' : ''}><table><thead><tr>${lead}<th class="n">D0 units so far</th><th class="n">D0 gross sales so far</th><th class="n">D0 net sales so far</th><th class="n">D0 projected units</th><th class="n">D0 projected gross sales</th><th class="n">D0 projected net sales</th><th class="n">${pa.month} units to yesterday</th><th class="n">${pa.month} gross sales to yesterday</th><th class="n">${pa.month} net sales to yesterday</th><th class="n">${pa.month} end projected units</th><th class="n">${pa.month} end projected gross sales</th><th class="n">${pa.month} end projected net sales</th></tr></thead>
+    <tbody>${rows || `<tr><td colspan="${kind === 'cat' ? 13 : 15}" class="empty">Nothing matches.</td></tr>`}</tbody>${tot}</table></div>
+    <p class="note">Each ${kind === 'cat' ? 'category' : 'SKU'} uses its own sales so far and its own last-7-day run-rate, with the store's hour-of-day pattern, weekday factors and calendar uplift. One with no sales in the last 7 days is projected at zero for the remaining days. Gross sales = before discounts and returns; net sales = after them. ${kind === 'cat' ? 'Category rows come from order lines pulled a few minutes apart from the store total, so they can differ from it slightly.' : ''}</p></section>`;
+}
+
+/* ---------- render: D0 (today) ---------- */
+function renderD0() {
+  const V = d0View();
+  if (!V) return `<section class="panel"><div class="empty">${S.mcp ? 'Loading today\'s hour-by-hour data from Shopify…' : 'The D0 view needs live Shopify data. Open this page with the Shopify connector to load it.'}</div></section>` ;
+  const at = hhmm(V.ts);
+  const chips = (cur, arr, tip, pp, inv) => V.cmp.map(([d, lab], i) => `<span class="cmpc"><span class="muted">${lab}</span> ${pp ? ppChip(cur, arr[i]) : chip(pct(cur, arr[i]), `${lab} (${fdw(d)}) ${tip}`, inv)}</span>`).join('');
+  const tile = (r, basis) => {
+    const same = basis === 'same';
+    return `<div class="tile d0"><span class="eyebrow">${esc(r.short || r.label)}</span><span class="v">${r.fmt(r.sf)}</span>
+      <span class="d">so far · projected full day <b>${r.fmt(r.proj)}</b></span>
+      <div class="cmprow">${same ? chips(r.sfX, r.same, 'at the same time of day, Draft Orders left out on both sides', false, r.inv) : chips(r.proj, r.full, 'full day, vs today projected', r.key === 'conv', r.inv)}</div>
+      <span class="d">${same ? `vs the same time (${at}) on those days${r.draft ? ', excl. Draft Orders' : ''}` : 'today projected vs their full day'}</span>${r.draft ? `<span class="d">incl. Draft Orders ${r.fmt(r.draft)}</span>` : ''}</div>`;
+  };
+  const R = V.rows;
+  const short = (r, s) => ({ ...r, short: s });
+  let h = `<section class="panel"><div class="panel-head"><h2>D0 · ${fdw(today)}${phase(today) ? ` <span class="pill ${phase(today)[0]}">${phase(today)[1]}</span>` : ''}</h2>
+      <span class="small muted">Whole store (web + app + subscriptions) · data as of ${at} IST · today updates every 2 minutes · ${Math.round(V.fG * 100)}% of a normal day's GMV is usually in by now</span></div>
+    <div class="tiles">
+      ${tile(short(R.units, 'Units'), 'same')}${tile(short(R.gross, 'GMV (gross sales)'), 'same')}${tile(short(R.gmv, 'GMV (net sales)'), 'same')}${tile(short(R.orders, 'Orders'), 'same')}${tile(short(R.asp, 'ASP'), 'same')}
+      ${tile(short(R.cust, 'Customers'), 'same')}${tile(short(V.traffic, 'Traffic'), 'full')}${tile(short(V.conv, 'Conversion %'), 'full')}
+      ${tile(short(R.rev, 'Sales reversals'), 'same')}
+    </div>
+    ${S.cat || S.plat !== 'total' ? '<p class="note">The D0 comparison is for the whole store: Shopify\'s hour-by-hour data cannot be split by category or by web / app. The projection tables further down follow the category and platform filters.</p>' : ''}
+  </section>`;
+  // A. same time of day
+  const head = (a) => `<tr><th>Metric</th><th class="n">D0 ${a}</th>${V.cmp.map(([d, lab]) => `<th class="n">${lab} · ${fd(d)}</th><th class="n">vs ${lab}</th>`).join('')}</tr>`;
+  const line = (r, cur, arr) => `<tr><td>${esc(r.label)}</td><td class="n"><b>${r.fmt(cur)}</b></td>${arr.map((v, i) => `<td class="n">${fin(v) ? r.fmt(v) : '<span class="muted">–</span>'}</td><td class="n">${r.key === 'conv' ? ppChip(cur, v) : chip(pct(cur, v), '', r.inv)}</td>`).join('')}</tr>`;
+  h += `<section class="panel"><div class="panel-head"><h2>So far today vs the same time on D-1, D-7 and last month</h2><span class="small muted">Everything up to ${at} IST on each day, so a part day is compared with a part day</span></div>
+    <div class="tw"><table><thead>${head('so far')}</thead><tbody>${[R.units, R.gross, R.gmv, R.asp, R.rev, R.orders, R.cust, R.web].map(r => line(r, r.sfX, r.same)).join('')}</tbody></table></div>
+    <p class="note">This table leaves out Draft Orders on every day, because Shopify's hour-by-hour data has none (today so far they add ${fN(R.orders.draft)} orders and ${fR(R.gmv.draft)} net sales). App openers come from Linkrunner once per day, not by the hour, so the same-time comparison shows web sessions only. Total traffic and conversion are compared on a full-day basis below. Web sessions exclude those that landed on the Parenting tools pages.</p></section>`;
+  // B. full day
+  h += `<section class="panel"><div class="panel-head"><h2>Full day: D0 projected vs D-1, D-7 and last month</h2><span class="small muted">Today's projected close against what those days finished at</span></div>
+    <div class="tw"><table><thead>${head('projected')}</thead><tbody>${[R.units, R.gross, R.gmv, R.asp, R.rev, R.orders, R.cust, V.traffic, V.conv].map(r => line(r, r.proj, r.full)).join('')}</tbody></table></div>
+    <p class="note">Orders, units, GMV, reversals and customers include Draft Orders, so they match Shopify's own totals. Today's projection adds the Draft Orders booked so far and does not project more of them (they are one-off orders created by hand). Conversion uses orders without Draft Orders, since those have no website or app session. Conversion change is shown in percentage points (pp). Customers add up each hour's customers, so someone who orders twice in a day can count twice. <b>Sales reversals</b> are returns and refunds booked on that day, whichever day the order was placed; GMV (net sales) is already after them. A rise in reversals is shown in red.</p></section>`;
+  return h + projTiles() + projTable('cat') + projTable('sku');
+}
+const ppChip = (a, b) => !fin(a) || !fin(b) ? '<span class="dchip flat">–</span>' : `<span class="dchip ${Math.abs(a - b) < 0.00005 ? 'flat' : a > b ? 'up' : 'down'}">${a > b ? '+' : ''}${((a - b) * 100).toFixed(2)} pp</span>`;
+
+/* ---------- store (db) ---------- */
+async function dbLoad() {
+  if (!S.db) return;
+  try {
+    const [dSnap, gSnap] = await Promise.all([S.db.collection('days').limit(400).get(), S.db.collection('ga4').limit(400).get()]);
+    dSnap.docs.forEach(doc => { const v = doc.data(); if (v) S.days[doc.id] = v; });
+    gSnap.docs.forEach(doc => { const v = doc.data(); if (v) S.ga4[doc.id] = v; });
+    try { const p = await S.db.doc('proj/latest').get(); const v = p.exists && p.data(); if (v && v.date === today && v.v === PROJ_V) S.proj = v; } catch (e) {}
+    await dbLoadSkus();
+    await dbLoadReturns();
+    const n = Object.keys(S.days).length;
+    S.status.db = { st: 'ok', msg: n ? `${n} saved days` : 'No saved days yet' };
+  } catch (e) {
+    S.status.db = { st: 'err', msg: 'Saved data unavailable' };
+  }
+}
+async function dbLoadReturns() {
+  if (!S.db) return;
+  try {
+    const snap = await S.db.collection('returns').limit(400).get();
+    S.returns = S.returns || {};
+    snap.docs.forEach(doc => { const v = doc.data(); if (v && v.rows) S.returns[doc.id] = v; });
+  } catch (e) { /* returns are optional */ }
+}
+async function dbLoadSkus() {
+  if (!S.db) return;
+  const want = [...new Set([...rangeDays(), ...baseDays(), ...cmpDays(), today])].sort().filter(d => !S.skus[d] && d <= today);
+  if (!want.length) return;
+  const q = want.length <= 30
+    ? S.db.collection('skus').where('date', 'in', want)
+    : S.db.collection('skus').where('date', '>=', want[0]).where('date', '<=', want[want.length - 1]);
+  const snap = await q.limit(200).get();
+  snap.docs.forEach(doc => { const v = doc.data(); if (v && v.rows) S.skus[doc.id] = v; });
+}
+async function dbSave(path, data) {
+  if (!S.db || S.canWrite === false) return;
+  try { await S.db.doc(path).set(data); }
+  catch (e) { if (e && e.code === 'invalid_argument') S.canWrite = false; }
+}
+
+/* ---------- refresh ---------- */
+/* projection inputs are stale on a new day, after an hour, or whenever today's sales were just re-pulled */
+const projStale = (todayRefetched) => !S.proj || S.proj.v !== PROJ_V || S.proj.date !== today || Date.now() - S.proj.fetchedAt > PROJ_MS || !!todayRefetched;
+function needsFetch(d, force) {
+  if (d > today) return false;
+  const D = S.days[d];
+  if (!D || D.v !== DATA_V || !D.shop || !D.app || !D.lp || !D.hasSku) return true;
+  return force || !D.final;
+}
+async function refresh(force) {
+  if (!S.mcp || S.busy) return;
+  S.busy = true; renderChrome();
+  const want = [...new Set([...rangeDays(), ...baseDays(), ...cmpDays(), today, addD(today, -1), addD(today, -7), lastMonth(today)])].sort().filter(d => needsFetch(d, force));
+  if (!want.length) {
+    let pe = null;
+    if (projStale()) { try { await fetchProjection(); } catch (e) { pe = e; } }
+    S.busy = false;
+    S.status[SHOP] = pe ? { st: 'err', msg: errMsg(SHOP, pe), code: pe.code } : { st: 'ok', msg: 'Up to date' };
+    S.status[LR] = { st: 'ok', msg: 'Up to date' }; S.lastRefresh = Date.now(); renderAll(); return;
+  }
+  S.status[SHOP] = { st: 'load', msg: `Loading ${want.length} day(s)` };
+  S.status[LR] = { st: 'load', msg: `Loading ${want.length} day(s)` };
+  renderChrome();
+
+  let shopErr = null, lrErr = null;
+  // 1. store-level sales + web sessions for the span
+  try {
+    const got = await fetchShopRange(want[0], want[want.length - 1]);
+    for (const d of want) if (got[d]) S.days[d] = { ...(S.days[d] || {}), date: d, shop: got[d].shop, sess: got[d].sess };
+  } catch (e) { shopErr = e; }
+  renderAll();
+
+  // 2. per-day SKU lines and app funnel, three at a time
+  const queue = want.slice();
+  const worker = async () => {
+    while (queue.length) {
+      const d = queue.shift();
+      const jobs = [];
+      let skuOk = false;
+      if (!shopErr) jobs.push(fetchSkuDay(d).then(rows => { S.skus[d] = { date: d, rows, fetchedAt: Date.now() }; skuOk = true; }).catch(e => { shopErr = shopErr || e; }));
+      if (!shopErr) jobs.push(fetchLpDay(d).then(lp => { S.days[d] = { ...(S.days[d] || {}), date: d, lp }; }).catch(e => { shopErr = shopErr || e; }));
+      if (!lrErr) jobs.push(fetchAppDay(d).then(app => { S.days[d] = { ...(S.days[d] || {}), date: d, app }; }).catch(e => { lrErr = lrErr || e; }));
+      await Promise.all(jobs);
+      const D = S.days[d];
+      if (D && skuOk) D.hasSku = true;
+      if (D && D.shop && D.app && D.lp && D.hasSku) {
+        D.v = DATA_V; D.final = d < yesterday; D.fetchedAt = Date.now();
+        await dbSave('days/' + d, D);
+        await dbSave('skus/' + d, S.skus[d]);
+      }
+      renderAll();
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
+  if (!shopErr && projStale(want.includes(today))) { try { await fetchProjection(); } catch (e) { shopErr = e; } }
+
+  const stamp = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  S.status[SHOP] = shopErr ? { st: 'err', msg: errMsg(SHOP, shopErr), code: shopErr.code } : { st: 'ok', msg: 'Live, updated ' + stamp };
+  S.status[LR] = lrErr ? { st: 'err', msg: errMsg(LR, lrErr), code: lrErr.code } : { st: 'ok', msg: 'Live, updated ' + stamp };
+  if (S.db && S.canWrite === false) S.status.db = { st: 'ok', msg: 'Read-only for you (live data not saved)' };
+  else if (S.db) S.status.db = { st: 'ok', msg: `${Object.keys(S.days).length} saved days` };
+  S.busy = false; S.lastRefresh = Date.now();
+  renderAll();
+}
+
+/* ---------- live tier: today only, every 2 minutes ----------
+   The hourly refresh re-pulls two months of history. This re-pulls just TODAY (a handful of small
+   queries) so D0, the projections and today's rows move in near real time while the page is open.
+   Each tick also saves a small live/d0 record; every open page subscribes to it, so viewers
+   without the connectors follow along as long as one connected viewer has the page open. */
+const LIVE_MS = 2 * 60 * 1000;
+function applyToday(day, hoursToday, skuDoc, at) {
+  if (day) S.days[today] = day;
+  if (skuDoc) S.skus[today] = skuDoc;
+  if (hoursToday && S.proj && S.proj.v === PROJ_V && S.proj.date === today) S.proj = { ...S.proj, hours: { ...S.proj.hours, [today]: hoursToday }, fetchedAt: at };
+  S.lastRefresh = at; S.lastLive = at;
+}
+const typing = () => { const a = document.activeElement; return !!(a && main.contains(a) && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)); };
+const paint = () => { if (typing()) renderChrome(); else renderAll(); };   // never redraw under someone typing in a search box
+async function liveTick() {
+  if (!S.mcp || S.busy || S.liveBusy || document.hidden) return;
+  if (nowIST().toISOString().slice(0, 10) !== today) { location.reload(); return; }
+  if (!S.proj || S.proj.v !== PROJ_V || S.proj.date !== today || !S.days[today]) return;   // the full refresh has not landed yet
+  S.liveBusy = true; renderChrome();
+  try {
+    const [rng, rows, lp, hs, hw] = await Promise.all([
+      fetchShopRange(today, today), fetchSkuDay(today), fetchLpDay(today),
+      shopQ(`FROM sales SHOW orders, net_sales, quantity_ordered, customers, sales_reversals, gross_sales WHERE sales_channel != 'Draft Orders' TIMESERIES hour SINCE ${today} UNTIL ${today} LIMIT 200`),
+      shopQ(`FROM sessions SHOW sessions WHERE ${NO_TOOLS} TIMESERIES hour SINCE ${today} UNTIL ${today} LIMIT 200`),
+    ]);
+    let app = null; try { app = await fetchAppDay(today); } catch (e) { /* keep the last app numbers */ }
+    const hrs = Array.from({ length: 24 }, () => [0, 0, 0, 0, 0, 0, 0]);
+    const slot = ts => { const t = new Date(Date.parse(ts) + 19800000); return t.toISOString().slice(0, 10) === today ? hrs[t.getUTCHours()] : null; };
+    for (const r of hs) { const x = slot(r.hour); if (x) { x[0] += num(r.quantity_ordered); x[1] += Math.round(num(r.net_sales)); x[2] += num(r.orders); x[3] += num(r.customers); x[5] += Math.round(-num(r.sales_reversals)); x[6] += Math.round(num(r.gross_sales)); } }
+    for (const r of hw) { const x = slot(r.hour); if (x) x[4] += num(r.sessions); }
+    const at = Date.now(), prev = S.days[today] || {};
+    const day = { ...prev, date: today, v: DATA_V, shop: rng[today].shop, sess: rng[today].sess || prev.sess, lp, app: app || prev.app, hasSku: true, final: false, fetchedAt: at };
+    applyToday(day, hrs, { date: today, rows, fetchedAt: at }, at);
+    S.status[SHOP] = { st: 'ok', msg: 'Live, updated ' + hhmm(at) }; if (app) S.status[LR] = { st: 'ok', msg: 'Live, updated ' + hhmm(at) };
+    S.liveN = (S.liveN || 0) + 1;
+    if (S.db && S.canWrite !== false) {
+      const skuAt = S.liveN % 5 === 1 ? at : (S.liveSkuAt || 0);   // SKU lines are the big document: share them every 5th tick
+      try {
+        if (skuAt === at) { await S.db.doc('skus/' + today).set(S.skus[today]); S.liveSkuAt = at; }
+        await S.db.doc('days/' + today).set(day);
+        await S.db.doc('live/d0').set({ date: today, fetchedAt: at, hours: hrs, day, skuAt: S.liveSkuAt || 0 });
+      } catch (e) { if (e && e.code === 'invalid_argument') S.canWrite = false; }
+    }
+  } catch (e) {
+    S.status[SHOP] = { st: 'err', msg: errMsg(SHOP, e), code: e && e.code };
+  } finally { S.liveBusy = false; paint(); }
+}
+/* every page follows the shared live record, so a viewer without connectors sees D0 move too */
+function followLive() {
+  if (!S.db) return;
+  try {
+    S.db.doc('live/d0').onSnapshot(async snap => {
+      const v = snap.exists && snap.data();
+      const mine = Math.max(S.lastLive || 0, (S.proj && S.proj.date === today && S.proj.fetchedAt) || 0);   // what this page's hour data is already as fresh as
+      if (!v || v.date !== today || !(v.fetchedAt > mine)) return;   // ignore our own and older records
+      let skuDoc = null;
+      if (v.skuAt && v.skuAt !== S.liveSkuAt) { try { const d = await S.db.doc('skus/' + today).get(); if (d.exists) { skuDoc = d.data(); S.liveSkuAt = v.skuAt; } } catch (e) {} }
+      if (!S.proj || S.proj.date !== today) { try { const pdoc = await S.db.doc('proj/latest').get(); const pv = pdoc.exists && pdoc.data(); if (pv && pv.date === today && pv.v === PROJ_V) S.proj = pv; } catch (e) {} }
+      applyToday(v.day, v.hours, skuDoc, v.fetchedAt);
+      S.sharedLive = true; paint();
+    }, () => {});
+  } catch (e) {}
+}
+
+/* ---------- GA4 import ---------- */
+function parseCsvLine(line) {
+  const out = []; let cur = '', q = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (q) { if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; } else if (c === '"') q = false; else cur += c; }
+    else if (c === '"') q = true; else if (c === ',') { out.push(cur); cur = ''; } else cur += c;
+  }
+  out.push(cur); return out;
+}
+function parseGa4(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim() && !l.startsWith('#'));
+  if (lines.length < 2) throw new Error('The file has no data rows.');
+  const head = parseCsvLine(lines[0]).map(h => h.trim().toLowerCase());
+  const find = re => head.findIndex(h => re.test(h));
+  const ix = {
+    date: find(/^date$/), plat: find(/^(platform|stream name|device category)$/),
+    users: find(/^(total users|users|active users)$/), sessions: find(/^sessions$/),
+    atc: find(/add.?to.?carts?/), checkout: find(/^checkouts?$|begin.?checkout/), purchases: find(/^(transactions|ecommerce purchases|purchases)$/),
+  };
+  if (ix.date < 0) throw new Error('No "Date" column. Build the GA4 Exploration with the Date dimension (not Day).');
+  if (ix.sessions < 0 && ix.users < 0) throw new Error('No Sessions or Total users column found.');
+  const out = {};
+  for (const l of lines.slice(1)) {
+    const c = parseCsvLine(l);
+    const raw = (c[ix.date] || '').replace(/\D/g, '');
+    if (raw.length !== 8) continue; // skips the grand-total row
+    const d = `${raw.slice(0, 4)}-${raw.slice(4, 6)}-${raw.slice(6, 8)}`;
+    const p = ix.plat >= 0 ? (c[ix.plat] || '').toLowerCase() : 'all';
+    const bucket = p === 'all' ? 'all' : /web|desktop|tablet|mobile/.test(p) && !/android|ios/.test(p) ? 'web' : /android|ios|app/.test(p) ? 'app' : null;
+    if (!bucket) continue;
+    const g = (k) => ix[k] >= 0 ? num((c[ix[k]] || '').replace(/,/g, '')) : NaN;
+    const rec = out[d] || (out[d] = { date: d });
+    const t = rec[bucket] || (rec[bucket] = { users: 0, sessions: 0, atc: 0, checkout: 0, purchases: 0 });
+    for (const k of ['users', 'sessions', 'atc', 'checkout', 'purchases']) { const v = g(k); if (fin(v)) t[k] += v; }
+  }
+  return out;
+}
+async function importGa4(file) {
+  const box = document.getElementById('ga4msg');
+  try {
+    const parsed = parseGa4(await file.text());
+    const ds = Object.keys(parsed).sort();
+    if (!ds.length) throw new Error('No dated rows found. Check the export has a Date column in YYYYMMDD form.');
+    for (const d of ds) {
+      const merged = { ...(S.ga4[d] || {}), ...parsed[d], importedAt: Date.now(), file: file.name.slice(0, 80) };
+      S.ga4[d] = merged;
+      await dbSave('ga4/' + d, merged);
+    }
+    const saved = S.db && S.canWrite !== false;
+    box.innerHTML = `Imported ${ds.length} day(s), ${fd(ds[0])} to ${fd(ds[ds.length - 1])}. ${saved ? 'Saved for everyone who opens this page.' : 'Kept for this visit only (you cannot save data to this page).'}`;
+    renderAll();
+  } catch (e) {
+    box.innerHTML = `<span class="down">${esc(e.message || e)}</span>`;
+  }
+}
+
+/* ---------- render: chrome ---------- */
+function renderChrome() {
+  const cd = document.getElementById('countdown');
+  if (today < SALE.start) { const n = saleDay(today) * -1 + 1; cd.textContent = `Starts in ${n} day${n === 1 ? '' : 's'}`; }
+  else if (today <= SALE.end) cd.textContent = `Day ${saleDay(today)} of 39`;
+  else cd.textContent = 'Sale ended 8 Nov';
+
+  const strip = document.getElementById('strip');
+  strip.innerHTML = days(SALE.start, SALE.end).map(d => {
+    const cls = [S.days[d] && S.days[d].shop ? 'has' : '', FLASH.includes(d) ? 'flash' : '', d === today ? 'today' : '', d >= S.from && d <= S.to ? 'sel' : ''].join(' ');
+    return `<button class="${cls}" data-d="${d}" title="${fdw(d)}${FLASH.includes(d) ? ', Flash Sale' : ''}" aria-label="${fdw(d)}"${d > today ? ' disabled' : ''}></button>`;
+  }).join('');
+
+  document.getElementById('from').value = S.from; document.getElementById('to').value = S.to;
+  document.getElementById('catSel').value = S.cat;
+  document.querySelectorAll('#presets button').forEach(b => { const r = preset(b.dataset.p); b.setAttribute('aria-pressed', r && r[0] === S.from && r[1] === S.to ? 'true' : 'false'); });
+  document.querySelectorAll('#plat button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === S.plat)));
+  const hasGa4 = rangeDays().some(d => S.ga4[d]);
+  if (!hasGa4 && S.src === 'ga4') S.src = 'live';
+  document.querySelectorAll('#srcSeg button').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.v === S.src)); if (b.dataset.v === 'ga4') b.disabled = !hasGa4; });
+  document.querySelectorAll('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.t === S.tab)));
+  const rb = document.getElementById('refresh');
+  rb.disabled = !S.mcp || S.busy; rb.textContent = S.busy ? 'Loading…' : 'Refresh data';
+
+  const ga4n = Object.keys(S.ga4).length;
+  const chip = (k, label) => { const s = S.status[k]; return `<span class="src ${s.st === 'ok' ? 'ok' : s.st === 'load' ? 'load' : s.st === 'err' ? 'err' : ''}" title="${esc(s.msg)}"><i></i><b>${label}</b> <span class="muted">${esc(s.st === 'err' ? 'Error, see below' : s.msg)}</span></span>`; };
+  document.getElementById('sources').innerHTML =
+    chip(SHOP, 'Shopify') + chip(LR, 'Linkrunner') + chip('db', 'Saved data') +
+    `<span class="src ${S.busy || S.liveBusy ? 'load' : S.lastRefresh ? 'ok' : ''}"><i></i><b>D0 = ${fdw(today)}</b> <span class="muted">${S.busy || S.liveBusy ? 'updating now' : S.lastRefresh ? `live, updated ${hhmm(S.lastRefresh)} IST` : 'loading'} · ${S.mcp ? 'today refreshes every 2 min' : 'follows the shared live feed'}</span></span>` +
+    `<span class="src ${ga4n ? 'ok' : ''}"><i></i><b>GA4</b> <span class="muted">${ga4n ? ga4n + ' imported days' : 'Not connected, import on Sources tab'}</span></span>`;
+
+  const errs = [SHOP, LR].filter(k => S.status[k].st === 'err');
+  const al = document.getElementById('pageAlert');
+  if (errs.length) { al.hidden = false; al.className = 'alert'; al.innerHTML = errs.map(k => esc(S.status[k].msg)).join('<br>') + (Object.keys(S.days).length ? '<br><span class="muted">Showing the last saved data where it exists.</span>' : ''); }
+  else al.hidden = true;
+}
+
+/* ---------- render: day view ---------- */
+function chartSvg(dl, baseAvg) {
+  const W = Math.max(320, (document.getElementById('main').clientWidth || 900) - 30), H = 230;
+  const L = 44, R = 10, T = 12, B = 28;
+  const vals = dl.map(d => { const m = dayMetrics(d, 'total', 'live'); return { d, w: m.ordersW || 0, a: m.ordersA || 0, o: m.ordersO || 0, has: fin(m.orders) }; });
+  const max = Math.max(1, baseAvg || 0, ...vals.map(v => v.w + v.a + v.o));
+  const step = [10, 20, 50, 100, 200, 250, 500, 1000, 2000].find(s => max / s <= 5) || 5000;
+  const top = Math.ceil(max / step) * step;
+  const y = v => T + (H - T - B) * (1 - v / top);
+  const bw = (W - L - R) / Math.max(1, vals.length);
+  let g = '';
+  for (let t = 0; t <= top; t += step) g += `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${L - 6}" y="${y(t) + 4}" text-anchor="end">${t.toLocaleString('en-IN')}</text>`;
+  const every = Math.ceil(vals.length / Math.floor((W - L) / 56));
+  vals.forEach((v, i) => {
+    const x = L + i * bw + bw * 0.14, w = Math.max(2, bw * 0.72);
+    if (FLASH.includes(v.d)) g += `<rect x="${L + i * bw}" y="${T}" width="${bw}" height="${H - T - B}" fill="var(--flash)" opacity="0.08"/>`;
+    let yy = y(0);
+    for (const [k, col] of [['w', 'var(--web)'], ['a', 'var(--app)'], ['o', 'var(--other)']]) {
+      const h = y(0) - y(v[k]); if (h <= 0) continue;
+      yy -= h; g += `<rect x="${x}" y="${yy}" width="${w}" height="${h}" fill="${col}"${v.d === today ? ' opacity="0.55"' : ''}><title>${fdw(v.d)}: web ${fN(v.w)}, app ${fN(v.a)}, other ${fN(v.o)}</title></rect>`;
+    }
+    if (i % every === 0) g += `<text x="${L + i * bw + bw / 2}" y="${H - 9}" text-anchor="middle">${fd(v.d)}</text>`;
+  });
+  if (baseAvg) g += `<line x1="${L}" x2="${W - R}" y1="${y(baseAvg)}" y2="${y(baseAvg)}" stroke="var(--ink)" stroke-dasharray="5 4" stroke-width="1.2"/><text x="${W - R}" y="${y(baseAvg) - 5}" text-anchor="end" style="fill:var(--ink)">pre-sale avg ${fN(baseAvg)}/day</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Orders per day by platform">${g}</svg>`;
+}
+
+function renderDay() {
+  const dl = rangeDays();
+  const ms = dl.map(d => ({ d, m: dayMetrics(d, S.plat, S.src) }));
+  const tot = sumMetrics(ms.map(x => x.m));
+  const bl = baseDays().map(d => dayMetrics(d, S.plat, S.src));
+  const bt = sumMetrics(bl);
+  const bOrd = bt.n ? bt.orders / bt.n : NaN;
+  const bTotal = sumMetrics(baseDays().map(d => dayMetrics(d, 'total', 'live')));
+  const convT = tot.conv, convB = bt.conv;
+  const avgOrd = tot.n ? tot.orders / tot.n : NaN;
+  const px = S.plat !== 'web' && S.src === 'live';
+
+  if (!tot.n && !tot.nf) return emptyState();
+
+  const kpi = (label, v, d) => `<div class="kpi"><span class="eyebrow">${label}</span><span class="v">${v}</span><span class="d muted">${d || '&nbsp;'}</span></div>`;
+  let h = `<div class="kpis">
+    ${kpi(S.plat === 'total' ? 'Orders (excl. Draft Orders)' : 'Orders', fN(tot.orders), `${fN(avgOrd)}/day · ${delta(avgOrd, bOrd)} vs pre-sale`)}
+    ${kpi('Net sales', fR(tot.net), `${fR(tot.n ? tot.net / tot.n : NaN)}/day`)}
+    ${kpi('Conversion', fP(convT), `orders ÷ ${px ? 'sessions + app openers' : 'sessions'} · pre-sale ${fP(convB)}`)}
+    ${kpi('AOV web', fR(tot.aovW), `pre-sale ${fR(bt.aovW)}`)}
+    ${kpi('AOV app', fR(tot.aovA), `pre-sale ${fR(bt.aovA)}`)}
+    ${kpi('App share of orders', fP(div(tot.ordersA, tot.ordersW + tot.ordersA), 0), 'web + app orders only')}
+  </div>`;
+
+  h += `<section class="panel chart"><div class="panel-head"><h2>Orders per day</h2>
+    <div class="legend"><span><b style="background:var(--web)"></b>Web</span><span><b style="background:var(--app)"></b>App</span><span><b style="background:var(--other)"></b>Other (subscriptions)</span><span><b style="background:var(--flash);opacity:.35"></b>Flash Sale day</span></div></div>
+    ${chartSvg(dl, bTotal.n ? bTotal.orders / bTotal.n : 0)}</section>`;
+
+  const col = (v, na) => fin(v) ? `<td class="n">${fN(v)}</td>` : `<td class="n na" title="${na || 'Not loaded'}">–</td>`;
+  const rows = ms.map(({ d, m }) => {
+    const ph = phase(d);
+    return `<tr><td>${fdw(d)}${ph ? `<span class="pill ${ph[0]}">${ph[1]}</span>` : ''}${d === today ? '<span class="pill part">so far</span>' : ''}</td>
+      ${col(m.users)}${col(m.sessions)}${col(m.atc)}${col(m.checkout)}${col(m.orders)}
+      <td class="n">${fP(div(m.orders, m.sessions))}</td><td class="n">${fR(m.aovW)}</td><td class="n">${fR(m.aovA)}</td>
+      <td class="n">${d < SALE.start ? '<span class="muted">base</span>' : delta(m.orders, bOrd)}</td></tr>`;
+  }).join('');
+  const bRow = bt.n ? `<tr class="base"><td>Pre-sale avg/day (${fd(BASE.start)}-${fd(baseDays().slice(-1)[0] || BASE.end)})</td>
+      <td class="n">${fN(bt.users / (bt.nf || 1))}</td><td class="n">${fN(bt.sessions / (bt.nf || 1))}</td><td class="n">${fN(bt.atc / (bt.nf || 1))}</td><td class="n">${fN(bt.checkout / (bt.nf || 1))}</td>
+      <td class="n">${fN(bOrd)}</td><td class="n">${fP(convB)}</td><td class="n">${fR(bt.aovW)}</td><td class="n">${fR(bt.aovA)}</td><td></td></tr>` : '';
+  const sessLbl = px ? 'Sessions†' : 'Sessions';
+  h += `<section class="panel"><div class="panel-head"><h2>Day-wise funnel · ${S.plat === 'total' ? 'web + app' : S.plat}</h2>
+      <span class="small muted">${S.src === 'ga4' ? 'Funnel from imported GA4' : 'Web funnel: Shopify sessions · App funnel: Linkrunner'} · Orders and AOV: Shopify</span></div>
+    <div class="tw"><table><thead><tr><th>Day</th><th class="n">Users</th><th class="n">${sessLbl}</th><th class="n">Add to cart</th><th class="n">Checkout</th><th class="n">Orders${S.plat === 'total' ? ' (excl. Draft Orders)' : ''}</th><th class="n">Conversion %</th><th class="n">AOV (Web)</th><th class="n">AOV (App)</th><th class="n">Orders vs pre-sale</th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td>Range total</td><td class="n">${fN(tot.users)}</td><td class="n">${fN(tot.sessions)}</td><td class="n">${fN(tot.atc)}</td><td class="n">${fN(tot.checkout)}</td><td class="n">${fN(tot.orders)}</td><td class="n">${fP(convT)}</td><td class="n">${fR(tot.aovW)}</td><td class="n">${fR(tot.aovA)}</td><td class="n">${delta(avgOrd, bOrd)}</td></tr>${bRow}</tfoot></table></div>
+    <p class="note">${px ? '<b>†</b> The app has no session event in Linkrunner, so app Sessions and Users both count people who opened the app that day. ' : ''}Users in the Total view add web visitors and app openers, so one person on both counts twice. Add to cart and Checkout count sessions (web) or people (app). Orders here leave out Draft Orders (orders created by hand in Shopify admin, with no session behind them), so conversion is not distorted; the Summary and D0 tabs include them and match Shopify. Total also includes subscription orders. Conversion % = Orders ÷ Sessions.</p>
+  </section>`;
+  return h;
+}
+
+/* ---------- render: category ---------- */
+function lineDayTable(test, label) {
+  const dl = rangeDays();
+  const rows = dl.map(d => { const r = lineDay(d, test); const ph = phase(d);
+    return `<tr><td>${fdw(d)}${ph ? `<span class="pill ${ph[0]}">${ph[1]}</span>` : ''}</td>${r ? `<td class="n">${fN(r.orders)}</td><td class="n">${fN(r.oW)}</td><td class="n">${fN(r.oA)}</td><td class="n">${fN(r.units)}</td><td class="n">${fR(r.gross)}</td><td class="n">${fR(r.net)}</td><td class="n">${fR(div(r.net, r.units))}</td><td class="n">${fR(r.rev)}</td><td class="n">${fR(div(r.nW, r.oW))}</td><td class="n">${fR(div(r.nA, r.oA))}</td>` : '<td class="n na" colspan="10">Not loaded</td>'}<td class="n na" title="Needs GA4 item-level export">–</td><td class="n na" title="Needs GA4 item-level export">–</td></tr>`; }).join('');
+  return `<section class="panel"><div class="panel-head"><h2>${esc(label)} · by day</h2><span class="small muted">Shopify order lines</span></div>
+    <div class="tw"><table><thead><tr><th>Day</th><th class="n">Orders</th><th class="n">Web</th><th class="n">App</th><th class="n">Units</th><th class="n">GMV (gross sales)</th><th class="n">GMV (net sales)</th><th class="n">ASP</th><th class="n">Sales reversals</th><th class="n">AOV (Web)</th><th class="n">AOV (App)</th><th class="n">Sessions</th><th class="n">Add to cart</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="note">Sessions and Add to cart by category or SKU are not in Shopify or Linkrunner. They need a GA4 item-level export (Item name x Date: items viewed, items added to cart). AOV here is this line's net sales per order that contains it, not the whole basket.</p></section>`;
+}
+function renderCat() {
+  const dl = rangeDays();
+  const agg = skuAgg(dl);
+  if (!agg.length) return projTable('cat') + emptyState();
+  const by = new Map();
+  for (const r of agg) {
+    let c = by.get(r.cat); if (!c) { c = { cat: r.cat, oW: 0, oA: 0, oO: 0, nW: 0, nA: 0, nO: 0, units: 0, gross: 0, rev: 0, skus: 0 }; by.set(r.cat, c); }
+    c.rev += r.rev; c.gross += r.gross; c.oW += r.oW; c.oA += r.oA; c.oO += r.oO; c.nW += r.nW; c.nA += r.nA; c.nO += r.nO; c.units += r.units; if (r.orders > 0) c.skus++;
+  }
+  const cats = [...by.values()].map(c => ({ ...c, orders: c.oW + c.oA + c.oO, net: c.nW + c.nA + c.nO })).sort((a, b) => b.net - a.net);
+  const totNet = cats.reduce((s, c) => s + c.net, 0);
+  const bAgg = skuAgg(baseDays()); const bCat = {}; const bn = baseDays().filter(d => S.skus[d]).length;
+  for (const r of bAgg) bCat[r.cat] = (bCat[r.cat] || 0) + r.orders;
+  const nd = dl.filter(d => S.skus[d]).length;
+  const rows = cats.map(c => `<tr class="pick${S.selCat === c.cat ? ' sel' : ''}" data-cat="${esc(c.cat)}" tabindex="0"><td>${esc(c.cat)}</td><td class="n">${fN(c.orders)}</td><td class="n">${fN(c.oW)}</td><td class="n">${fN(c.oA)}</td><td class="n">${fN(c.units)}</td><td class="n">${fR(c.gross)}</td><td class="n">${fR(c.net)}</td><td class="n">${fR(div(c.net, c.units))}</td><td class="n">${fR(c.rev)}</td><td class="n">${fP(div(c.net, totNet), 1)}</td><td class="n">${fR(div(c.nW, c.oW))}</td><td class="n">${fR(div(c.nA, c.oA))}</td><td class="n">${fN(c.skus)}</td><td class="n">${bn && nd && dl[0] >= SALE.start ? delta(c.orders / nd, (bCat[c.cat] || 0) / bn) : '<span class="muted">–</span>'}</td></tr>`).join('');
+  let h = projTable('cat') + `<section class="panel"><div class="panel-head"><h2>Categories · ${fd(dl[0])} to ${fd(dl[dl.length - 1])}</h2><span class="small muted">Click a category for its day-wise table</span></div>
+    <div class="tw"><table><thead><tr><th>Category</th><th class="n">Orders</th><th class="n">Web</th><th class="n">App</th><th class="n">Units</th><th class="n">GMV (gross sales)</th><th class="n">GMV (net sales)</th><th class="n">ASP</th><th class="n">Sales reversals</th><th class="n">Share of net</th><th class="n">AOV (Web)</th><th class="n">AOV (App)</th><th class="n">SKUs sold</th><th class="n">Orders/day vs pre-sale</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="note">Category comes from the master marketing calendar's SKU map (1,634 live SKUs). Orders count order lines per SKU, so an order with two SKUs from one category counts twice here. Net sales include that day's returns.</p></section>`;
+  // heatmap: categories x days (orders)
+  if (dl.length > 1) {
+    const top = cats.slice(0, 9).map(c => c.cat);
+    const grid = top.map(cat => dl.map(d => { const r = lineDay(d, s => catOf(s) === cat); return r ? r.orders : NaN; }));
+    const mx = Math.max(1, ...grid.flat().filter(fin));
+    const hrows = top.map((cat, i) => `<tr><td>${esc(cat)}</td>${grid[i].map(v => `<td class="n" style="background:color-mix(in srgb, var(--web) ${fin(v) ? Math.round(v / mx * 70) : 0}%, transparent)">${fin(v) ? fN(v) : ''}</td>`).join('')}</tr>`).join('');
+    h += `<section class="panel"><div class="panel-head"><h2>Orders by category and day</h2><span class="small muted">Darker = more orders</span></div>
+      <div class="tw heat"><table><thead><tr><th>Category</th>${dl.map(d => `<th class="n"${FLASH.includes(d) ? ' style="color:var(--flash)"' : ''}>${fd(d)}</th>`).join('')}</tr></thead><tbody>${hrows}</tbody></table></div></section>`;
+  }
+  const sel = S.cat && by.has(S.cat) ? S.cat : S.selCat && by.has(S.selCat) ? S.selCat : cats[0].cat;
+  h += lineDayTable(s => catOf(s) === sel, sel);
+  return h;
+}
+
+/* ---------- render: returns ----------
+   Returns, refunds and cancellations, by the day they were booked (same basis as Sales reversals).
+   Built hourly from Shopify orders (refund lines, return notes, refund notes, cancellation tags) by the scheduled
+   refresh and saved as returns/<date>: rows [sku, title, kind, reason, units, value ex-GST, [order names]]. */
+const RKINDS = ['Customer return', 'RTO (not delivered)', 'Cancelled', 'Other refund'];
+/* D0 returns, laid out like the D0 tab: so far vs the same time on D-1 / D-7 / same date last month, projected full day,
+   then reasons, categories and products for today. Hour-by-hour from returns/<date>.hrs and each row's {hour: [units, value]}. */
+function retD0() {
+  const R = S.returns || {}, T = R[today];
+  if (!T) return `<section class="panel"><div class="empty">Today's returns load with the next hourly refresh.</div></section>`;
+  const ts = T.fetchedAt, t = new Date(ts + 19800000), H = t.getUTCHours(), Mi = t.getUTCMinutes(), at = hhmm(ts);
+  const cmp = [[addD(today, -1), 'D-1'], [addD(today, -7), 'D-7'], [lastMonth(today), 'Last month']];
+  const inCat = sku => !S.cat || catOf(sku) === S.cat;
+  // per day: 24 hourly slots of [units, value, orders] for one kind ('All' or a type), honouring the category filter
+  const slots = (d, kind) => {
+    const doc = R[d]; if (!doc) return null;
+    if (!S.cat && doc.hrs) { const a = doc.hrs[kind]; return a || Array.from({ length: 24 }, () => [0, 0, 0]); }
+    const a = Array.from({ length: 24 }, () => [0, 0, NaN]);
+    for (const r of doc.rows) if ((kind === 'All' || r[2] === kind) && inCat(r[0])) for (const [h, [u, v]] of Object.entries(r[7] || {})) { a[+h][0] += u; a[+h][1] += v; }
+    return a;
+  };
+  const upto = (a, i) => { if (!a) return NaN; let x = 0; for (let h = 0; h < H; h++) x += a[h][i]; return x + a[H][i] * Mi / 60; };
+  const whole = (a, i) => (a ? a.reduce((x, s) => x + s[i], 0) : NaN);
+  // usual share of a day's returned units in by this time, from every complete day saved since 1 Aug
+  const hist = Object.keys(R).filter(d => d < today && d >= HIST_START).sort();
+  const cum = Array(24).fill(0); for (const d of hist) (slots(d, 'All') || []).forEach((s, h) => { cum[h] += s[0]; });
+  const tot = cum.reduce((a, b) => a + b, 0) || 1; let c = 0; const cumS = cum.map(v => (c += v) / tot);
+  const share = dayShare(cumS, ts);
+  const last7 = days(addD(today, -7), addD(today, -1)).filter(d => R[d]);
+  const metric = (key, label, kind, i, fmt) => {
+    const a = slots(today, kind), sf = whole(a, i), base = last7.length ? last7.reduce((x, d) => x + whole(slots(d, kind), i), 0) / last7.length : NaN;
+    return { key, label, fmt, inv: true, sf, proj: blendProj(sf, share, base), same: cmp.map(([d]) => upto(slots(d, kind), i)), full: cmp.map(([d]) => whole(slots(d, kind), i)) };
+  };
+  const M = {
+    units: metric('units', 'Units returned', 'All', 0, fN), orders: metric('orders', 'Orders affected', 'All', 2, fN), value: metric('value', 'Value (ex-GST)', 'All', 1, fR),
+    ...Object.fromEntries(RKINDS.map(k => [k, metric(k, `${k} (units)`, k, 0, fN)])),
+  };
+  if (S.cat) { M.orders.sf = new Set(T.rows.filter(r => inCat(r[0])).flatMap(r => r[6])).size; M.orders.proj = NaN; M.orders.same = [NaN, NaN, NaN]; M.orders.full = cmp.map(([d]) => R[d] ? new Set(R[d].rows.filter(r => inCat(r[0])).flatMap(r => r[6])).size : NaN); }
+  // return rate = units returned / units sold (whole store; Shopify's hour data for units sold)
+  const V = !S.cat ? d0View() : null;
+  M.rate = V ? { key: 'rate', label: 'Return rate (units returned ÷ units sold)', fmt: v => fP(v, 1), inv: true, sf: div(M.units.sf, V.rows.units.sf), proj: div(M.units.proj, V.rows.units.proj),
+    same: cmp.map((_, i) => div(M.units.same[i], V.rows.units.same[i])), full: cmp.map((_, i) => div(M.units.full[i], V.rows.units.full[i])) } : null;
+  const list = [M.units, M.orders, M.value, M.rate, ...RKINDS.map(k => M[k])].filter(Boolean);
+  const chips = (r, cur, arr, tip) => cmp.map(([d, lab], i) => `<span class="cmpc"><span class="muted">${lab}</span> ${r.key === 'rate' ? ppChip(cur, arr[i]) : chip(pct(cur, arr[i]), `${lab} (${fdw(d)}) ${tip}`, true)}</span>`).join('');
+  const tile = r => `<div class="tile d0"><span class="eyebrow">${esc(r.label)}</span><span class="v">${r.fmt(r.sf)}</span>
+      <span class="d">so far · projected full day <b>${r.fmt(r.proj)}</b></span>
+      <div class="cmprow">${chips(r, r.sf, r.same, 'at the same time of day')}</div><span class="d">vs the same time (${at}) on those days · a rise is red</span></div>`;
+  let h = `<section class="panel"><div class="panel-head"><h2>D0 returns, refunds and cancellations · ${fdw(today)}${S.cat ? ' · ' + esc(S.cat) : ''}</h2>
+      <span class="small muted">Data as of ${at} IST · updated hourly · ${Math.round(share * 100)}% of a normal day's returns are usually booked by now</span></div>
+    <div class="tiles">${list.map(tile).join('')}</div></section>`;
+  const head = a => `<tr><th>Metric</th><th class="n">D0 ${a}</th>${cmp.map(([d, lab]) => `<th class="n">${lab} · ${fd(d)}</th><th class="n">vs ${lab}</th>`).join('')}</tr>`;
+  const line = (r, cur, arr) => `<tr><td>${esc(r.label)}</td><td class="n"><b>${fin(cur) ? r.fmt(cur) : '–'}</b></td>${arr.map(v => `<td class="n">${fin(v) ? r.fmt(v) : '<span class="muted">–</span>'}</td><td class="n">${r.key === 'rate' ? ppChip(cur, v) : chip(pct(cur, v), '', true)}</td>`).join('')}</tr>`;
+  h += `<section class="panel"><div class="panel-head"><h2>So far today vs the same time on D-1, D-7 and last month</h2><span class="small muted">Everything booked up to ${at} IST on each day</span></div>
+    <div class="tw"><table><thead>${head('so far')}</thead><tbody>${list.map(r => line(r, r.sf, r.same)).join('')}</tbody></table></div></section>`;
+  h += `<section class="panel"><div class="panel-head"><h2>Full day: D0 projected vs D-1, D-7 and last month</h2><span class="small muted">Today's projected close against what those days finished at</span></div>
+    <div class="tw"><table><thead>${head('projected')}</thead><tbody>${list.map(r => line(r, r.proj, r.full)).join('')}</tbody></table></div>
+    <p class="note">Projected full day = returns so far ÷ the share of a normal day's returns usually booked by this time; until about 30% is in, it leans on the last 7 days' average. Return rate change is in percentage points (pp). Orders at the same time of day add up each hour's orders. A rise in returns is shown in red.</p></section>`;
+  // today's detail with the same-time comparison, for reasons, categories and products
+  const rowsOf = d => (R[d] ? R[d].rows.filter(r => inCat(r[0])) : null);
+  const sumUpto = (r) => { let x = 0; for (const [hh, [u]] of Object.entries(r[7] || {})) { const n = +hh; x += n < H ? u : n === H ? u * Mi / 60 : 0; } return x; };
+  const detail = (title, keyf, labf, extra) => {
+    const m = new Map();
+    const add = (d, i, r) => { const k = keyf(r); let g = m.get(k); if (!g) { g = { k, r, u: 0, v: 0, o: new Set(), same: [0, 0, 0], why: {} }; m.set(k, g); }
+      if (i < 0) { g.u += r[4]; g.v += r[5]; r[6].forEach(o => g.o.add(o)); g.why[r[3]] = (g.why[r[3]] || 0) + r[4]; } else g.same[i] += sumUpto(r); };
+    (rowsOf(today) || []).forEach(r => add(today, -1, r));
+    cmp.forEach(([d], i) => (rowsOf(d) || []).forEach(r => add(d, i, r)));
+    const has = cmp.map(([d]) => !!R[d]);
+    const gs = [...m.values()].filter(g => g.u > 0 || g.same.some(x => x > 0.5)).sort((a, b) => b.u - a.u || b.same[0] - a.same[0]).slice(0, 200);
+    const topW = g => Object.entries(g.why).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([w, q]) => `${esc(w)} (${fN(q)})`).join(', ');
+    return `<section class="panel"><div class="panel-head"><h2>${title}</h2><span class="small muted">Today so far vs the same time on each day · units</span></div>
+      <div class="tw" style="max-height:520px"><table><thead><tr>${extra.head}<th class="n">D0 units</th><th class="n">D0 orders</th><th class="n">D0 value</th>${cmp.map(([d, lab]) => `<th class="n">${lab} · ${fd(d)}</th><th class="n">vs ${lab}</th>`).join('')}${extra.why ? '<th>Top reasons today</th>' : ''}</tr></thead><tbody>
+      ${gs.map(g => `<tr>${extra.cells(g)}<td class="n"><b>${fN(g.u)}</b></td><td class="n">${fN(g.o.size)}</td><td class="n">${fR(g.v)}</td>${g.same.map((x, i) => `<td class="n">${has[i] ? fN(x) : '–'}</td><td class="n">${has[i] ? chip(pct(g.u, x), '', true) : '–'}</td>`).join('')}${extra.why ? `<td class="small">${topW(g)}</td>` : ''}</tr>`).join('') || `<tr><td colspan="12" class="empty">Nothing booked yet today.</td></tr>`}</tbody></table></div></section>`;
+  };
+  h += detail('D0 by reason', r => r[2] + '|' + r[3], null, { head: '<th>Type</th><th>Reason</th>', cells: g => `<td>${esc(g.r[2])}</td><td>${esc(g.r[3])}</td>`, why: false });
+  h += detail('D0 by category', r => catOf(r[0]), null, { head: '<th>Category</th>', cells: g => `<td>${esc(g.k)}</td>`, why: true });
+  h += detail('D0 by product', r => r[0] || '(no SKU) ' + r[1], null, { head: '<th>SKU</th><th>Product</th><th>Category</th>', cells: g => `<td class="num">${esc(g.k)}</td><td class="title" title="${esc(g.r[1])}">${esc(g.r[1])}</td><td>${esc(catOf(g.r[0]))}</td>`, why: true });
+  return h;
+}
+function renderReturns() {
+  return retD0() + `<h2 style="margin:18px 0 6px">Selected range · ${fd(rangeDays()[0])} to ${fd(rangeDays().slice(-1)[0])}</h2>` + renderReturnsRange();
+}
+function renderReturnsRange() {
+  const dl = rangeDays();
+  const R = S.returns || {};
+  const have = dl.filter(d => R[d]);
+  if (!have.length) return `<section class="panel"><div class="empty">No returns data saved for ${fd(dl[0])} to ${fd(dl[dl.length - 1])} yet. It is built by the hourly refresh from Shopify orders.</div></section>`;
+  const kind = S.rkind || 'all';
+  const lines = [];
+  for (const d of have) for (const [sku, title, k, why, q, val, ords] of R[d].rows) {
+    const cat = catOf(sku);
+    if (S.cat && cat !== S.cat) continue;
+    if (kind !== 'all' && k !== kind) continue;
+    lines.push({ d, sku, title, k, why, q, val, ords, cat });
+  }
+  const uniq = arr => new Set(arr).size;
+  const allOrders = uniq(lines.flatMap(l => l.ords));
+  const U = lines.reduce((s, l) => s + l.q, 0), V = lines.reduce((s, l) => s + l.val, 0);
+  const sold = skuAgg(dl); const soldBy = new Map(sold.map(r => [r.sku, r.units]));
+  const soldCat = {}; for (const r of sold) soldCat[r.cat] = (soldCat[r.cat] || 0) + r.units;
+  const soldAll = S.cat ? (soldCat[S.cat] || 0) : sold.reduce((s, r) => s + r.units, 0);
+  const group = (keyf) => { const m = new Map(); for (const l of lines) { const k = keyf(l); let g = m.get(k); if (!g) { g = { k, q: 0, val: 0, ords: [], kinds: {}, why: {}, title: l.title, cat: l.cat }; m.set(k, g); } g.q += l.q; g.val += l.val; g.ords.push(...l.ords); g.kinds[l.k] = (g.kinds[l.k] || 0) + l.q; g.why[l.why] = (g.why[l.why] || 0) + l.q; } return [...m.values()].map(g => ({ ...g, n: uniq(g.ords) })); };
+  const topWhy = g => Object.entries(g.why).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([w, q]) => `${esc(w)} (${fN(q)})`).join(', ');
+  const byKind = Object.fromEntries(RKINDS.map(k => [k, lines.filter(l => l.k === k).reduce((s, l) => s + l.q, 0)]));
+  const t = (label, v, sub) => `<div class="tile"><span class="eyebrow">${label}</span><span class="v">${v}</span><span class="d">${sub}</span></div>`;
+  const seg = ['all', ...RKINDS].map(k => `<button data-rk="${esc(k)}" aria-pressed="${kind === k}">${k === 'all' ? 'All' : esc(k)}</button>`).join('');
+  let h = `<section class="panel"><div class="panel-head"><h2>Returns, refunds and cancellations · ${fd(dl[0])} to ${fd(dl[dl.length - 1])}${S.cat ? ' · ' + esc(S.cat) : ''}</h2>
+      <span class="small muted">By the day the refund or cancellation was booked · all channels · updated hourly</span></div>
+    <div class="bar" style="padding:8px 10px"><div class="seg" id="rkSeg" role="group" aria-label="Return type">${seg}</div></div>
+    <div class="tiles">
+      ${t('Units returned', fN(U), `${fP(div(U, soldAll), 1)} of ${fN(soldAll)} units sold in these days`)}
+      ${t('Orders affected', fN(allOrders), 'orders with at least one returned, refunded or cancelled line')}
+      ${t('Value (ex-GST)', fR(V), 'refunded or cancelled line value, after discounts')}
+      ${kind === 'all' ? RKINDS.map(k => t(k, fN(byKind[k]), `${fP(div(byKind[k], U), 0)} of units`)).join('') : ''}
+    </div></section>`;
+  // by reason
+  const reasons = group(l => l.k + '|' + l.why).sort((a, b) => b.q - a.q);
+  h += `<section class="panel"><div class="panel-head"><h2>By reason</h2><span class="small muted">${fN(reasons.length)} reasons</span></div>
+    <div class="tw" style="max-height:460px"><table><thead><tr><th>Type</th><th>Reason</th><th class="n">Orders</th><th class="n">Units</th><th class="n">Value (ex-GST)</th><th class="n">Share of units</th></tr></thead><tbody>
+    ${reasons.map(g => { const [k, w] = g.k.split('|'); return `<tr><td>${esc(k)}</td><td>${esc(w)}</td><td class="n">${fN(g.n)}</td><td class="n">${fN(g.q)}</td><td class="n">${fR(g.val)}</td><td class="n">${fP(div(g.q, U), 1)}</td></tr>`; }).join('')}</tbody></table></div></section>`;
+  // by category
+  const cats = group(l => l.cat).sort((a, b) => b.q - a.q);
+  h += `<section class="panel"><div class="panel-head"><h2>By category</h2><span class="small muted">Return rate = units returned ÷ units sold in the same days</span></div>
+    <div class="tw"><table><thead><tr><th>Category</th><th class="n">Units returned</th><th class="n">Orders</th><th class="n">Value (ex-GST)</th><th class="n">Units sold</th><th class="n">Return rate</th>${RKINDS.map(k => `<th class="n">${esc(k)}</th>`).join('')}<th>Top reasons</th></tr></thead><tbody>
+    ${cats.map(g => `<tr><td>${esc(g.k)}</td><td class="n"><b>${fN(g.q)}</b></td><td class="n">${fN(g.n)}</td><td class="n">${fR(g.val)}</td><td class="n">${fN(soldCat[g.k] || 0)}</td><td class="n">${fP(div(g.q, soldCat[g.k]), 1)}</td>${RKINDS.map(k => `<td class="n">${g.kinds[k] ? fN(g.kinds[k]) : '<span class="muted">–</span>'}</td>`).join('')}<td class="small">${topWhy(g)}</td></tr>`).join('')}</tbody></table></div></section>`;
+  // by product
+  const q = S.skuQ.trim().toLowerCase();
+  let prods = group(l => l.sku || '(no SKU) ' + l.title).sort((a, b) => b.q - a.q);
+  if (q) prods = prods.filter(g => g.k.toLowerCase().includes(q) || (g.title || '').toLowerCase().includes(q));
+  h += `<section class="panel"><div class="panel-head"><h2>By product</h2><span class="small muted">${fN(prods.length)} products${prods.length > 300 ? ', top 300 by units' : ''}</span></div>
+    <div class="bar" style="padding:8px 10px"><label for="skuQ">Search <input type="search" id="skuQ" placeholder="SKU or product name" value="${esc(S.skuQ)}"></label></div>
+    <div class="tw" style="max-height:620px"><table><thead><tr><th>SKU</th><th>Product</th><th>Category</th><th class="n">Units returned</th><th class="n">Orders</th><th class="n">Value (ex-GST)</th><th class="n">Units sold</th><th class="n">Return rate</th>${RKINDS.map(k => `<th class="n">${esc(k)}</th>`).join('')}<th>Top reasons</th></tr></thead><tbody>
+    ${prods.slice(0, 300).map(g => `<tr><td class="num">${esc(g.k)}</td><td class="title" title="${esc(g.title)}">${esc(g.title)}</td><td>${esc(g.cat)}</td><td class="n"><b>${fN(g.q)}</b></td><td class="n">${fN(g.n)}</td><td class="n">${fR(g.val)}</td><td class="n">${fN(soldBy.get(g.k) || 0)}</td><td class="n">${soldBy.get(g.k) ? fP(div(g.q, soldBy.get(g.k)), 1) : '<span class="muted">–</span>'}</td>${RKINDS.map(k => `<td class="n">${g.kinds[k] ? fN(g.kinds[k]) : '<span class="muted">–</span>'}</td>`).join('')}<td class="small">${topWhy(g)}</td></tr>`).join('')}</tbody></table></div>
+    <p class="note"><b>Types:</b> Customer return = delivered, then returned (reason from the return request, e.g. Quality issue). RTO = not delivered: refused at the door or returned by the courier. Cancelled = cancelled before dispatch (reason from the cancellation, e.g. better price available elsewhere). Other refund = refunded with no return or cancellation (reason from the refund note). Units are counted on the day the refund or cancellation was booked, so a return rate compares them with units sold in the same days, not the same orders. Value is the refunded line value after discounts, without GST.</p></section>`;
+  return h;
+}
+
+/* ---------- render: sku ---------- */
+function renderSku() {
+  const dl = rangeDays();
+  let agg = skuAgg(dl).filter(r => r.sku);
+  if (!agg.length) return projTable('sku') + emptyState();
+  const catsIn = [...new Set(agg.map(r => r.cat))].sort();
+  const q = S.skuQ.trim().toLowerCase();
+  if (S.cat) agg = agg.filter(r => r.cat === S.cat);
+  if (q) agg = agg.filter(r => r.sku.toLowerCase().includes(q) || (r.title || '').toLowerCase().includes(q));
+  const key = { net: r => r.net, gross: r => r.gross, rev: r => r.rev, orders: r => r.orders, units: r => r.units, asp: r => div(r.net, r.units) || 0, aovW: r => div(r.nW, r.oW) || 0, aovA: r => div(r.nA, r.oA) || 0 }[S.skuSort];
+  agg.sort((a, b) => key(b) - key(a));
+  const shown = agg.slice(0, 300);
+  const th = (k, l) => `<th class="n sortable" data-sort="${k}" aria-sort="${S.skuSort === k ? 'descending' : 'none'}">${l}${S.skuSort === k ? ' ↓' : ''}</th>`;
+  const rows = shown.map(r => `<tr class="pick${S.selSku === r.sku ? ' sel' : ''}" data-sku="${esc(r.sku)}" tabindex="0"><td class="num">${esc(r.sku)}</td><td class="title" title="${esc(r.title)}">${esc(r.title)}</td><td>${esc(r.cat)}</td><td class="n">${fN(r.orders)}</td><td class="n">${fN(r.oW)}</td><td class="n">${fN(r.oA)}</td><td class="n">${fN(r.units)}</td><td class="n">${fR(r.gross)}</td><td class="n">${fR(r.net)}</td><td class="n">${fR(div(r.net, r.units))}</td><td class="n">${fR(r.rev)}</td><td class="n">${fR(div(r.nW, r.oW))}</td><td class="n">${fR(div(r.nA, r.oA))}</td></tr>`).join('');
+  let h = `<section class="panel"><div class="panel-head"><h2>SKUs · ${fd(dl[0])} to ${fd(dl[dl.length - 1])}</h2><span class="small muted">${fN(agg.length)} SKUs${agg.length > 300 ? ', top 300 shown' : ''} · click one for its day-wise table</span></div>
+    <div class="bar" style="padding:8px 10px">
+      <label for="skuQ">Search <input type="search" id="skuQ" placeholder="SKU or product name" value="${esc(S.skuQ)}"></label>
+      <span class="small muted">${S.cat ? 'Showing ' + esc(S.cat) + ' (category filter at the top)' : 'Use the category filter at the top to narrow the list'}</span>
+    </div>
+    <div class="tw" style="max-height:620px"><table><thead><tr><th>SKU</th><th>Product</th><th>Category</th>${th('orders', 'Orders')}<th class="n">Web</th><th class="n">App</th>${th('units', 'Units')}${th('gross', 'GMV (gross sales)')}${th('net', 'GMV (net sales)')}${th('asp', 'ASP')}${th('rev', 'Sales reversals')}${th('aovW', 'AOV (Web)')}${th('aovA', 'AOV (App)')}</tr></thead><tbody>${rows || '<tr><td colspan="13" class="empty">No SKU matches this search.</td></tr>'}</tbody></table></div></section>`;
+  h += projTable('sku');
+  const sel = S.selSku && agg.find(r => r.sku === S.selSku) ? S.selSku : (shown[0] && shown[0].sku);
+  if (sel) { const r = agg.find(x => x.sku === sel); h += lineDayTable(s => s === sel, `${sel} · ${(r && r.title || '').slice(0, 60)}`); }
+  return h;
+}
+
+/* ---------- render: summary ---------- */
+function gmvChart(dl) {
+  const W = Math.max(320, (document.getElementById('main').clientWidth || 900) - 30), H = 210, L = 58, R = 10, T = 12, B = 28;
+  const stack = !S.cat && S.plat === 'total';
+  const vals = dl.map(d => {
+    const D = S.days[d];
+    if (stack && D && D.shop) return { d, parts: [['w', D.shop.w.net, 'var(--web)'], ['a', D.shop.a.net, 'var(--app)'], ['o', D.shop.o.net, 'var(--other)']] };
+    const s = dayStat(d); return { d, parts: [['x', s ? s.gmv : NaN, S.plat === 'app' ? 'var(--app)' : 'var(--web)']] };
+  });
+  const tot = v => v.parts.reduce((s, p) => s + (fin(p[1]) ? p[1] : 0), 0);
+  const bs = sumStats(baseDays().map(dayStat)); const base = bs.n ? bs.gmv / bs.n : 0;
+  const max = Math.max(1, base, ...vals.map(tot));
+  const raw = max / 4, mag = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 2.5, 5, 10].map(k => k * mag).find(s => s >= raw);
+  const top = Math.ceil(max / step) * step, y = v => T + (H - T - B) * (1 - v / top), bw = (W - L - R) / Math.max(1, vals.length);
+  const every = Math.ceil(vals.length / Math.floor((W - L) / 56));
+  let g = '';
+  for (let t = 0; t <= top + 1e-6; t += step) g += `<line x1="${L}" x2="${W - R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${L - 6}" y="${y(t) + 4}" text-anchor="end">${fR(t).replace('₹', '')}</text>`;
+  vals.forEach((v, i) => {
+    const x = L + i * bw + bw * 0.14, w = Math.max(2, bw * 0.72);
+    if (FLASH.includes(v.d)) g += `<rect x="${L + i * bw}" y="${T}" width="${bw}" height="${H - T - B}" fill="var(--flash)" opacity="0.08"/>`;
+    let yy = y(0);
+    for (const [, val, col] of v.parts) { if (!fin(val) || val <= 0) continue; const h = y(0) - y(val); yy -= h;
+      g += `<rect x="${x}" y="${yy}" width="${w}" height="${h}" fill="${col}"${v.d === today ? ' opacity="0.55"' : ''}><title>${fdw(v.d)}: GMV ${fR(tot(v))}</title></rect>`; }
+    if (i % every === 0) g += `<text x="${L + i * bw + bw / 2}" y="${H - 9}" text-anchor="middle">${fd(v.d)}</text>`;
+  });
+  if (base) g += `<line x1="${L}" x2="${W - R}" y1="${y(base)}" y2="${y(base)}" stroke="var(--ink)" stroke-dasharray="5 4" stroke-width="1.2"/><text x="${W - R}" y="${y(base) - 5}" text-anchor="end" style="fill:var(--ink)">pre-sale avg ${fR(base)}/day</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="GMV per day">${g}</svg>`;
+}
+function heatTable(title, sub, rows, dl, fmt, totLabel) {
+  const mx = Math.max(1e-9, ...rows.filter(r => !r.muted).flatMap(r => r.vals.filter(fin)));
+  const cell = (v, muted) => `<td class="n" style="background:color-mix(in srgb, var(--${muted ? 'other' : 'web'}) ${fin(v) ? Math.round(Math.min(1, v / mx) * 62) : 0}%, transparent)">${fin(v) ? fmt(v) : '<span class="muted">–</span>'}</td>`;
+  const body = rows.map(r => `<tr><td${r.muted ? ' class="muted"' : ''}>${esc(r.label)}</td>${r.vals.map(v => cell(v, r.muted)).join('')}<td class="n tot">${fin(r.total) ? fmt(r.total) : '–'}</td></tr>`).join('');
+  return `<section class="panel"><div class="panel-head"><h3>${title}</h3><span class="small muted">${sub}</span></div>
+    <div class="tw heat"><table><thead><tr><th>Category</th>${dl.map(d => `<th class="n"${FLASH.includes(d) ? ' style="color:var(--flash)"' : ''}>${fd(d)}</th>`).join('')}<th class="n tot">${totLabel}</th></tr></thead><tbody>${body || `<tr><td colspan="${dl.length + 2}" class="empty">No data yet.</td></tr>`}</tbody></table></div></section>`;
+}
+function catBlocks(dl) {
+  const cds = dl.map(catDay), lps = dl.map(lpDay);
+  const cats = new Map();
+  cds.forEach(m => m && Object.entries(m).forEach(([c, x]) => cats.set(c, (cats.get(c) || 0) + (fin(x.gmv) ? x.gmv : 0))));
+  let list = [...cats].sort((a, b) => b[1] - a[1]).map(x => x[0]).filter(c => c !== NO_SKU);
+  if (S.cat) list = list.filter(c => c === S.cat);
+  const mk = (key) => list.map(c => { const vals = cds.map(m => (m ? (m[c] ? m[c][key] : 0) : NaN)); return { label: c, vals, total: vals.filter(fin).reduce((s, v) => s + v, 0) }; });
+  // traffic rows: categories first, then page groups that are not a category
+  const isExtra = c => [MIXED, UNMAPPED_PAGES, OTHER_PAGES].includes(c);
+  let tcats = [...list];
+  // categories that had landing traffic but no sales still belong in the traffic view
+  lps.forEach(l => l && Object.keys(l).forEach(c => { if (!isExtra(c) && !tcats.includes(c) && (!S.cat || c === S.cat)) tcats.push(c); }));
+  if (!S.cat) for (const extra of [MIXED, UNMAPPED_PAGES, OTHER_PAGES]) if (lps.some(l => l && l[extra])) tcats.push(extra);
+  const traf = tcats.map(c => { const vals = lps.map(l => (l ? (l[c] ? l[c][0] : 0) : NaN)); return { label: c, vals, total: vals.filter(fin).reduce((s, v) => s + v, 0), muted: isExtra(c) }; });
+  const conv = tcats.filter(c => c !== OTHER_PAGES).map(c => {
+    let n = 0, dd = 0; const vals = lps.map(l => { if (!l) return NaN; const x = l[c]; if (!x || !x[0]) return NaN; n += x[2]; dd += x[0]; return x[2] / x[0]; });
+    return { label: c, vals, total: div(n, dd), muted: isExtra(c) };
+  });
+  const webOnly = S.plat === 'app' ? 'The app does not report which products people view, so category traffic is web only. Switch Platform to Total or Web.' : 'Web sessions that landed on the category\'s product or collection pages (Shopify)';
+  return heatTable('Category units, day on day', 'Units sold (Shopify order lines)', mk('units'), dl, fN, 'Total') +
+    heatTable('Category GMV (gross sales), day on day', 'Gross sales before discounts and returns, ex-GST (Shopify)', mk('gross'), dl, v => fR(v), 'Total') +
+    heatTable('Category GMV (net sales), day on day', 'Net sales after discounts and returns, ex-GST (Shopify)', mk('gmv'), dl, v => fR(v), 'Total') +
+    heatTable('Category sales reversals, day on day', 'Returns and refunds booked that day (Shopify), ex-GST', mk('rev'), dl, v => fR(v), 'Total') +
+    heatTable('Category traffic, day on day', webOnly, traf, dl, fN, 'Total') +
+    heatTable('Category conversion, day on day', 'Landing sessions that completed checkout ÷ landing sessions (web)', conv, dl, v => fP(v, 1), 'Range');
+}
+function renderSum() {
+  const dl = rangeDays();
+  const st = dl.map(dayStat);
+  if (!st.some(Boolean)) return projTiles() + emptyState();
+  const T = sumStats(st), B = sumStats(baseDays().map(dayStat));
+  const inSale = dl[0] >= SALE.start;
+  const per = (t, k) => (t.n ? t[k] / t.n : NaN);
+  const vs = (k) => inSale ? `${chip(pct(per(T, k), per(B, k)), 'vs pre-sale daily average')} vs pre-sale/day` : 'pre-sale period';
+  const series = k => st.map(s => (s ? (k === 'asp' ? div(s.gmv, s.units) : s[k]) : NaN));
+  const tile = (label, v, sub, k, col) => `<div class="tile"><span class="eyebrow">${label}</span><span class="v">${v}</span><span class="d">${sub}</span>${spark(series(k), col)}</div>`;
+  const noCust = !!S.cat;
+  let h = projTiles() + `<h2 style="margin-top:4px">Selected range · ${fd(dl[0])} to ${fd(dl[dl.length - 1])}</h2><div class="tiles">
+    ${tile('Units sold', fN(T.units), `${fN(per(T, 'units'))}/day · ${vs('units')}`, 'units', 'var(--web)')}
+    ${tile('GMV (gross sales)', fR(T.gross), `${fR(per(T, 'gross'))}/day · ${vs('gross')}`, 'gross', 'var(--app)')}
+    ${tile('GMV (net sales)', fR(T.gmv), `${fR(per(T, 'gmv'))}/day · ${vs('gmv')}`, 'gmv', 'var(--web)')}
+    ${tile('ASP (avg selling price)', fR(div(T.gmv, T.units)), `net sales ÷ units · gross ${fR(div(T.gross, T.units))}${inSale ? ' · ' + chip(pct(div(T.gmv, T.units), div(B.gmv, B.units)), 'vs pre-sale') + ' vs pre-sale' : ''}`, 'asp', 'var(--web)')}
+    ${tile('Sales reversals', fR(T.rev), `${fR(per(T, 'rev'))}/day · ${fP(div(T.rev, T.rev + T.gmv), 1)} of sales before reversals`, 'rev', 'var(--bad)')}
+    ${tile(S.cat ? 'Orders (lines)' : 'Orders', fN(T.orders), `${fN(per(T, 'orders'))}/day · ${vs('orders')}${hasD() ? ` · incl. ${fN(T.draft)} Draft Orders` : ''}`, 'orders', 'var(--app)')}
+    ${tile(S.cat ? 'Traffic (web landings)' : 'Traffic', fN(T.traffic), S.cat ? 'sessions landing on this category' : (S.plat === 'web' ? 'web sessions' : S.plat === 'app' ? 'app openers' : 'web sessions + app openers'), 'traffic', 'var(--app)')}
+    ${tile(S.cat ? 'Landing conversion' : 'Conversion', fP(T.conv), inSale ? `${chip(pct(T.conv, B.conv))} vs pre-sale` : (S.cat ? 'completed checkouts ÷ landing sessions' : 'orders ÷ traffic'), 'conv', 'var(--good)')}
+    ${noCust ? '' : tile('Customers', fN(T.cust), 'sum of daily customers', 'cust', 'var(--ink)')}
+    ${noCust ? '' : tile('New customers', fN(T.newC), `${fP(div(T.newC, T.cust), 0)} of customers`, 'newC', 'var(--good)')}
+    ${noCust ? '' : tile('Returning customers', fN(T.retC), `${fP(div(T.retC, T.cust), 0)} of customers`, 'retC', 'var(--flash)')}
+  </div>`;
+  h += `<section class="panel chart"><div class="panel-head"><h2>GMV (net sales) per day${S.cat ? ' · ' + esc(S.cat) : ''}</h2>
+    ${!S.cat && S.plat === 'total' ? '<div class="legend"><span><b style="background:var(--web)"></b>Web</span><span><b style="background:var(--app)"></b>App</span><span><b style="background:var(--other)"></b>Subscriptions</span><span><b style="background:var(--flash);opacity:.35"></b>Flash Sale day</span></div>' : ''}</div>${gmvChart(dl)}</section>`;
+  const mxG = Math.max(1, ...st.map(s => (s && fin(s.gmv) ? s.gmv : 0)));
+  const td = (v, f = fN) => `<td class="n">${fin(v) ? f(v) : '<span class="muted">–</span>'}</td>`;
+  const rows = dl.map((d, i) => { const s = st[i]; const ph = phase(d);
+    const lab = `<td>${fdw(d)}${ph ? `<span class="pill ${ph[0]}">${ph[1]}</span>` : ''}${d === today ? '<span class="pill part">so far</span>' : ''}</td>`;
+    if (!s) return `<tr>${lab}<td class="n na" colspan="${hasD() ? 12 : 11}">Not loaded</td></tr>`;
+    return `<tr>${lab}${td(s.units)}${td(s.gross, fR)}<td class="n bar-cell"><i style="width:${fin(s.gmv) ? Math.round(s.gmv / mxG * 100) : 0}%"></i><span>${fR(s.gmv)}</span></td>${td(div(s.gmv, s.units), fR)}${td(s.rev, fR)}${td(s.orders)}${hasD() ? td(s.draft) : ''}${td(s.traffic)}${td(s.conv, v => fP(v))}${td(s.cust)}${td(s.newC)}${td(s.retC)}</tr>`; }).join('');
+  const bn = B.n || 1;
+  h += `<section class="panel"><div class="panel-head"><h2>Day on day${S.cat ? ' · ' + esc(S.cat) : ''}</h2><span class="small muted">${S.plat === 'total' ? 'Web + app + subscriptions + Draft Orders (matches Shopify)' : S.plat === 'web' ? 'Web' : 'App'}</span></div>
+    <div class="tw"><table><thead><tr><th>Day</th><th class="n">Units</th><th class="n">GMV (gross sales)</th><th class="n">GMV (net sales)</th><th class="n">ASP</th><th class="n">Sales reversals</th><th class="n">Orders</th>${hasD() ? '<th class="n">of which Draft Orders</th>' : ''}<th class="n">Traffic</th><th class="n">Conversion %</th><th class="n">Customers</th><th class="n">New</th><th class="n">Returning</th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot><tr><td>Range total</td>${td(T.units)}${td(T.gross, fR)}<td class="n">${fR(T.gmv)}</td>${td(div(T.gmv, T.units), fR)}${td(T.rev, fR)}${td(T.orders)}${hasD() ? td(T.draft) : ''}${td(T.traffic)}${td(T.conv, v => fP(v))}${td(T.cust)}${td(T.newC)}${td(T.retC)}</tr>
+    ${B.n ? `<tr class="base"><td>Pre-sale avg/day</td>${td(B.units / bn)}${td(B.gross / bn, fR)}<td class="n">${fR(B.gmv / bn)}</td>${td(div(B.gmv, B.units), fR)}${td(B.rev / bn, fR)}${td(B.orders / bn)}${hasD() ? td(B.draft / bn) : ''}${td(B.traffic / bn)}${td(B.conv, v => fP(v))}${td(B.cust / bn)}${td(B.newC / bn)}${td(B.retC / bn)}</tr>` : ''}</tfoot></table></div>
+    <p class="note">${S.cat ? '<b>Category view:</b> orders count order lines for this category; traffic and conversion come from web sessions that landed on its product or collection pages. Customer counts exist only for the whole store. ' : ''}GMV is shown two ways: gross sales (before discounts and returns) and net sales (after them), ex-GST, as Shopify reports them. Sales reversals = returns and refunds booked that day, whichever day the order was placed. Customers add up each day's customers, so someone who orders on two days counts twice. ${hasD() ? 'Orders, units, GMV and customers include Draft Orders (orders created by hand in Shopify admin), so they match the Shopify totals. ' : ''}Conversion = orders ÷ traffic${hasD() ? ', leaving out Draft Orders because they have no website or app session' : ''}. Traffic excludes sessions that landed on the Parenting tools pages.</p></section>`;
+  h += `<div class="stack">${catBlocks(dl)}</div>`;
+  return h;
+}
+
+/* ---------- render: comparison ----------
+   Default day is D0 (today). Today is a part day, so its comparison value is the PROJECTED full day:
+   units and GMV from the category projection, traffic = landings so far ÷ the usual share of a day's
+   web sessions in by the time of the pull. Any earlier day compares actual full days. */
+function cmpModel() {
+  const [a, d1, d7, lm] = cmpDays();
+  const isT = a === today;
+  const cols = [[a, isT ? 'D0' : 'Selected day'], [d1, 'D-1'], [d7, 'D-7'], [lm, 'Same date last month']];
+  const cdm = cols.map(([d]) => catDay(d)), lpm = cols.map(([d]) => lpDay(d));
+  const extras = [MIXED, UNMAPPED_PAGES, OTHER_PAGES];
+  const cats = new Set(); cdm.forEach(m => m && Object.keys(m).forEach(c => cats.add(c)));
+  lpm.forEach(l => l && Object.keys(l).forEach(c => { if (!extras.includes(c)) cats.add(c); }));
+  let list = [...cats].filter(c => c !== NO_SKU);
+  if (S.cat) list = list.filter(c => c === S.cat);
+  const raw = (i, c, k) => k === 'traffic' ? (lpm[i] ? (lpm[i][c] ? lpm[i][c][0] : 0) : NaN) : (cdm[i] ? (cdm[i][c] ? cdm[i][c][k] : 0) : NaN);
+  const pa = isT ? projAll() : null, M = isT ? projModel() : null, D = S.days[today];
+  const fS = isT && M && D && D.fetchedAt ? dayShare(M.cum[K.s], D.fetchedAt) : NaN;
+  const fRv = isT && M && D && D.fetchedAt ? dayShare(M.cum[K.r], D.fetchedAt) : NaN;
+  const cur = (c, k) => {
+    if (!isT) return raw(0, c, k);
+    if (k === 'traffic') { const v = raw(0, c, k); return fin(v) && fS > 0.05 ? Math.max(v, v / fS) : NaN; }
+    if (k === 'rev') { const v = raw(0, c, k); return fin(v) && fRv > 0.05 ? Math.max(v, v / fRv) : NaN; }
+    if (!pa) return NaN;
+    const x = pa.cats.get(c); return x ? (k === 'units' ? x.d0U : k === 'gross' ? x.d0GG : x.d0G) : 0;
+  };
+  const missing = cols.filter(([d], i) => !cdm[i] || (!lpm[i] && S.plat !== 'app')).map(([d]) => fd(d));
+  return { a, d1, d7, lm, isT, cols, list, raw, cur, missing, projReady: !isT || !!pa, asOf: pa ? pa.asOf : (D && D.fetchedAt) || 0 };
+}
+function renderCmp() {
+  const C = cmpModel(), { a, d1, d7, lm, isT, cols, list } = C;
+  const block = (k, title, f, inv) => {
+    const rows = list.map(c => ({ c, sf: C.raw(0, c, k), v: [C.cur(c, k), C.raw(1, c, k), C.raw(2, c, k), C.raw(3, c, k)] })).sort((x, y) => (y.v[0] || y.sf || 0) - (x.v[0] || x.sf || 0));
+    const sum = g => rows.reduce((s, r) => { const x = g(r); return fin(x) ? s + x : s; }, 0);
+    const okc = g => rows.some(r => fin(g(r)));
+    const tot = { c: 'All categories', sf: okc(r => r.sf) ? sum(r => r.sf) : NaN, v: [0, 1, 2, 3].map(i => (okc(r => r.v[i]) ? sum(r => r.v[i]) : NaN)) };
+    const val = v => (fin(v) ? f(v) : '<span class="muted">–</span>');
+    const line = r => `<tr><td>${esc(r.c)}</td>${isT ? `<td class="n">${val(r.sf)}</td>` : ''}<td class="n"><b>${val(r.v[0])}</b></td>${[1, 2, 3].map(i => `<td class="n">${val(r.v[i])}</td><td class="n">${chip(pct(r.v[0], r.v[i]), `${cols[i][1]} (${fdw(cols[i][0])}): ${fin(r.v[i]) ? f(r.v[i]) : 'no data'}`, inv)}</td>`).join('')}</tr>`;
+    return `<section class="panel"><div class="panel-head"><h2>${title}</h2><span class="small muted">${k === 'traffic' ? 'Web sessions landing on the category\'s pages' : k === 'gmv' ? 'Net sales (after discounts and returns), ex-GST' : k === 'gross' ? 'Gross sales (before discounts and returns), ex-GST' : k === 'rev' ? 'Returns and refunds booked that day; a rise is red' : 'Units sold'}</span></div>
+      <div class="tw"><table><thead><tr><th>Category</th>${isT ? `<th class="n">D0 so far</th><th class="n">D0 projected</th>` : `<th class="n">${fd(a)}</th>`}<th class="n">D-1 · ${fd(d1)}</th><th class="n">vs D-1</th><th class="n">D-7 · ${fd(d7)}</th><th class="n">vs D-7</th><th class="n">Last month · ${fd(lm)}</th><th class="n">vs last month</th></tr></thead>
+      <tbody>${rows.map(line).join('') || `<tr><td colspan="${isT ? 9 : 8}" class="empty">No data yet.</td></tr>`}</tbody>
+      ${S.cat ? '' : `<tfoot>${line(tot)}</tfoot>`}</table></div></section>`;
+  };
+  const card = (k, label, f, inv) => {
+    const ok = i => list.some(c => fin(i < 0 ? C.raw(0, c, k) : i === 0 ? C.cur(c, k) : C.raw(i, c, k)));
+    const sm = i => list.reduce((s, c) => { const x = i < 0 ? C.raw(0, c, k) : i === 0 ? C.cur(c, k) : C.raw(i, c, k); return fin(x) ? s + x : s; }, 0);
+    return `<div class="cmp-card"><span class="eyebrow">${label}${S.cat ? ' · ' + esc(S.cat) : ''}</span><span class="num" style="font-size:22px">${ok(0) ? f(sm(0)) : '–'}</span>
+      ${isT ? `<span class="small muted">projected full day · ${ok(-1) ? f(sm(-1)) : '–'} so far</span>` : ''}
+      ${[1, 2, 3].map(i => `<div class="row"><span class="muted">${cols[i][1]} (${fd(cols[i][0])}) ${ok(i) ? f(sm(i)) : '–'}</span>${chip(ok(i) && ok(0) ? pct(sm(0), sm(i)) : NaN, '', inv)}</div>`).join('')}</div>`;
+  };
+  const what = isT
+    ? `<b>D0 · ${fdw(a)}</b> (today, data as of ${C.asOf ? hhmm(C.asOf) : '–'} IST, updating every 2 minutes). Today is still running, so each category is compared on its <b>projected full day</b> against the full day before (<b>${fdw(d1)}</b>), the same weekday last week (<b>${fdw(d7)}</b>) and the same date last month (<b>${fdw(lm)}</b>). "So far" is shown alongside.`
+    : `Each category on <b>${fdw(a)}</b> against the day before (<b>${fdw(d1)}</b>), the same weekday last week (<b>${fdw(d7)}</b>) and the same date last month (<b>${fdw(lm)}</b>).`;
+  return `<section class="panel"><div class="panel-head"><h2>Category comparison${isT ? ' · D0' : ''}</h2>
+      <span style="display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap"><label class="small muted" for="cmpDate">Compare day <input type="date" id="cmpDate" value="${a}" max="${today}" style="background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:3px 7px"></label>${isT ? '' : '<button class="btn" id="cmpToday">Back to D0 (today)</button>'}</span></div>
+      <p class="note">${what} Pick any other day to compare actual full days.${C.missing.length ? ` <span class="down">Still loading: ${C.missing.join(', ')}.</span>` : ''}${isT && !C.projReady ? ' <span class="down">Projection still loading; projected columns fill in shortly.</span>' : ''}</p>
+      <div class="cmp-grid">${card('units', 'Units', fN)}${card('gross', 'GMV (gross sales)', fR)}${card('gmv', 'GMV (net sales)', fR)}${card('rev', 'Sales reversals', fR, true)}${S.plat === 'app' ? '' : card('traffic', 'Traffic', fN)}</div></section>
+    ${block('units', 'Units', fN)}${block('gross', 'GMV (gross sales)', fR)}${block('gmv', 'GMV (net sales)', fR)}${block('rev', 'Sales reversals', fR, true)}${S.plat === 'app' ? '<section class="panel"><p class="note">Traffic by category is web only. Switch Platform to Total or Web to see it.</p></section>' : block('traffic', 'Traffic', fN)}`;
+}
+
+/* ---------- render: sources ---------- */
+function renderSrc() {
+  const g = Object.keys(S.ga4).sort();
+  return `<section class="panel"><h2>Where each number comes from</h2>
+    <dl class="defs">
+      <dt>Orders, AOV, net sales</dt><dd>Shopify, live (ShopifyQL, store time IST). Web = Online Store channel. App = Appmaker mobile app channel. Totals include Draft Orders (orders created by hand in Shopify admin), so they match Shopify; conversion and the Funnel tab leave them out. AOV is Shopify's own average order value per channel.</dd>
+      <dt>Web users, sessions, add to cart, checkout</dt><dd><b>Parenting tools are excluded:</b> sessions that landed on /pages/parenting-tools or any of the 18 tools it links to (gender predictor, nakshatra, numerology, baby names and so on) are left out of every sessions, traffic and conversion figure. Shopify sessions report: online store visitors, sessions, sessions with cart additions, sessions that reached checkout. Shopify under-records checkout on some days, so read the web checkout step as a floor.</dd>
+      <dt>App users, add to cart, checkout</dt><dd>Linkrunner funnel per day: people who opened the app that day, then added to cart, then started checkout (by device). There is no app session event, so app sessions show app openers.</dd>
+      <dt>Category and SKU</dt><dd>Shopify order lines per SKU per day, mapped to category with the SKU map from the master marketing calendar (v24).</dd>
+      <dt>GA4</dt><dd>No live GA4 link: the Supermetrics GA4 connector's trial ended on 22 Jul 2026. Import GA4 exports below to switch the funnel to GA4.</dd>
+      <dt>Refresh</dt><dd>Opening the page pulls any missing day and re-pulls today and yesterday. Older days are saved on the page after their first pull, so teammates without the Shopify or Linkrunner connectors still see them.</dd>
+    </dl></section>
+  <section class="panel"><h2>Import a GA4 export</h2>
+    <p class="note">In GA4, Explore, Free form: rows <b>Date</b> (not Day) and <b>Platform</b>; values <b>Total users, Sessions, Add to carts, Checkouts, Transactions</b>. Export as CSV. Web rows fill the web funnel, Android and iOS rows fill the app funnel. Re-importing a day replaces it.</p>
+    <div><label class="btn" for="ga4file" style="display:inline-block">Choose GA4 CSV</label> <input type="file" id="ga4file" accept=".csv,text/csv" style="position:absolute;opacity:0;width:1px;height:1px"> <span id="ga4msg" class="small muted">${g.length ? `${g.length} day(s) imported, ${fd(g[0])} to ${fd(g[g.length - 1])}.` : 'No GA4 data yet.'}</span></div>
+  </section>`;
+}
+
+function emptyState() {
+  const loading = S.busy || [SHOP, LR].some(k => S.status[k].st === 'load') || (S.mcp && S.status[SHOP].st === 'idle');
+  return `<section class="panel"><div class="empty">${loading ? `Loading ${fd(S.from)} to ${fd(clampToday(S.to))} from Shopify and Linkrunner…` :
+    S.from > today ? `Nothing to show yet: ${fd(S.from)} is in the future.` :
+    'No data for this range yet. Live data needs the Shopify and Linkrunner connectors; once anyone with them opens the page, the days are saved here for everyone.'}</div></section>`;
+}
+
+function renderAll() {
+  renderChrome();
+  const main = document.getElementById('main');
+  const sy = document.scrollingElement.scrollTop;
+  main.innerHTML = S.tab === 'd0' ? renderD0() : S.tab === 'sum' ? renderSum() : S.tab === 'cmp' ? renderCmp() : S.tab === 'cat' ? renderCat() : S.tab === 'sku' ? renderSku() : S.tab === 'ret' ? renderReturns() : S.tab === 'src' ? renderSrc() : renderDay();
+  document.scrollingElement.scrollTop = sy;
+}
+
+/* ---------- Excel export (same sheets as the scheduled workbook) ---------- */
+let xlsxLib = null;
+function loadXlsx() {
+  if (window.XLSX) return Promise.resolve(window.XLSX);
+  if (xlsxLib) return xlsxLib;
+  xlsxLib = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = () => res(window.XLSX); s.onerror = () => { xlsxLib = null; rej(new Error('lib')); };
+    document.head.appendChild(s);
+  });
+  return xlsxLib;
+}
+const XF = { n: '#,##0', r: '"₹"#,##0', p: '0.00%', p1: '0.0%', d: 'dd-mmm-yyyy' };
+function xsheet(X, head, rows, fmts, widths) {
+  const clean = v => (typeof v === 'number' && !isFinite(v)) ? null : v;
+  const aoa = [head, ...rows.map(r => r.map((v, i) => fmts[i] === 'd' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T00:00:00Z') : clean(v)))];
+  const ws = X.utils.aoa_to_sheet(aoa, { cellDates: true });
+  for (let r = 1; r < aoa.length; r++) fmts.forEach((f, c) => { const cell = ws[X.utils.encode_cell({ r, c })]; if (cell && XF[f]) cell.z = XF[f]; });
+  ws['!cols'] = head.map((h, i) => ({ wch: (widths && widths[i]) || Math.max(11, Math.min(24, h.length + 3)) }));
+  ws['!autofilter'] = { ref: X.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: Math.max(1, rows.length), c: head.length - 1 } }) };
+  return ws;
+}
+/* several titled tables stacked on one sheet */
+function blocksSheet(X, blocks, widths) {
+  const aoa = [], z = [];
+  for (const b of blocks) {
+    if (b.title) { aoa.push([b.title]); z.push([]); }
+    if (b.head) { aoa.push(b.head); z.push([]); }
+    for (const r of (b.rows || [])) {
+      aoa.push(r.map((v, i) => b.fmts && b.fmts[i] === 'd' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T00:00:00Z') : (typeof v === 'number' && !isFinite(v)) ? null : v));
+      z.push(b.fmts || []);
+    }
+    if (!(blocks[blocks.indexOf(b) + 1] || {}).tight) { aoa.push([]); z.push([]); }
+  }
+  const ws = X.utils.aoa_to_sheet(aoa, { cellDates: true });
+  z.forEach((fm, r) => fm.forEach((f, c) => { const cell = ws[X.utils.encode_cell({ r, c })]; if (cell && XF[f]) cell.z = XF[f]; }));
+  ws['!cols'] = widths.map(w => ({ wch: w }));
+  return ws;
+}
+function summarySheetBlocks(dl) {
+  const st = dl.map(dayStat);
+  const T = sumStats(st);
+  const blocks = [
+    { title: `Big Festive Days · Summary · ${fd(S.from)} to ${fd(clampToday(S.to))}${S.cat ? ' · ' + S.cat : ''} · ${S.plat === 'total' ? 'web + app + subscriptions' : S.plat}` },
+    { title: 'Day on day', head: ['Day', 'Phase', 'Units', 'GMV (gross sales)', 'GMV (net sales)', 'Sales reversals', 'Orders', 'of which Draft Orders', 'Traffic', 'Conversion % (excl. Draft Orders)', 'Customers', 'New customers', 'Returning customers'],
+      fmts: ['d', '', 'n', 'r', 'r', 'r', 'n', 'n', 'n', 'p', 'n', 'n', 'n'],
+      rows: [...dl.map((d, i) => { const s = st[i] || {}; const p = phase(d); return [d, (p ? p[1] : 'Big Festive Days') + (d === today ? ' (so far)' : ''), s.units, s.gross, s.gmv, s.rev, s.orders, s.draft, s.traffic, s.conv, s.cust, s.newC, s.retC]; }),
+        ['Range total', '', T.units, T.gross, T.gmv, T.rev, T.orders, T.draft, T.traffic, T.conv, T.cust, T.newC, T.retC]] },
+  ];
+  const cds = dl.map(catDay), lps = dl.map(lpDay);
+  const cats = new Map(); cds.forEach(m => m && Object.entries(m).forEach(([c, x]) => cats.set(c, (cats.get(c) || 0) + (fin(x.gmv) ? x.gmv : 0))));
+  let list = [...cats].sort((a, b) => b[1] - a[1]).map(x => x[0]).filter(c => c !== NO_SKU);
+  if (S.cat) list = list.filter(c => c === S.cat);
+  const head = ['Category', ...dl.map(fd), 'Total'];
+  const mat = (key) => list.map(c => { const v = cds.map(m => (m ? (m[c] ? m[c][key] : 0) : null)); return [c, ...v, v.reduce((s, x) => s + (x || 0), 0)]; });
+  const extras = [MIXED, UNMAPPED_PAGES, OTHER_PAGES];
+  const tl = [...list];
+  lps.forEach(l => l && Object.keys(l).forEach(c => { if (!extras.includes(c) && !tl.includes(c) && (!S.cat || c === S.cat)) tl.push(c); }));
+  if (!S.cat) tl.push(...extras.filter(c => lps.some(l => l && l[c])));
+  const traf = tl.map(c => { const v = lps.map(l => (l ? (l[c] ? l[c][0] : 0) : null)); return [c, ...v, v.reduce((s, x) => s + (x || 0), 0)]; });
+  const conv = tl.filter(c => c !== OTHER_PAGES).map(c => { let n = 0, dd = 0; const v = lps.map(l => { const x = l && l[c]; if (!x || !x[0]) return null; n += x[2]; dd += x[0]; return x[2] / x[0]; }); return [c, ...v, dd ? n / dd : null]; });
+  const f = k => ['', ...dl.map(() => k), k];
+  blocks.push({ title: 'Category units, day on day', head, fmts: f('n'), rows: mat('units') });
+  blocks.push({ title: 'Category GMV (gross sales), day on day', head, fmts: f('r'), rows: mat('gross') });
+  blocks.push({ title: 'Category GMV (net sales), day on day', head, fmts: f('r'), rows: mat('gmv') });
+  blocks.push({ title: 'Category sales reversals, day on day', head, fmts: f('r'), rows: mat('rev') });
+  blocks.push({ title: 'Category traffic, day on day (web sessions landing on the category\'s pages)', head, fmts: f('n'), rows: traf });
+  blocks.push({ title: 'Category conversion, day on day (landing sessions that completed checkout / landing sessions)', head: [...head.slice(0, -1), 'Range'], fmts: f('p'), rows: conv });
+  return blocks;
+}
+function comparisonBlocks() {
+  const C = cmpModel(), { cols, list, isT } = C;
+  const head = ['Category', ...(isT ? ['D0 so far', 'D0 projected'] : [fd(cols[0][0])]), 'D-1 ' + fd(cols[1][0]), 'vs D-1', 'D-7 ' + fd(cols[2][0]), 'vs D-7', 'Last month ' + fd(cols[3][0]), 'vs last month'];
+  const ch = (x, y) => (fin(x) && fin(y) && y ? x / y - 1 : null);
+  const n = v => (fin(v) ? v : null);
+  const blocks = [{ title: `Category comparison for ${isT ? 'D0, ' : ''}${fdw(cols[0][0])}${isT ? ' (today: compared on its projected full day)' : ''}${S.cat ? ' · ' + S.cat : ''}` }];
+  for (const [k, t, fm] of [['units', 'Units', 'n'], ['gross', 'GMV (gross sales)', 'r'], ['gmv', 'GMV (net sales)', 'r'], ['rev', 'Sales reversals', 'r'], ['traffic', 'Traffic (web landing sessions)', 'n']]) {
+    const data = list.map(c => ({ c, sf: C.raw(0, c, k), v: [C.cur(c, k), C.raw(1, c, k), C.raw(2, c, k), C.raw(3, c, k)] })).sort((x, y) => (y.v[0] || y.sf || 0) - (x.v[0] || x.sf || 0));
+    const mk = r => [r.c, ...(isT ? [n(r.sf)] : []), n(r.v[0]), n(r.v[1]), ch(r.v[0], r.v[1]), n(r.v[2]), ch(r.v[0], r.v[2]), n(r.v[3]), ch(r.v[0], r.v[3])];
+    const rows = data.map(mk);
+    if (!S.cat && data.length) {
+      const sm = g => { const xs = data.map(g).filter(fin); return xs.length ? xs.reduce((x, y) => x + y, 0) : NaN; };
+      rows.push(mk({ c: 'All categories', sf: sm(r => r.sf), v: [0, 1, 2, 3].map(i => sm(r => r.v[i])) }));
+    }
+    blocks.push({ title: t, head, fmts: ['', ...(isT ? [fm] : []), fm, fm, 'p1', fm, 'p1', fm, 'p1'], rows });
+  }
+  return blocks;
+}
+function buildWorkbook(X) {
+  const wb = X.utils.book_new();
+  const dlAll = rangeDays().filter(d => S.days[d] && S.days[d].shop);
+  X.utils.book_append_sheet(wb, blocksSheet(X, summarySheetBlocks(dlAll), [30, 18, ...dlAll.map(() => 11), 12]), 'Summary');
+  X.utils.book_append_sheet(wb, blocksSheet(X, comparisonBlocks(), [30, 14, 15, 15, 10, 15, 10, 18, 13]), 'Comparison');
+  const V = d0View();
+  if (V) {
+    const head = lab => ['Metric', 'D0 ' + lab, ...V.cmp.flatMap(([d, l]) => [`${l} ${fd(d)}`, `vs ${l}`])];
+    const fm = f => ['', f, f, 'p1', f, 'p1', f, 'p1'];
+    const ch = (a, b) => (fin(a) && fin(b) && b ? a / b - 1 : null);
+    const ln = (r, cur, arr, pp) => [r.label, cur, ...arr.flatMap(v => [fin(v) ? v : null, pp ? (fin(cur) && fin(v) ? cur - v : null) : ch(cur, v)])];
+    const R = V.rows, kf = r => (r.key === 'gmv' || r.key === 'gross' || r.key === 'rev' ? 'r' : r.key === 'conv' ? 'p' : 'n');
+    const blocksA = [R.units, R.gross, R.gmv, R.rev, R.orders, R.cust, R.web].map(r => ({ head: null, rows: [ln(r, r.sf, r.same)], fmts: fm(kf(r)) }));
+    const blocksB = [R.units, R.gross, R.gmv, R.rev, R.orders, R.cust, V.traffic, V.conv].map(r => ({ rows: [ln(r, r.proj, r.full, r.key === 'conv')], fmts: r.key === 'conv' ? ['', 'p', 'p', 'p', 'p', 'p', 'p', 'p'] : fm(kf(r)) }));
+    const flat = (title, head_, bl) => [{ title, head: head_ }, ...bl.map(b => ({ rows: b.rows, fmts: b.fmts, tight: true }))];
+    X.utils.book_append_sheet(wb, blocksSheet(X, [
+      { title: `D0 (${fdw(today)}) · whole store · data as of ${hhmm(V.ts)} IST · GMV = net sales` },
+      ...flat(`So far today vs the same time (${hhmm(V.ts)}) on D-1, D-7 and the same date last month`, head('so far'), blocksA),
+      { title: '' },
+      ...flat('Full day: D0 projected vs what those days finished at (conversion change in percentage points)', head('projected'), blocksB),
+      { title: '' },
+      { title: 'Projection', head: ['', 'D0 so far', 'D0 projected', `${V.month} to yesterday`, `${V.month} end projected`], fmts: ['', 'n', 'n', 'n', 'n'], rows: [['Units', R.units.sf, R.units.proj, V.mU.mtd, V.mU.end]] },
+      { rows: [['GMV (gross sales)', R.gross.sf, R.gross.proj, V.mGG.mtd, V.mGG.end]], fmts: ['', 'r', 'r', 'r', 'r'], tight: true },
+      { rows: [['GMV (net sales)', R.gmv.sf, R.gmv.proj, V.mG.mtd, V.mG.end]], fmts: ['', 'r', 'r', 'r', 'r'], tight: true },
+      { title: 'How it is worked out', rows: [[PROJ_NOTE()]] },
+    ], [38, 16, 16, 12, 16, 12, 18, 14]), 'D0');
+  }
+  const pa = projAll();
+  if (pa) {
+    const m = pa.month;
+    const H = ['D0 units so far', 'D0 gross sales so far', 'D0 net sales so far', 'D0 projected units', 'D0 projected gross sales', 'D0 projected net sales', `${m} units to yesterday`, `${m} gross sales to yesterday`, `${m} net sales to yesterday`, `${m} end projected units`, `${m} end projected gross sales`, `${m} end projected net sales`];
+    const F = ['n', 'r', 'r', 'n', 'r', 'r', 'n', 'r', 'r', 'n', 'r', 'r'];
+    const v = x => [x.sfU, x.sfGG, x.sfG, x.d0U, x.d0GG, x.d0G, x.mtdU, x.mtdGG, x.mtdG, x.mU, x.mGG, x.mG];
+    const cats = [...pa.cats].filter(([k]) => k !== NO_SKU).sort((a, b) => b[1].mG - a[1].mG);
+    const skusP = [...pa.skus].sort((a, b) => b[1].mG - a[1].mG);
+    X.utils.book_append_sheet(wb, blocksSheet(X, [
+      { title: `Projection by category and SKU · D0 (${fdw(today)}) and ${m} end · data as of ${hhmm(pa.asOf)} IST · ${S.plat === 'total' ? 'web + app + subscriptions' : S.plat} · GMV = net sales` },
+      { title: 'How it is worked out', rows: [[PROJ_NOTE()]] },
+      { title: 'By category', head: ['Category', ...H], fmts: ['', ...F], rows: cats.map(([k, x]) => [k, ...v(x)]) },
+      { title: 'By SKU', head: ['SKU', 'Product', 'Category', ...H], fmts: ['', '', '', ...F], rows: skusP.map(([k, x]) => [k, x.title, catOf(k), ...v(x)]) },
+    ], [30, 44, 26, 14, 16, 14, 16, 16, 18, 16, 18]), 'Projection');
+  }
+  const dl = rangeDays().filter(d => S.days[d] && S.days[d].shop);
+  const phaseName = d => { const p = phase(d); return p ? p[1] : 'Big Festive Days'; };
+  const stamp = new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  // Summary
+  const T = sumMetrics(dl.map(d => dayMetrics(d, 'total', S.src)));
+  const bd = baseDays().filter(d => S.days[d] && S.days[d].shop);
+  const B = sumMetrics(bd.map(d => dayMetrics(d, 'total', S.src)));
+  const pd = (t) => t.n ? t.orders / t.n : NaN;
+  const summ = X.utils.aoa_to_sheet([
+    ['Big Festive Days Tracker'],
+    [`Range ${fd(S.from)} to ${fd(clampToday(S.to))} · downloaded ${stamp} · funnel source: ${S.src === 'ga4' ? 'GA4 import' : 'Shopify + Linkrunner'}`],
+    [],
+    ['Metric', 'Selected range', 'Pre-sale 17-30 Sep'],
+    ['Days with data', T.n, B.n], ['Orders', T.orders, B.orders], ['Orders per day', pd(T), pd(B)], ['Net sales (ex-GST)', T.net, B.net],
+    ['Conversion (orders / sessions + app openers)', T.conv, B.conv], ['AOV (Web)', T.aovW, B.aovW], ['AOV (App)', T.aovA, B.aovA],
+  ].map(r => r.map(v => (typeof v === 'number' && !isFinite(v)) ? null : v)));
+  [['7', 'n'], ['8', 'r'], ['9', 'p'], ['10', 'r'], ['11', 'r']].forEach(([r, f]) => ['B', 'C'].forEach(c => { if (summ[c + r]) summ[c + r].z = XF[f]; }));
+  summ['!cols'] = [{ wch: 44 }, { wch: 18 }, { wch: 18 }];
+  X.utils.book_append_sheet(wb, summ, 'Overview');
+  // Day-wise
+  const H = ['Day', 'Weekday', 'Phase', 'Users', 'Sessions', 'Add to cart', 'Checkout', 'Orders', 'Conversion %', 'AOV (Web)', 'AOV (App)', 'Net sales', 'Orders vs pre-sale avg'];
+  const F = ['d', '', '', 'n', 'n', 'n', 'n', 'n', 'p', 'r', 'r', 'r', 'p1'];
+  for (const [plat, name] of [['total', 'Day-wise Total'], ['web', 'Day-wise Web'], ['app', 'Day-wise App']]) {
+    const bt = sumMetrics(bd.map(d => dayMetrics(d, plat, S.src))); const ba = bt.n ? bt.orders / bt.n : NaN;
+    const rows = dl.map(d => { const m = dayMetrics(d, plat, S.src);
+      return [d, DOW[new Date(d + 'T00:00:00Z').getUTCDay()], phaseName(d) + (d === today ? ' (so far)' : ''), m.users, m.sessions, m.atc, m.checkout, m.orders, div(m.orders, m.sessions), m.aovW, m.aovA, m.net, d >= SALE.start && fin(ba) ? m.orders / ba - 1 : null]; });
+    const t = sumMetrics(dl.map(d => dayMetrics(d, plat, S.src)));
+    rows.push(['All days', '', '', t.users, t.sessions, t.atc, t.checkout, t.orders, t.conv, t.aovW, t.aovA, t.net, null]);
+    X.utils.book_append_sheet(wb, xsheet(X, H, rows, F, [13, 9, 20]), name);
+  }
+  // Category + SKU
+  const LH = ['Orders', 'Web orders', 'App orders', 'Units', 'Net sales', 'AOV (Web)', 'AOV (App)'];
+  const LF = ['n', 'n', 'n', 'n', 'r', 'r', 'r'];
+  const lc = r => [r.oW + r.oA + r.oO, r.oW, r.oA, r.units, r.nW + r.nA + r.nO, div(r.nW, r.oW), div(r.nA, r.oA)];
+  const agg = skuAgg(dl);
+  const byCat = new Map();
+  for (const r of agg) { const c = byCat.get(r.cat) || { oW: 0, oA: 0, oO: 0, nW: 0, nA: 0, nO: 0, units: 0, skus: 0 }; for (const k of ['oW', 'oA', 'oO', 'nW', 'nA', 'nO', 'units']) c[k] += r[k]; if (r.orders > 0) c.skus++; byCat.set(r.cat, c); }
+  const totNet = [...byCat.values()].reduce((s, c) => s + c.nW + c.nA + c.nO, 0) || 1;
+  const catRows = [...byCat].map(([c, r]) => [c, ...lc(r), (r.nW + r.nA + r.nO) / totNet, r.skus]).sort((a, b) => b[5] - a[5]);
+  X.utils.book_append_sheet(wb, xsheet(X, ['Category', ...LH, 'Share of net sales', 'SKUs sold'], catRows, ['', ...LF, 'p1', 'n'], [30]), 'Category');
+  const cdRows = [], sdRows = [];
+  for (const d of dl) {
+    const s = S.skus[d]; if (!s) continue;
+    const cm = new Map(), sm = new Map();
+    for (const [sku, title, ch, o, n, u] of s.rows) {
+      if (ch === 'd') continue;
+      const k = ch === 'w' ? 'W' : ch === 'a' ? 'A' : 'O';
+      for (const [m, key, extra] of [[cm, catOf(sku), null], [sm, sku, title]]) {
+        if (m === sm && !sku) continue;
+        const r = m.get(key) || { oW: 0, oA: 0, oO: 0, nW: 0, nA: 0, nO: 0, units: 0, title: extra };
+        r['o' + k] += o; r['n' + k] += n; r.units += u; if (extra && !r.title) r.title = extra; m.set(key, r);
+      }
+    }
+    for (const [c, r] of cm) cdRows.push([d, phaseName(d), c, ...lc(r)]);
+    for (const [sku, r] of sm) sdRows.push([d, sku, r.title || '', catOf(sku), ...lc(r)]);
+  }
+  X.utils.book_append_sheet(wb, xsheet(X, ['Day', 'Phase', 'Category', ...LH], cdRows, ['d', '', '', ...LF], [13, 18, 30]), 'Category by day');
+  const skuRows = agg.filter(r => r.sku).sort((a, b) => b.net - a.net).map(r => [r.sku, r.title || '', r.cat, r.orders, r.oW, r.oA, r.units, r.net, div(r.nW, r.oW), div(r.nA, r.oA)]);
+  X.utils.book_append_sheet(wb, xsheet(X, ['SKU', 'Product', 'Category', ...LH], skuRows, ['', '', '', ...LF], [16, 60, 26]), 'SKU');
+  X.utils.book_append_sheet(wb, xsheet(X, ['Day', 'SKU', 'Product', 'Category', ...LH], sdRows, ['d', '', '', '', ...LF], [13, 16, 60, 26]), 'SKU by day');
+  const notes = [
+    ['Orders, AOV, net sales', 'Shopify (IST). Web = Online Store, App = Appmaker app. Total includes subscription orders and Draft Orders (matches Shopify); the Funnel sheet leaves Draft Orders out. Net sales ex-GST, include that day\'s returns.'],
+    ['Web funnel', 'Shopify sessions report: visitors, sessions, sessions with cart additions, sessions that reached checkout.'],
+    ['App funnel', 'Linkrunner: people who opened the app, then added to cart, then started checkout. App Sessions = app openers (no app session event).'],
+    ['Conversion %', 'Orders / Sessions (Total: orders / (web sessions + app openers)), only over days that have a funnel.'],
+    ['Category and SKU', 'Shopify order lines, category from the master marketing calendar SKU map. An order with two SKUs from one category counts twice at category level.'],
+    ['Scheduled copy', 'A full workbook (17 Sep to today) is rebuilt every hour from 8 AM to 11 PM by the Claude scheduled task "Big Festive Days Excel refresh".'],
+    ['Downloaded', stamp],
+  ];
+  X.utils.book_append_sheet(wb, xsheet(X, ['Item', 'Definition'], notes, ['', ''], [28, 120]), 'Notes');
+  return wb;
+}
+async function downloadXlsx() {
+  const msg = document.getElementById('xlsxMsg'); const btn = document.getElementById('xlsx');
+  if (!rangeDays().some(d => S.days[d] && S.days[d].shop)) { msg.textContent = 'No data in this range yet.'; return; }
+  btn.disabled = true; msg.textContent = 'Building workbook…';
+  try {
+    const X = await loadXlsx();
+    const buf = X.write(buildWorkbook(X), { bookType: 'xlsx', type: 'array', cellDates: true });
+    const name = `Big-Festive-Days_${S.from}_to_${clampToday(S.to)}.xlsx`;
+    msg.textContent = '';
+    await S.downloads.save({ filename: name, data: new Blob([buf]) });
+    msg.textContent = 'Saved.';
+  } catch (e) {
+    const code = e && e.code;
+    msg.textContent = code === 'declined' ? 'Download cancelled.' :
+      code === 'rate_limited' ? 'A download prompt is already open. Finish it, then try again.' :
+      code === 'extension_not_enabled' || code === 'rejected_extension' ? 'Excel downloads are not available in this view.' :
+      e && e.message === 'lib' ? 'Could not load the Excel builder. Check your connection and try again.' :
+      'Download failed. Try again.';
+  } finally { btn.disabled = false; }
+}
+
+/* ---------- events ---------- */
+document.getElementById('xlsx').addEventListener('click', downloadXlsx);
+function setRange(a, b) {
+  if (!a || !b) return;
+  if (a > b) [a, b] = [b, a];
+  S.from = a; S.to = b;
+  renderAll();
+  dbLoadSkus().catch(() => {}).then(() => { renderAll(); refresh(false); });
+}
+document.getElementById('presets').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { const r = preset(b.dataset.p); setRange(r[0], r[1]); } });
+document.getElementById('strip').addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.disabled) setRange(b.dataset.d, b.dataset.d); });
+document.getElementById('from').addEventListener('change', e => setRange(e.target.value, S.to));
+document.getElementById('to').addEventListener('change', e => setRange(S.from, e.target.value));
+document.getElementById('plat').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { S.plat = b.dataset.v; renderAll(); } });
+document.getElementById('srcSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.disabled) { S.src = b.dataset.v; renderAll(); } });
+document.getElementById('refresh').addEventListener('click', () => refresh(false));
+document.getElementById('tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.tab = b.dataset.t; try { localStorage.setItem('bfd.tab2', S.tab); } catch (x) {} history.replaceState(null, '', '#' + S.tab); renderAll(); });
+const main = document.getElementById('main');
+const pickRow = tr => { if (tr.dataset.cat !== undefined) S.selCat = tr.dataset.cat; if (tr.dataset.sku !== undefined) S.selSku = tr.dataset.sku; renderAll(); };
+main.addEventListener('click', e => {
+  const tr = e.target.closest('tr.pick'); if (tr) return pickRow(tr);
+  const th = e.target.closest('th[data-sort]'); if (th) { S.skuSort = th.dataset.sort; renderAll(); }
+  const rk = e.target.closest('button[data-rk]'); if (rk) { S.rkind = rk.dataset.rk; renderAll(); }
+  if (e.target.id === 'cmpToday') { S.anchor = null; renderAll(); dbLoadSkus().catch(() => {}).then(() => { renderAll(); refresh(false); }); }
+});
+main.addEventListener('keydown', e => { const tr = e.target.closest('tr.pick'); if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pickRow(tr); } });
+let qt;
+main.addEventListener('input', e => {
+  if (e.target.id === 'skuQ') { clearTimeout(qt); const v = e.target.value; qt = setTimeout(() => { S.skuQ = v; renderAll(); const el = document.getElementById('skuQ'); if (el) { el.focus(); el.setSelectionRange(v.length, v.length); } }, 250); }
+});
+const catSel = document.getElementById('catSel');
+catSel.insertAdjacentHTML('beforeend', CATS.filter(c => c !== 'Unmapped').map(c => `<option>${esc(c)}</option>`).join(''));
+catSel.addEventListener('change', e => { S.cat = e.target.value; renderAll(); });
+main.addEventListener('change', e => {
+  if (e.target.id === 'cmpDate' && e.target.value) {
+    S.anchor = e.target.value >= today ? null : e.target.value;   // null = follow D0 (today)
+    renderAll(); dbLoadSkus().catch(() => {}).then(() => { renderAll(); refresh(false); });
+  }
+  if (e.target.id === 'ga4file' && e.target.files[0]) importGa4(e.target.files[0]);
+});
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (S.tab === 'day' || S.tab === 'sum') renderAll(); }, 200); });
+
+/* ---------- boot ---------- */
+renderAll();
+(async () => {
+  const has = window.claude && typeof window.claude.use === 'function';
+  const [db, mcp, user, downloads] = has ? await Promise.all([
+    window.claude.use('db').catch(() => null), window.claude.use('mcp').catch(() => null), window.claude.use('user').catch(() => null),
+    window.claude.use('downloads').catch(() => null),
+  ]) : [null, null, null, null];
+  S.db = db; S.mcp = mcp; S.downloads = downloads;
+  document.getElementById('xlsx').hidden = !downloads;
+  if (user && typeof user.can === 'function') { try { const c = await user.can('data.write'); if (c === false) S.canWrite = false; } catch (e) {} }
+  if (!db) S.status.db = { st: 'idle', msg: 'Not available in this view' };
+  await dbLoad();
+  followLive();
+  if (!mcp) {
+    const msg = 'Live data is not available in this view.';
+    S.status[SHOP] = { st: 'idle', msg: msg }; S.status[LR] = { st: 'idle', msg: msg };
+    renderAll(); return;
+  }
+  renderAll();
+  refresh(false);
+  // hourly refresh of today's numbers and the projection; reload after midnight IST so "today" moves on
+  let lastTick = Date.now();
+  const tick = () => {
+    if (nowIST().toISOString().slice(0, 10) !== today) { location.reload(); return; }
+    lastTick = Date.now(); dbLoadReturns().then(() => { if (S.tab === 'ret') renderAll(); }); refresh(false);
+  };
+  setInterval(tick, 60 * 60 * 1000);
+  setInterval(liveTick, LIVE_MS);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    if (Date.now() - lastTick > 60 * 60 * 1000) tick();
+    else if (Date.now() - (S.lastLive || S.lastRefresh || 0) > LIVE_MS) liveTick();
+  });
+})();
+})();
+</script>
+
+</body></html>

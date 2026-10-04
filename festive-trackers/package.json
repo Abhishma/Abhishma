@@ -1,0 +1,9 @@
+{
+  "name": "r4r-festive-trackers",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test automation/test/*.test.mjs connectors/ops-mcp/test/*.test.mjs"
+  }
+}

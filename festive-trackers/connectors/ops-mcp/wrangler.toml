@@ -1,0 +1,10 @@
+name = "r4r-ops-mcp"
+main = "src/worker.mjs"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+# Non-secret settings. Credentials go in secrets: see README.
+[vars]
+UNICOMMERCE_FACILITY = ""
+# Courier name as Unicommerce reports it -> ClickPost cp_id, e.g. {"Delhivery": 4, "Bluedart": 5}
+CLICKPOST_CP_IDS = "{}"
