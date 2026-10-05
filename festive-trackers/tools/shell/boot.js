@@ -49,8 +49,19 @@
     } catch (e) { return null; }
   }
 
+  /* On phones the sale-day strip scrolls sideways; bring today's cell into view whenever the strip is redrawn. */
+  function centreStrip() {
+    const strip = document.querySelector('#tk-mount .strip');
+    if (!strip || strip.scrollWidth <= strip.clientWidth) return;
+    const cell = strip.querySelector('.today') || strip.querySelector('.sel');
+    if (!cell || strip.dataset.tkCentred) return;
+    const x = cell.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
+    strip.scrollLeft = x - strip.clientWidth / 2 + cell.offsetWidth / 2;
+    strip.dataset.tkCentred = '1';
+  }
   function mount(cat) {
     $('tk-mount').appendChild($('tk-' + which + '-ui').content.cloneNode(true));
+    new MutationObserver(centreStrip).observe($('tk-mount'), { childList: true, subtree: true });
     const run = document.createElement('script');
     run.textContent = $('tk-' + which + '-js').textContent;
     document.body.appendChild(run);
