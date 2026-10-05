@@ -46,6 +46,38 @@ body { background: var(--paper, var(--tk-paper)); color: var(--ink, var(--tk-ink
 .tk-status.good { color: var(--tk-good) }
 .tk-preview { font-size: 13px; padding: 10px 12px; border-radius: 8px; background: var(--tk-paper); border: 1px solid var(--tk-line); overflow-wrap: anywhere }
 .tk-preview ul { margin: 6px 0 0; padding-left: 18px; columns: 2 220px }
+
+/* Phones. Both trackers' own styles load after this file, so these rules are scoped under #tk-mount to win. */
+@media (max-width: 640px) {
+  /* filter rows wrap instead of pushing the page sideways */
+  #tk-mount .seg { flex-wrap: wrap; max-width: 100% }
+  #tk-mount .seg button { flex: 1 1 auto; min-height: 40px; padding: 8px 12px }
+  #tk-mount .bar { gap: 10px }
+  #tk-mount .bar label { flex-wrap: wrap }
+  /* thumb-sized controls; 16px text stops iOS zooming into a field */
+  #tk-mount .btn { min-height: 40px; padding: 8px 14px }
+  #tk-mount input[type=date], #tk-mount select, #tk-mount input[type=search] { min-height: 40px; font-size: 16px }
+  /* tabs: one swipeable row */
+  #tk-mount .tabs { scrollbar-width: none; overscroll-behavior-x: contain }
+  #tk-mount .tabs::-webkit-scrollbar { display: none }
+  #tk-mount .tabs button { min-height: 44px; padding: 10px 14px }
+  /* the 39-day strip scrolls sideways with cells big enough to tap; it opens on today */
+  #tk-mount .strip { grid-template-columns: repeat(39, 28px); overflow-x: auto; scrollbar-width: none; padding-block: 3px }
+  #tk-mount .strip::-webkit-scrollbar { display: none }
+  #tk-mount .strip button { height: 34px }
+  /* wide tables: the first column stays put while the numbers scroll */
+  #tk-mount .tw th:first-child, #tk-mount .tw td:first-child { position: sticky; left: 0; z-index: 1; box-shadow: 1px 0 0 var(--line) }
+  #tk-mount .tw td:first-child { background: var(--card) }
+  #tk-mount .tw th:first-child { z-index: 2 }
+  #tk-mount td.title { max-width: 180px }
+  /* the shell's own controls */
+  .tk-cat > summary { min-height: 44px; align-items: center }
+  .tk-switch .tk-label { flex-basis: 100% }
+  .tk-switch [data-k] { flex: 1 1 0 }
+  .tk-btn { min-height: 40px }
+  .tk-src label { min-height: 40px; padding-inline: 4px }
+  .tk-field input[type=text], .tk-field textarea, .tk-field select { font-size: 16px; min-height: 40px }
+}
 </style>
 
 <div class="tk-shell">
@@ -5261,8 +5293,19 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TKCatalog;
     } catch (e) { return null; }
   }
 
+  /* On phones the sale-day strip scrolls sideways; bring today's cell into view whenever the strip is redrawn. */
+  function centreStrip() {
+    const strip = document.querySelector('#tk-mount .strip');
+    if (!strip || strip.scrollWidth <= strip.clientWidth) return;
+    const cell = strip.querySelector('.today') || strip.querySelector('.sel');
+    if (!cell || strip.dataset.tkCentred) return;
+    const x = cell.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
+    strip.scrollLeft = x - strip.clientWidth / 2 + cell.offsetWidth / 2;
+    strip.dataset.tkCentred = '1';
+  }
   function mount(cat) {
     $('tk-mount').appendChild($('tk-' + which + '-ui').content.cloneNode(true));
+    new MutationObserver(centreStrip).observe($('tk-mount'), { childList: true, subtree: true });
     const run = document.createElement('script');
     run.textContent = $('tk-' + which + '-js').textContent;
     document.body.appendChild(run);
