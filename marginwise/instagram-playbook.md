@@ -1,14 +1,14 @@
 # Marginwise Instagram Playbook
 
 Working plan for the Marginwise Instagram account. Lead magnets referenced here live in `lead-magnets/`.
-Last updated: 12 Oct 2026.
+Last updated: 12 Oct 2026. Content calendar: `instagram-content-calendar.xlsx`.
 
 ## 1. Positioning
 
 - Job of the account: discovery and trust for D2C and Shopify founders in India, the US and the UK, ending in a 30-minute call.
 - Angle: margin, not ROAS. Every competitor sells revenue and ROAS; Marginwise shows what the business keeps.
 - Language: English only. Indian context (rupee figures, Indian brands, COD and RTO) carries India topics.
-- Face: Abhimanyu on camera, Velmurgan for paid media. Collab posts with Abhimanyu's personal handle.
+- Format: faceless. No one on camera; every post shows the work itself (screen recordings of stores, calculators, audits) with Abhimanyu's voiceover. Text-only voiceover-free versions are the fallback. Collab posts with Abhimanyu's personal handle are optional.
 
 ## 2. Competitor review (11 Oct 2026)
 
@@ -47,7 +47,7 @@ Four Indian D2C agencies, checked from their public profiles and last 12 reels.
   > Free 30-min store review below.
 - Bio, once proof exists: replace line 2 with one verifiable number, for example "Margin up X% for [named client]", with permission.
 - Highlights: Store teardowns, Results (when available), How we work, Working with us (US/UK), COD/RTO, Book a call.
-- Pinned: (1) founder intro, (2) best teardown, (3) first client testimonial once recorded.
+- Pinned: (1) audit walkthrough, (2) best teardown, (3) first client testimonial once recorded.
 
 ## 4. Proof plan (new priority)
 
@@ -55,7 +55,7 @@ Without proof, reach will look like Smashed's. Build it in this order:
 
 1. **Teardown proof (week 1 onward):** every teardown shows skill without needing a client.
 2. **Before/after on your own work:** with permission, a past fix with the metric it moved. If no permission, describe the pattern without the brand.
-3. **First testimonial (target: within 60 days):** offer 2-3 brands the Growth Audit at a reduced fee in exchange for a recorded 60-second founder testimonial and permission to show the metric that moved.
+3. **First testimonial (target: within 60 days):** offer 2-3 brands the Growth Audit at a reduced fee in exchange for a written or voice testimonial (their face optional) and permission to show the metric that moved.
 4. **Monthly "what we fixed" roundup (once 2+ clients):** Brandslane's results format, but with margin and conversion, not ROAS.
 
 Do not use results from current or past employers. Check the employment-contract point before posting anything.
@@ -70,7 +70,7 @@ Do not use results from current or past employers. Check the employment-contract
 | 15% | Retention and email flow ratings | Both markets |
 | 10% | Proof and trust | Founder intro, how we work, testimonials, results roundups |
 
-Formats that worked in the competitor set and fit us: founder intro with service breakdown, saveable "save these N examples" lists, client stories, testimonials. Formats to avoid: memes, office life, holiday greetings, ad showcases with no numbers.
+Formats that worked in the competitor set and fit us (made faceless): service breakdown as a screen walkthrough, saveable "save these N examples" lists, client stories, testimonials. Formats to avoid: memes, office life, holiday greetings, ad showcases with no numbers.
 
 ## 6. First 15 reels
 
@@ -90,7 +90,7 @@ Reels 1-12 are unchanged from the original plan. Reels 13-15 are added from the 
 | 10 | India | [Indian Brand] is losing mobile buyers here. | AUDIT |
 | 11 | India | Your ₹1 lakh ad budget costs ₹1.18 lakh. | save |
 | 12 | India | Five questions to ask before you hire a D2C agency. | CHECKLIST |
-| 13 | Both | **Founder intro:** "Every agency sells you ROAS. I sell you margin. Here's the difference." 60s: who Abhimanyu is, the four services, who it is not for, how the first call works. | AUDIT |
+| 13 | Both | **Audit walkthrough (faceless intro):** "Every agency sells you ROAS. We sell you margin. This is what that looks like." Screen walkthrough of an audit on a demo store, ending on the four services. | AUDIT |
 | 14 | Both | **Saveable list:** "Save these 5 checkout pages before you redesign yours." Five public checkouts (mix of US/UK and Indian), one thing each does well. | save, AUDIT |
 | 15 | Both | **Proof without clients:** "I audited 10 D2C stores this month. The same 3 leaks showed up in 8 of them." Only post once you have actually run the audits; use the real count. | AUDIT |
 
@@ -98,7 +98,7 @@ Reels 1-12 are unchanged from the original plan. Reels 13-15 are added from the 
 
 | Week | Reels | Why |
 |---|---|---|
-| 1 | 13, 1, 8 | Founder intro first (pin it), then the margin message for both markets |
+| 1 | 13, 1, 8 | Audit walkthrough first (pin it), then the margin message for both markets |
 | 2 | 2, 9, 14 | Teardown, India margin, first saveable list |
 | 3 | 3, 10, 7 | CRO depth and the offshore-trust answer |
 | 4 | 4, 6, 12 | Retention, speed, agency checklist |

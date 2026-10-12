@@ -55,21 +55,21 @@ D = lambda m, dd: date(2026, m, dd)
 
 # Week 1
 post(D(10, 14), "Reel (60s)", "Proof and trust", "Both",
-     "Every agency sells you ROAS. I sell you margin.",
-     "1) Who I am: 10 years building D2C, omnichannel and loyalty products. 2) The four services in one line each. "
-     "3) Who it is not for: pre-launch ideas, single theme tweaks, guaranteed-results deals. "
-     "4) How the free 30-min call works and what you leave with.",
-     "Most agencies report ROAS. We report what you keep.\n\nMarginwise runs CRO, performance marketing, UX and app "
-     "development for D2C and Shopify brands in India, the US and the UK. Every engagement starts with a free "
-     "30-minute call: you leave with your top three leaks and a written summary.\n\nComment AUDIT and I will send "
-     "you a 2-minute teardown of your store.\n\n#d2c #shopify #ecommercegrowth",
+     "Every agency sells you ROAS. We sell you margin. This is what that looks like.",
+     "Screen walkthrough of a Marginwise audit on a demo store (your own Shopify dev store or a public store, no client data): "
+     "1) funnel numbers, 2) three leaks ranked by revenue impact, 3) the one fix to ship this week, 4) the written summary "
+     "the founder gets. Close on the four services and who it is not for.",
+     "Most agencies report ROAS. We report what you keep.\n\nThis is what a Marginwise audit looks like: your funnel, "
+     "your three biggest leaks ranked by revenue impact, one fix to ship this week, and a written summary.\n\n"
+     "CRO, performance marketing, UX and app development for D2C and Shopify brands in India, the US and the UK.\n\n"
+     "Comment AUDIT and we will send you a 2-minute teardown of your store.\n\n#d2c #shopify #ecommercegrowth",
      "AUDIT", "Free 2-min teardown (manual)", "No", "Yes", "Batch 1")
 post(D(10, 16), "Reel (45s)", "Margin math", "Intl",
      "Your ROAS says 3x. Your bank account disagrees.",
      "Show 3x ROAS on screen. Remove over-attribution, returns, COGS, shipping, payment fees one by one. "
      "Land on contribution after ads. End: track contribution margin per order, not ROAS.",
      "ROAS is not profit. Here is what a 3x ROAS can actually leave you with once over-attribution, returns, "
-     "product cost, shipping and fees come out.\n\nComment PROFIT and I will send you the calculator to run it on "
+     "product cost, shipping and fees come out.\n\nComment PROFIT and we will send you the calculator to run it on "
      "your own numbers.\n\n#shopify #metaads #dtc",
      "PROFIT", "marginwise-profit-calculator-usd.xlsx", "Yes", "Yes", "Batch 1")
 post(D(10, 17), "Carousel (7 slides)", "Margin math", "Both",
@@ -87,7 +87,7 @@ post(D(10, 18), "Reel (50s)", "COD/RTO", "India",
      "packaging, wasted ad spend. Three fixes: prepaid incentive, WhatsApp confirmation for risky COD, "
      "switch off COD only in high-RTO pin codes.",
      "Switching off COD everywhere is the wrong fix. Find the pin codes where it loses money and act only there.\n\n"
-     "Comment RTO and I will send you the sheet that ranks your states and pin codes by RTO cost.\n\n"
+     "Comment RTO and we will send you the sheet that ranks your states and pin codes by RTO cost.\n\n"
      "#d2cindia #rto #shopifyindia",
      "RTO", "marginwise-rto-finder.xlsx", "Yes", "Yes", "Batch 1")
 
@@ -103,7 +103,7 @@ post(D(10, 22), "Reel (60s)", "Margin math", "India",
      "Your revenue is growing. Your profit isn't. Here's why.",
      "Break down a ₹1,000 order: GST, COGS, ad cost per order, shipping, RTO, gateway fees, discounts. "
      "Land on contribution margin per order. Investors now ask for this, not GMV.",
-     "Contribution margin per order, explained with a real ₹1,000 example.\n\nComment MARGIN and I will send you "
+     "Contribution margin per order, explained with a real ₹1,000 example.\n\nComment MARGIN and we will send you "
      "the calculator, including a what-if for pushing more buyers to prepaid.\n\n#d2cindia #unitEconomics #founders",
      "MARGIN", "marginwise-margin-calculator-inr.xlsx", "No", "No", "Batch 1")
 post(D(10, 24), "Carousel (8 slides)", "Margin math", "India",
@@ -164,7 +164,7 @@ post(D(11, 5), "Reel (45s)", "CRO", "Both",
      "Deloitte/Google study of 37 brands. Run a public store through PageSpeed. Show the three usual culprits: "
      "app scripts, oversized images, third-party widgets. Fix speed before buying more traffic.",
      "Fix speed before you buy more traffic. The three culprits on most Shopify stores.\n\n"
-     "Comment SPEED and I will check your store.\n\n#shopifyspeed #cro #ecommerce",
+     "Comment SPEED and we will check your store.\n\n#shopifyspeed #cro #ecommerce",
      "SPEED", "Speed check (manual)", "No", "No", "Batch 2")
 post(D(11, 7), "Carousel (8 slides)", "CRO", "Intl",
      "Black Friday checkout checklist: 7 fixes before 27 November",
@@ -204,12 +204,135 @@ post(D(11, 14), "Carousel (7 slides)", "Retention", "Both",
      "Comment FLOWS for the full checklist.\n\n#retention #emailmarketing #d2c",
      "FLOWS", "marginwise-post-purchase-email-checklist.pdf", "No", "No", "Design")
 post(D(11, 15), "Reel (60s)", "Proof and trust", "Both",
-     "I audited [N] D2C stores this month. The same 3 leaks showed up in [X] of them.",
+     "We audited [N] D2C stores this month. The same 3 leaks showed up in [X] of them.",
      "Only post if the audits are real; use the actual count. Three most common leaks, anonymised. "
      "If fewer than 5 audits are done, swap for a second Indian teardown.",
      "What we keep finding when we audit D2C stores, with no names attached.\n\nComment AUDIT to get yours.\n\n"
      "#d2c #cro #ecommercegrowth",
      "AUDIT", "Free 2-min teardown (manual)", "No", "No", "Batch 3")
+
+
+# ------------------------------------------------------------------ faceless production steps
+POST_SETTINGS = ("Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, "
+                 "publish at 19:30 IST{trial}. Reply to every comment in the first hour.")
+
+
+def reel_steps(record, script, edit_extra="", trial=False):
+    t = " as a Trial Reel (share to followers only if 3-second hold beats your average)" if trial else ""
+    return "\n".join([
+        "1. Record: " + record,
+        "2. Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. " + script,
+        "3. Voiceover: record in a quiet room on your phone (Voice Memos or CapCut > Audio > Record). One clean take; no AI voice.",
+        "4. Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), "
+        "hook text on screen for the first 2 seconds. " + edit_extra,
+        "5. Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.",
+        "6. " + POST_SETTINGS.format(trial=t),
+    ])
+
+
+def carousel_steps(design):
+    return "\n".join([
+        "1. Canva > Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.",
+        "2. Slide copy: take it from the Outline column. Max 25 words per slide. " + design,
+        "3. Put a source line (small, bottom) on every slide with a statistic.",
+        "4. Last slide: CTA with the comment keyword in large text.",
+        "5. Export as PNG, upload in order, add alt text to slide 1.",
+        "6. " + POST_SETTINGS.format(trial=""),
+    ])
+
+
+STEPS = {
+    D(10, 14): reel_steps(
+        "Screen-record (desktop, QuickTime or OBS, 1080p) a walkthrough of an audit on a demo store: GA4 funnel, "
+        "three leaks marked in a doc, the one-page written summary. Use a Shopify dev store or public pages only.",
+        "Open with: 'This is what we look at before we touch your ads.'",
+        "Zoom (keyframes) on each leak as you name it; red box highlights. Pin this post after publishing."),
+    D(10, 16): reel_steps(
+        "Screen-record the PROFIT calculator (ROAS to Profit tab) at 150% zoom, typing in a 3x ROAS store and "
+        "watching contribution turn negative.",
+        "Say each cost as it is subtracted; end on the break-even ROAS cell.",
+        "Highlight the cell being changed each time; end frame on the verdict cell.", trial=True),
+    D(10, 17): carousel_steps("Big number top half, one-line meaning and 'what to fix' bottom half."),
+    D(10, 18): reel_steps(
+        "Screen-record the RTO finder with sample orders loaded: the By State tab sorting by cost, one state flagged "
+        "'Restrict COD or verify'.",
+        "Use the Shipway 26% vs under 2% figure in the first line.",
+        "Text callout for each of the three fixes as you say it.", trial=True),
+    D(10, 20): reel_steps(
+        "Phone screen-record (iOS Control Centre > Screen Recording, or Android quick settings) the brand's mobile "
+        "product page: scroll slowly, add to cart, open cart. 40 seconds, no notifications (Do Not Disturb on).",
+        "Two things it does well, then the one leak and what it costs.",
+        "Red circle on the leak; slow-zoom into it. Blur any personal data.", trial=True),
+    D(10, 22): reel_steps(
+        "Screen-record the MARGIN calculator, Margin per Order tab, stepping through each cost line of a ₹1,000 order.",
+        "One sentence per cost line; end on contribution per order.",
+        "Running total as on-screen text in the top corner."),
+    D(10, 24): carousel_steps("One cost per slide with the running total shown on every slide."),
+    D(10, 25): reel_steps(
+        "Phone screen-record five public checkouts (stop before payment). 6-8 seconds each.",
+        "One line per checkout: what it does well.",
+        "Numbered label 1-5 on screen; 'Save this' text on the final frame.", trial=True),
+    D(10, 27): reel_steps(
+        "Phone screen-record a checkout showing a surprise shipping cost, a forced account screen and a long form "
+        "(public stores).",
+        "Lead with Baymard's 70.22%; one fix per problem.",
+        "Split screen: problem on top, fix described as text below.", trial=True),
+    D(10, 29): reel_steps(
+        "Phone screen-record the Indian brand's mobile product page: price, delivery date, COD/prepaid messaging, size guide.",
+        "Two strengths, one leak, the fix.",
+        "Red circle on the leak; ₹ figures as on-screen text."),
+    D(10, 31): carousel_steps("Slide 3 shows a redacted sample weekly update; build it from a blank template, not client data."),
+    D(11, 1): reel_steps(
+        "Screen-record the agency checklist PDF scrolling to the 'If the agency is in another country' section, "
+        "plus a world clock showing IST vs ET overlap.",
+        "Name the three worries, then the three answers.",
+        "Text list builds one line at a time."),
+    D(11, 3): reel_steps(
+        "Screenshot three order confirmation emails (your own inbox; blur names, order numbers, addresses).",
+        "Score each out of 10 with one reason; end on what a 9/10 has.",
+        "Big score number appears on each email; slow scroll down each one."),
+    D(11, 5): reel_steps(
+        "Screen-record pagespeed.web.dev running on a public Shopify store, then the opportunities list.",
+        "Lead with Deloitte/Google 0.1s = 8.4%; name the three culprits.",
+        "Highlight the three culprits in the report as you name them."),
+    D(11, 7): carousel_steps("One fix per slide with a small mock of the checkout element it refers to."),
+    D(11, 8): reel_steps(
+        "Screen-record the agency checklist PDF, top table (five questions, good answer, red flag).",
+        "Read each question and its red flag.",
+        "Highlight each row as you read it."),
+    D(11, 10): reel_steps(
+        "Screen-record the PROFIT calculator with COGS raised to show a tariff hit, then bundle/AOV changes recovering margin.",
+        "Before vs after landed cost; three levers.",
+        "Before/after numbers side by side as text.", trial=True),
+    D(11, 12): reel_steps(
+        "Screen-record the MARGIN calculator, GST on Ads tab, typing ₹1,00,000.",
+        "Explain reverse charge in one sentence; say 'confirm with your CA'.",
+        "Show '₹1,18,000 leaves your account' as the final frame."),
+    D(11, 14): carousel_steps("Each email slide shows when to send it and one line of example copy."),
+    D(11, 15): reel_steps(
+        "Screen-record a tally sheet of the audits you actually ran (store names hidden) and anonymised screenshots of the three leaks.",
+        "Use the real count. If under 5 audits, swap for a second Indian teardown and follow that recipe.",
+        "Counter animation for each leak's tally."),
+}
+
+SOP = [
+    ("Kit", "Laptop with QuickTime (Mac) or OBS (Windows) for desktop recording; phone screen recorder; CapCut (free); "
+            "Canva (free); wired earphones with mic or any USB mic. No camera needed."),
+    ("Before recording", "Do Not Disturb on, browser in a clean profile (no bookmarks, no logged-in personal accounts), "
+                         "zoom browser to 125-150% so text is readable on a phone."),
+    ("Recording", "Move the cursor slowly and pause 1 second on anything you will talk about. Record 20% more than you need."),
+    ("Voiceover", "Your own voice, phone held 15 cm away, in a room with soft furnishings. Read from the script, then do one "
+                  "natural take without reading; use whichever sounds less scripted. Instagram rewards real human content; "
+                  "skip AI voices."),
+    ("If you do not want to use your voice", "Text-only version: put each script line as a caption block (3-4 words per screen), "
+                                             "add quiet background music from CapCut's commercial library. Expect lower watch time; "
+                                             "test it as a Trial Reel first."),
+    ("Editing", "CapCut: 9:16, Auto captions, hook text in the first 2 seconds, cut every pause over half a second, "
+                "zoom and red-box highlights on whatever you name. Length 30-60 seconds."),
+    ("Privacy", "Blur names, emails, order numbers and any client data. Teardowns use public pages only."),
+    ("Carousels", "Canva 1080x1350, one template for all, max 25 words per slide, source line on stat slides, CTA slide last."),
+    ("After posting", "Reply to every comment in the first hour; check the auto-DM fired; log numbers in the Calendar tab after 7 days."),
+]
 
 # ------------------------------------------------------------------ workbook
 wb = Workbook()
@@ -222,10 +345,11 @@ lines = [
     ("t", "Five weeks, 20 posts: 3 reels and 1 carousel a week, plus Stories on 4 days. Built from "
           "marginwise/instagram-playbook.md."),
     ("h", "Tabs"),
-    ("t", "Calendar: every post with hook, outline, caption, CTA keyword and lead magnet. Fill the yellow "
+    ("t", "Calendar: every post with hook, outline, step-by-step production (faceless), caption, CTA keyword and lead magnet. Fill the yellow "
           "columns after posting."),
     ("t", "Stories: the weekly Stories rhythm."),
-    ("t", "Filming batches: what to film in each session so you are never filming the night before."),
+    ("t", "How to make (no face): the kit and the step-by-step method used for every post. No camera needed."),
+    ("t", "Recording batches: what to record in each session so you are never recording the night before."),
     ("t", "Weekly review: totals per week, calculated from the Calendar tab."),
     ("t", "Setup before 14 Oct: the checklist to finish before the first post."),
     ("h", "Rules"),
@@ -253,9 +377,9 @@ for kind, text in lines:
 
 cal = wb.create_sheet("Calendar")
 heads = ["Week", "Date", "Day", "IST", "US Eastern", "UK", "Format", "Pillar", "Market", "Hook (on screen)",
-         "Outline", "Caption", "CTA keyword", "Lead magnet", "Trial Reel first?", "Pin?", "Filming batch",
+         "Outline", "Step by step (no face)", "Caption", "CTA keyword", "Lead magnet", "Trial Reel first?", "Pin?", "Recording batch",
          "Status", "Post link", "Reach", "Saves", "Shares", "Comments", "DMs", "Calls booked"]
-widths = [7, 12, 6, 7, 9, 7, 15, 14, 8, 34, 50, 60, 12, 30, 10, 6, 11, 11, 24, 9, 8, 8, 10, 8, 9]
+widths = [7, 12, 6, 7, 9, 7, 15, 14, 8, 34, 45, 70, 55, 12, 30, 10, 6, 11, 11, 24, 9, 8, 8, 10, 8, 9]
 header(cal, 1, heads, widths)
 cal.freeze_panes = "D2"
 start = date(2026, 10, 12)
@@ -264,7 +388,7 @@ cal.add_data_validation(status_dv)
 for i, (d, fmt, pillar, market, hook, outline, caption, cta, magnet, trial, pin, batch) in enumerate(P, 2):
     week = (d - start).days // 7 + 1
     ist, et, uk = local_times(d)
-    vals = [week, d, d.strftime("%a"), ist, et, uk, fmt, pillar, market, hook, outline, caption, cta, magnet,
+    vals = [week, d, d.strftime("%a"), ist, et, uk, fmt, pillar, market, hook, outline, STEPS[d], caption, cta, magnet,
             trial, pin, batch, "Planned"]
     for col, v in enumerate(vals, 1):
         c = cal.cell(row=i, column=col, value=v)
@@ -274,17 +398,17 @@ for i, (d, fmt, pillar, market, hook, outline, caption, cta, magnet, trial, pin,
         if week % 2 == 0:
             c.fill = WEEKFILL
     cal.cell(row=i, column=2).number_format = "dd mmm yyyy"
-    status_dv.add(f"R{i}")
-    for col in range(19, 26):
+    status_dv.add(f"S{i}")
+    for col in range(20, 27):
         c = cal.cell(row=i, column=col)
         c.fill = INPUT
         c.font = f(color=BLUE)
         c.border = BOX
-        if col >= 20:
+        if col >= 21:
             c.number_format = "#,##0"
-    cal.row_dimensions[i].height = 150
+    cal.row_dimensions[i].height = 230
 last = len(P) + 1
-cal.auto_filter.ref = f"A1:Y{last}"
+cal.auto_filter.ref = f"A1:Z{last}"
 
 st = wb.create_sheet("Stories")
 header(st, 1, ["Day", "Story type", "What to post", "Sticker", "Why"], [10, 18, 60, 18, 45])
@@ -294,7 +418,7 @@ stories = [
     ("Wednesday", "Behind the scenes", "15 seconds from a teardown in progress: the store on screen, one thing you spotted. "
      "No client names.", "Question box: 'Want yours next?'", "Shows the work, feeds AUDIT requests."),
     ("Friday", "Reel share", "Share the week's best-performing reel with a one-line takeaway.", "Link: marginwise.in booking", "Stories with link stickers are the highest-intent surface."),
-    ("Sunday", "Answer", "Answer one question from DMs or the question box on camera (30-45s).", "None", "Turns DMs into content and shows you reply."),
+    ("Sunday", "Answer", "Answer one question from DMs as 2-3 text frames over a screen recording or screenshot of the relevant page.", "None", "Turns DMs into content and shows you reply."),
 ]
 for i, row in enumerate(stories, 2):
     for col, v in enumerate(row, 1):
@@ -304,11 +428,21 @@ for i, row in enumerate(stories, 2):
         c.border = BOX
     st.row_dimensions[i].height = 60
 
-fb = wb.create_sheet("Filming batches")
+sop = wb.create_sheet("How to make (no face)")
+header(sop, 1, ["Step", "How"], [26, 110])
+for i, (k, v) in enumerate(SOP, 2):
+    for col, val in ((1, k), (2, v)):
+        c = sop.cell(row=i, column=col, value=val)
+        c.font = f(bold=(col == 1))
+        c.alignment = WRAP
+        c.border = BOX
+    sop.row_dimensions[i].height = 45
+
+fb = wb.create_sheet("Recording batches")
 header(fb, 1, ["Batch", "Film on", "Posts covered", "What to prepare", "Time needed"], [10, 14, 50, 60, 12])
 batches = [
     ("Batch 1", date(2026, 10, 13), "Founder intro; ROAS 3x; COD RTO 26%; US/UK product page teardown; ₹1,000 order margin; 5 checkout pages",
-     "Pick the US/UK brand and 5 checkouts (public pages). Screen recordings done before filming. Same shirt across takes to batch-edit.", "3 hours"),
+     "Pick the US/UK brand and 5 checkouts (public pages). Record all screen captures first, then write and record every voiceover in one sitting.", "3 hours"),
     ("Batch 2", date(2026, 10, 24), "Cart abandonment; Indian teardown; offshore trust; email ratings; site speed; agency questions",
      "Pick the Indian brand and three order confirmation emails (your own inbox or public examples). Run PageSpeed on one public store.", "3 hours"),
     ("Batch 3", date(2026, 11, 7), "Tariffs; GST on ads; audit roundup",
@@ -335,8 +469,8 @@ for w in range(1, 6):
     wr.cell(row=r, column=1, value=w)
     wr.cell(row=r, column=2, value=start + timedelta(days=7 * (w - 1))).number_format = "dd mmm yyyy"
     wr.cell(row=r, column=3, value=f"=COUNTIF({rng('A')},A{r})")
-    wr.cell(row=r, column=4, value=f'=COUNTIFS({rng("A")},A{r},{rng("R")},"Posted")')
-    for col, src in zip("EFGHIJ", "TUVWXY"):
+    wr.cell(row=r, column=4, value=f'=COUNTIFS({rng("A")},A{r},{rng("S")},"Posted")')
+    for col, src in zip("EFGHIJ", "UVWXYZ"):
         wr[f"{col}{r}"] = f"=SUMIF({rng('A')},A{r},{rng(src)})"
         wr[f"{col}{r}"].number_format = "#,##0"
     wr[f"K{r}"] = f"=IFERROR(G{r}/E{r}*1000,0)"
