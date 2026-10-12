@@ -1,7 +1,7 @@
 # Marginwise Instagram Playbook
 
 Working plan for the Marginwise Instagram account. Lead magnets referenced here live in `lead-magnets/`.
-Last updated: 11 Oct 2026.
+Last updated: 12 Oct 2026.
 
 ## 1. Positioning
 
@@ -39,7 +39,7 @@ Four Indian D2C agencies, checked from their public profiles and last 12 reels.
 
 ## 3. Profile
 
-- Handle: confirm @marginwise is ours; fall back to @marginwise.in.
+- Handle: **@marginwise.in**. @marginwise is taken by another account (checked 12 Oct 2026); @marginwise.in matches the domain and reinforces the URL. Register it now. Unclaimed backups as of 12 Oct 2026: @marginwisehq, @marginwise.co, @marginwise_in.
 - Name field: `Marginwise | D2C CRO & Growth`
 - Bio, until client proof exists:
   > CRO, performance marketing and UX for D2C brands. India, US, UK.
@@ -124,7 +124,6 @@ Weekly, by keyword and reel: reach, sends per reach, saves, comments, DMs sent, 
 
 ## 9. Open decisions
 
-- Is @marginwise ours, or do we use @marginwise.in?
 - Add the UK to marginwise.in, or drop it from the bio and PDFs.
 - Employment-contract check before posting.
 - Which 2-3 brands to approach for the testimonial-for-discount offer.
