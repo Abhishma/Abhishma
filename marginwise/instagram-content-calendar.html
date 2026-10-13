@@ -1,0 +1,354 @@
+<title>Marginwise Content Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column of post cards grouped by week, sticky section nav on top. */
+:root {
+  --bg:#f3f4f7; --surface:#ffffff; --ink:#18203a; --muted:#5b6478; --line:#dde1ea;
+  --accent:#1f6f5c; --accent-soft:#e3f1ec; --reel:#e8ecf7; --carousel:#f6efe1; --pin:#fbe7e3; --pin-ink:#8a2f1b;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#10131c; --surface:#181d2a; --ink:#e7eaf2; --muted:#9aa3b8; --line:#2a3142;
+  --accent:#5cc4a6; --accent-soft:#16332c; --reel:#222a3d; --carousel:#33291a; --pin:#3a201b; --pin-ink:#f2a493; color-scheme:dark } }
+:root[data-theme="dark"] {
+  --bg:#10131c; --surface:#181d2a; --ink:#e7eaf2; --muted:#9aa3b8; --line:#2a3142;
+  --accent:#5cc4a6; --accent-soft:#16332c; --reel:#222a3d; --carousel:#33291a; --pin:#3a201b; --pin-ink:#f2a493; color-scheme:dark }
+* { box-sizing:border-box }
+body { background:var(--bg); color:var(--ink); font-family:var(--body); font-size:15px; line-height:1.55 }
+.wrap { max-width:760px; margin:0 auto; padding-inline:16px; padding-block:8px 64px }
+nav { position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--bg); border-bottom:1px solid var(--line); }
+nav .in { max-width:760px; margin:0 auto; padding:10px 16px; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none }
+nav a { flex:0 0 auto; text-decoration:none; color:var(--ink); font-weight:600; font-size:13px; padding:7px 12px; border:1px solid var(--line); border-radius:999px; background:var(--surface) }
+nav a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
+h1 { font-family:var(--display); font-size:clamp(26px,6vw,36px); line-height:1.1; margin:24px 0 6px; text-wrap:balance }
+.lede { color:var(--muted); margin:0 0 8px; max-width:62ch }
+.rule { font-size:13px; color:var(--muted); margin:0 0 4px }
+h2 { font-family:var(--display); font-size:22px; margin:40px 0 12px; scroll-margin-top:64px }
+h3.week { font-family:var(--display); font-size:18px; margin:28px 0 10px; scroll-margin-top:64px }
+h3.week span { font-family:var(--mono); font-size:12px; color:var(--muted); font-weight:400; margin-left:6px }
+.post { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:14px; display:grid; gap:12px }
+.post-head { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px }
+.when { display:grid; gap:2px } .when b { font-size:15px }
+.mono { font-family:var(--mono); font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums }
+.tags { display:flex; flex-wrap:wrap; gap:6px; align-items:flex-start }
+.chip { font-size:12px; padding:2px 8px; border-radius:6px; background:var(--bg); border:1px solid var(--line); white-space:nowrap }
+.chip.reel { background:var(--reel) } .chip.carousel { background:var(--carousel) }
+.chip.pin { background:var(--pin); color:var(--pin-ink); border-color:transparent; font-weight:600 }
+.chip.trial { background:var(--accent-soft); color:var(--accent); border-color:transparent; font-weight:600 }
+.hook { font-family:var(--display); font-size:19px; font-weight:600; line-height:1.3; margin:0; text-wrap:balance }
+.block h4 { margin:0 0 4px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted) }
+.block p { margin:0 }
+.steps { margin:0; padding-left:20px; display:grid; gap:6px }
+.caphead { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px }
+.caphead h4 { margin:0 }
+.caption { background:var(--bg); border-radius:8px; padding:10px 12px; font-size:14px; user-select:text }
+button.copy { font:600 12px var(--body); color:var(--accent); background:var(--accent-soft); border:0; border-radius:6px; padding:6px 10px; cursor:pointer }
+.meta { display:flex; flex-wrap:wrap; gap:8px 20px; margin:0; padding-top:10px; border-top:1px solid var(--line) }
+.meta div { min-width:0 } .meta dt { font-size:11px; color:var(--muted) } .meta dd { margin:0; font-size:13px; font-weight:500 }
+.meta dd.mono { color:var(--accent); font-weight:500; font-size:13px }
+.tw { overflow-x:auto; background:var(--surface); border:1px solid var(--line); border-radius:10px }
+table { border-collapse:collapse; width:100%; font-size:14px; min-width:520px }
+th, td { text-align:left; vertical-align:top; padding:10px 12px; border-bottom:1px solid var(--line) }
+th { font-size:12px; color:var(--muted); font-weight:600 }
+tr:last-child td { border-bottom:0 }
+ul.checks { list-style:none; padding:0; margin:0; display:grid; gap:8px }
+ul.checks li { display:flex; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px }
+ul.checks input { margin-top:4px; accent-color:var(--accent); width:18px; height:18px; flex:0 0 auto }
+ul.checks label { display:grid; gap:2px; min-width:0 } ul.checks span { color:var(--muted); font-size:13px }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior:smooth } }
+</style>
+
+<nav aria-label="Sections"><div class="in">
+  <a href="#calendar">Calendar</a><a href="#week1">Wk 1</a><a href="#week2">Wk 2</a><a href="#week3">Wk 3</a><a href="#week4">Wk 4</a><a href="#week5">Wk 5</a>
+  <a href="#how">How to make</a><a href="#batches">Recording</a><a href="#stories">Stories</a><a href="#setup">Setup</a>
+</div></nav>
+<main class="wrap">
+  <h1>@marginwise.in content calendar</h1>
+  <p class="lede">14 Oct to 15 Nov 2026. 20 posts, no face on camera: every post shows the work, with your voiceover.</p>
+  <p class="rule">Post at 19:30 IST. Reply to every comment in the first hour. Don't publish a keyword until its auto-DM works.</p>
+  <h2 id="calendar">Calendar</h2>
+  <h3 class='week' id='week1'>Week 1 <span>14 Oct to 18 Oct</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Wed 14 Oct</b><span class="mono">19:30 IST · 10:00 ET · 15:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (60s)</span><span class="chip">Both</span><span class="chip">Proof and trust</span><span class='chip pin'>Pin</span></div>
+  </header>
+  <p class="hook">Every agency sells you ROAS. We sell you margin. This is what that looks like.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen walkthrough of a Marginwise audit on a demo store (your own Shopify dev store or a public store, no client data): 1) funnel numbers, 2) three leaks ranked by revenue impact, 3) the one fix to ship this week, 4) the written summary the founder gets. Close on the four services and who it is not for.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record (desktop, QuickTime or OBS, 1080p) a walkthrough of an audit on a demo store: GA4 funnel, three leaks marked in a doc, the one-page written summary. Use a Shopify dev store or public pages only.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Open with: &#x27;This is what we look at before we touch your ads.&#x27;</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Zoom (keyframes) on each leak as you name it; red box highlights. Pin this post after publishing.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-1-0">Copy caption</button></div>
+    <p class="caption" id="cap-1-0">Most agencies report ROAS. We report what you keep.<br><br>This is what a Marginwise audit looks like: your funnel, your three biggest leaks ranked by revenue impact, one fix to ship this week, and a written summary.<br><br>CRO, performance marketing, UX and app development for D2C and Shopify brands in India, the US and the UK.<br><br>Comment AUDIT and we will send you a 2-minute teardown of your store.<br><br>#d2c #shopify #ecommercegrowth</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>Free 2-min teardown (manual)</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Fri 16 Oct</b><span class="mono">19:30 IST · 10:00 ET · 15:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (45s)</span><span class="chip">Intl</span><span class="chip">Margin math</span><span class='chip pin'>Pin</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Your ROAS says 3x. Your bank account disagrees.</p>
+  <div class="block"><h4>What it shows</h4><p>Show 3x ROAS on screen. Remove over-attribution, returns, COGS, shipping, payment fees one by one. Land on contribution after ads. End: track contribution margin per order, not ROAS.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the PROFIT calculator (ROAS to Profit tab) at 150% zoom, typing in a 3x ROAS store and watching contribution turn negative.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Say each cost as it is subtracted; end on the break-even ROAS cell.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Highlight the cell being changed each time; end frame on the verdict cell.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-1-1">Copy caption</button></div>
+    <p class="caption" id="cap-1-1">ROAS is not profit. Here is what a 3x ROAS can actually leave you with once over-attribution, returns, product cost, shipping and fees come out.<br><br>Comment PROFIT and we will send you the calculator to run it on your own numbers.<br><br>#shopify #metaads #dtc</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">PROFIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-profit-calculator-usd.xlsx</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 17 Oct</b><span class="mono">19:30 IST · 10:00 ET · 15:00 UK</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (7 slides)</span><span class="chip">Both</span><span class="chip">Margin math</span></div>
+  </header>
+  <p class="hook">Where D2C revenue leaks: 4 numbers every founder should know</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 70.22% of carts abandoned (Baymard). S3 35% conversion gain from better checkout design (Baymard). S4 8.4% more conversions from 0.1s faster mobile (Deloitte/Google). S5 26% RTO on COD vs under 2% prepaid (Shipway FY25). S6 what to fix first. S7 CTA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Big number top half, one-line meaning and &#x27;what to fix&#x27; bottom half.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-1-2">Copy caption</button></div>
+    <p class="caption" id="cap-1-2">Four published numbers that explain where most D2C stores lose revenue, and what to fix first for each. Sources on every slide.<br><br>Save this for your next growth review. Comment AUDIT if you want us to check your store against them.<br><br>#ecommerce #cro #d2cbrands</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>Free 2-min teardown (manual)</dd></div><div><dt>Record in</dt><dd>Design</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 18 Oct</b><span class="mono">19:30 IST · 10:00 ET · 15:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (50s)</span><span class="chip">India</span><span class="chip">COD/RTO</span><span class='chip pin'>Pin</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">26% of your COD orders come back.</p>
+  <div class="block"><h4>What it shows</h4><p>Shipway FY25: 26% RTO on COD vs under 2% prepaid. What one RTO costs: forward and return shipping, packaging, wasted ad spend. Three fixes: prepaid incentive, WhatsApp confirmation for risky COD, switch off COD only in high-RTO pin codes.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the RTO finder with sample orders loaded: the By State tab sorting by cost, one state flagged &#x27;Restrict COD or verify&#x27;.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Use the Shipway 26% vs under 2% figure in the first line.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Text callout for each of the three fixes as you say it.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-1-3">Copy caption</button></div>
+    <p class="caption" id="cap-1-3">Switching off COD everywhere is the wrong fix. Find the pin codes where it loses money and act only there.<br><br>Comment RTO and we will send you the sheet that ranks your states and pin codes by RTO cost.<br><br>#d2cindia #rto #shopifyindia</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">RTO</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-rto-finder.xlsx</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article><h3 class='week' id='week2'>Week 2 <span>20 Oct to 25 Oct</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 20 Oct</b><span class="mono">19:30 IST · 10:00 ET · 15:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (60s)</span><span class="chip">Intl</span><span class="chip">Teardown</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">[Brand] does everything right on this page except one thing.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record a well-known US/UK brand&#x27;s mobile product page. Two strengths, one leak (hidden shipping cost, review placement, or slow image). What that leak costs in margin.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Phone screen-record (iOS Control Centre &gt; Screen Recording, or Android quick settings) the brand&#x27;s mobile product page: scroll slowly, add to cart, open cart. 40 seconds, no notifications (Do Not Disturb on).</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Two things it does well, then the one leak and what it costs.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Red circle on the leak; slow-zoom into it. Blur any personal data.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-2-0">Copy caption</button></div>
+    <p class="caption" id="cap-2-0">A product page teardown with a margin lens: what converts, what leaks, and what the leak costs.<br><br>Want this for your store? Comment AUDIT.<br><br>#shopifycro #productpage #ecommerce</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>Free 2-min teardown (manual)</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 22 Oct</b><span class="mono">19:30 IST · 10:00 ET · 15:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (60s)</span><span class="chip">India</span><span class="chip">Margin math</span></div>
+  </header>
+  <p class="hook">Your revenue is growing. Your profit isn&#x27;t. Here&#x27;s why.</p>
+  <div class="block"><h4>What it shows</h4><p>Break down a ₹1,000 order: GST, COGS, ad cost per order, shipping, RTO, gateway fees, discounts. Land on contribution margin per order. Investors now ask for this, not GMV.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the MARGIN calculator, Margin per Order tab, stepping through each cost line of a ₹1,000 order.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. One sentence per cost line; end on contribution per order.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Running total as on-screen text in the top corner.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-2-1">Copy caption</button></div>
+    <p class="caption" id="cap-2-1">Contribution margin per order, explained with a real ₹1,000 example.<br><br>Comment MARGIN and we will send you the calculator, including a what-if for pushing more buyers to prepaid.<br><br>#d2cindia #unitEconomics #founders</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">MARGIN</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-margin-calculator-inr.xlsx</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 24 Oct</b><span class="mono">19:30 IST · 10:00 ET · 15:00 UK</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (8 slides)</span><span class="chip">India</span><span class="chip">Margin math</span></div>
+  </header>
+  <p class="hook">What a ₹1,000 order actually earns you</p>
+  <div class="block"><h4>What it shows</h4><p>One cost per slide: GST, product cost, ad cost, shipping and packaging, RTO, COD fees, gateway fees. Final slide: contribution per order and the one lever that moves it most.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. One cost per slide with the running total shown on every slide.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-2-2">Copy caption</button></div>
+    <p class="caption" id="cap-2-2">Line by line, what is left of a ₹1,000 order once every cost is counted. Numbers are an example store; run your own with the calculator.<br><br>Comment MARGIN for the sheet.<br><br>#d2cindia #ecommerceindia #margin</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">MARGIN</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-margin-calculator-inr.xlsx</dd></div><div><dt>Record in</dt><dd>Design</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 25 Oct</b><span class="mono">19:30 IST · 10:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (45s)</span><span class="chip">Both</span><span class="chip">Teardown</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Save these 5 checkout pages before you redesign yours.</p>
+  <div class="block"><h4>What it shows</h4><p>Five public checkouts (mix of US/UK and Indian). One thing each does well: trust badges placement, delivery date, COD/prepaid nudge, express pay, order summary clarity.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Phone screen-record five public checkouts (stop before payment). 6-8 seconds each.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. One line per checkout: what it does well.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Numbered label 1-5 on screen; &#x27;Save this&#x27; text on the final frame.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-2-3">Copy caption</button></div>
+    <p class="caption" id="cap-2-3">Five checkouts worth studying before your next redesign, and the one thing each gets right.<br><br>Save this. Comment AUDIT if you want yours reviewed.<br><br>#checkout #shopify #cro</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>Free 2-min teardown (manual)</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article><h3 class='week' id='week3'>Week 3 <span>27 Oct to 01 Nov</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 27 Oct</b><span class="mono">19:30 IST · 10:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (45s)</span><span class="chip">Intl</span><span class="chip">CRO</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">7 out of 10 people who add to cart never buy.</p>
+  <div class="block"><h4>What it shows</h4><p>Baymard: 70.22% average cart abandonment across 50 studies. Three fixable reasons: surprise costs, forced account creation, too many steps. Show one fix for each on a Shopify checkout.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Phone screen-record a checkout showing a surprise shipping cost, a forced account screen and a long form (public stores).</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Lead with Baymard&#x27;s 70.22%; one fix per problem.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Split screen: problem on top, fix described as text below.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-3-0">Copy caption</button></div>
+    <p class="caption" id="cap-3-0">Cart abandonment averages 70% (Baymard Institute). Three fixes that do not need a redesign.<br><br>Save this for your next checkout review.<br><br>#checkout #shopifytips #ecommerce</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">Save</dd></div>
+  <div><dt>Sends</dt><dd>None</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 29 Oct</b><span class="mono">19:30 IST · 10:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (60s)</span><span class="chip">India</span><span class="chip">Teardown</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">[Indian Brand] is losing mobile buyers here.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record an Indian D2C brand&#x27;s mobile product page. Two strengths, one leak (COD/prepaid messaging, delivery date clarity, size guidance). The fix.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Phone screen-record the Indian brand&#x27;s mobile product page: price, delivery date, COD/prepaid messaging, size guide.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Two strengths, one leak, the fix.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Red circle on the leak; ₹ figures as on-screen text.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-3-1">Copy caption</button></div>
+    <p class="caption" id="cap-3-1">A mobile product page teardown of an Indian D2C brand, and one fix that lifts conversion without a redesign.<br><br>Comment AUDIT for a teardown of your store.<br><br>#d2cindia #cro #shopifyindia</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>Free 2-min teardown (manual)</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 31 Oct</b><span class="mono">19:30 IST · 10:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (6 slides)</span><span class="chip">Intl</span><span class="chip">Proof and trust</span></div>
+  </header>
+  <p class="hook">How a US or UK brand works with a team in India</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 overlap hours (your morning, our evening). S3 weekly written update, with redacted example. S4 one senior contact. S5 billing in USD/GBP, NDA, 30-day notice. S6 CTA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Slide 3 shows a redacted sample weekly update; build it from a blank template, not client data.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-3-2">Copy caption</button></div>
+    <p class="caption" id="cap-3-2">The three things founders worry about with an offshore team, and exactly how we handle each one.<br><br>See how we work at the link in bio.<br><br>#ecommerceagency #shopifyexperts #dtc</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">Link in bio</dd></div>
+  <div><dt>Sends</dt><dd>None</dd></div><div><dt>Record in</dt><dd>Design</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 01 Nov</b><span class="mono">19:30 IST · 09:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (50s)</span><span class="chip">Intl</span><span class="chip">Proof and trust</span></div>
+  </header>
+  <p class="hook">Why US brands are scared to hire an agency in India.</p>
+  <div class="block"><h4>What it shows</h4><p>Communication, time zones, quality. How each should be handled by any agency: overlap hours, weekly written update, one senior point of contact. &#x27;Ask any agency for these three.&#x27;</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the agency checklist PDF scrolling to the &#x27;If the agency is in another country&#x27; section, plus a world clock showing IST vs ET overlap.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Name the three worries, then the three answers.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Text list builds one line at a time.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-3-3">Copy caption</button></div>
+    <p class="caption" id="cap-3-3">What to ask any offshore agency before you sign, ourselves included.<br><br>Comment CHECKLIST for the full agency hiring checklist.<br><br>#ecommerceagency #shopify #dtcbrands</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">CHECKLIST</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-agency-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article><h3 class='week' id='week4'>Week 4 <span>03 Nov to 08 Nov</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 03 Nov</b><span class="mono">19:30 IST · 09:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (45s)</span><span class="chip">Both</span><span class="chip">Retention</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Rating post-purchase emails. This one is a 2/10.</p>
+  <div class="block"><h4>What it shows</h4><p>Rate three order confirmation emails (public or redacted) with a score and one reason each. End on what a 9/10 email contains.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screenshot three order confirmation emails (your own inbox; blur names, order numbers, addresses).</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Score each out of 10 with one reason; end on what a 9/10 has.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Big score number appears on each email; slow scroll down each one.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-4-0">Copy caption</button></div>
+    <p class="caption" id="cap-4-0">Your order confirmation email is the most-opened email you send. Most brands waste it on a receipt.<br><br>Comment FLOWS for the post-purchase checklist and a 10-point scorecard.<br><br>#klaviyo #emailmarketing #dtc</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">FLOWS</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-post-purchase-email-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 05 Nov</b><span class="mono">19:30 IST · 09:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (45s)</span><span class="chip">Both</span><span class="chip">CRO</span></div>
+  </header>
+  <p class="hook">A tenth of a second changed conversions by 8.4%.</p>
+  <div class="block"><h4>What it shows</h4><p>Deloitte/Google study of 37 brands. Run a public store through PageSpeed. Show the three usual culprits: app scripts, oversized images, third-party widgets. Fix speed before buying more traffic.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record pagespeed.web.dev running on a public Shopify store, then the opportunities list.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Lead with Deloitte/Google 0.1s = 8.4%; name the three culprits.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Highlight the three culprits in the report as you name them.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-4-1">Copy caption</button></div>
+    <p class="caption" id="cap-4-1">Fix speed before you buy more traffic. The three culprits on most Shopify stores.<br><br>Comment SPEED and we will check your store.<br><br>#shopifyspeed #cro #ecommerce</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">SPEED</dd></div>
+  <div><dt>Sends</dt><dd>Speed check (manual)</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 07 Nov</b><span class="mono">19:30 IST · 09:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (8 slides)</span><span class="chip">Intl</span><span class="chip">CRO</span></div>
+  </header>
+  <p class="hook">Black Friday checkout checklist: 7 fixes before 27 November</p>
+  <div class="block"><h4>What it shows</h4><p>One fix per slide: shipping cost shown early, guest checkout, express pay, delivery date, stock and promo messaging, mobile speed, post-purchase upsell that keeps margin. Final slide CTA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. One fix per slide with a small mock of the checkout element it refers to.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-4-2">Copy caption</button></div>
+    <p class="caption" id="cap-4-2">Seven checkout fixes you can still ship before Black Friday, none of which need a redesign.<br><br>Save this. Comment AUDIT if you want us to check yours before the sale.<br><br>#blackfriday #bfcm #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>Free 2-min teardown (manual)</dd></div><div><dt>Record in</dt><dd>Design</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 08 Nov</b><span class="mono">19:30 IST · 09:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (50s)</span><span class="chip">India</span><span class="chip">Proof and trust</span></div>
+  </header>
+  <p class="hook">Five questions to ask before you hire a D2C agency.</p>
+  <div class="block"><h4>What it shows</h4><p>Who works on my account? Whose name is the ad account in? Show a redacted report with CPA. Notice period? Which one metric in month one?</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the agency checklist PDF, top table (five questions, good answer, red flag).</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Read each question and its red flag.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Highlight each row as you read it.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-4-3">Copy caption</button></div>
+    <p class="caption" id="cap-4-3">Most founders pick an agency from the pitch deck. Ask these five questions instead, including to us.<br><br>Comment CHECKLIST for the full list.<br><br>#d2c #marketingagency #founders</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">CHECKLIST</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-agency-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article><h3 class='week' id='week5'>Week 5 <span>10 Nov to 15 Nov</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 10 Nov</b><span class="mono">19:30 IST · 09:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (50s)</span><span class="chip">Intl</span><span class="chip">Margin math</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Tariffs went up. Your prices didn&#x27;t. Here&#x27;s the gap.</p>
+  <div class="block"><h4>What it shows</h4><p>Since the $800 de minimis exemption ended, landed costs rose. Landed cost before and after (illustrative). Three levers besides price: AOV bundles, free-shipping threshold, push higher-margin products.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the PROFIT calculator with COGS raised to show a tariff hit, then bundle/AOV changes recovering margin.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Before vs after landed cost; three levers.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Before/after numbers side by side as text.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-5-0">Copy caption</button></div>
+    <p class="caption" id="cap-5-0">Rising import costs hit contribution margin first. Three ways to protect it without a price rise.<br><br>Comment PROFIT for the margin calculator.<br><br>#dtc #tariffs #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">PROFIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-profit-calculator-usd.xlsx</dd></div><div><dt>Record in</dt><dd>Batch 3</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 12 Nov</b><span class="mono">19:30 IST · 09:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (40s)</span><span class="chip">India</span><span class="chip">Margin math</span></div>
+  </header>
+  <p class="hook">Your ₹1 lakh ad budget costs ₹1.18 lakh.</p>
+  <div class="block"><h4>What it shows</h4><p>Meta Ireland billing means 18% GST under reverse charge, paid in cash before credit. Show the cash timing. Add 18% to the ad budget in your cash-flow plan. Confirm with your CA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the MARGIN calculator, GST on Ads tab, typing ₹1,00,000.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Explain reverse charge in one sentence; say &#x27;confirm with your CA&#x27;.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Show &#x27;₹1,18,000 leaves your account&#x27; as the final frame.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-5-1">Copy caption</button></div>
+    <p class="caption" id="cap-5-1">The GST line that catches founders short on cash. Not tax advice; confirm with your CA.<br><br>Comment MARGIN for the calculator, which includes a GST-on-ads tab.<br><br>#d2cindia #metaads #gst</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">MARGIN</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-margin-calculator-inr.xlsx</dd></div><div><dt>Record in</dt><dd>Batch 3</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 14 Nov</b><span class="mono">19:30 IST · 09:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (7 slides)</span><span class="chip">Both</span><span class="chip">Retention</span></div>
+  </header>
+  <p class="hook">After the sale: turn festive and Black Friday buyers into repeat buyers</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 why sale buyers churn. S3 the delivered + how-to-use email. S4 review request timing. S5 replenishment timed to your data. S6 win-back without a discount first. S7 CTA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Each email slide shows when to send it and one line of example copy.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-5-2">Copy caption</button></div>
+    <p class="caption" id="cap-5-2">Sale buyers are the easiest to lose. Five emails that bring them back without giving away margin.<br><br>Comment FLOWS for the full checklist.<br><br>#retention #emailmarketing #d2c</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">FLOWS</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-post-purchase-email-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Design</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 15 Nov</b><span class="mono">19:30 IST · 09:00 ET · 14:00 UK</span></div>
+    <div class="tags"><span class="chip reel">Reel (60s)</span><span class="chip">Both</span><span class="chip">Proof and trust</span></div>
+  </header>
+  <p class="hook">We audited [N] D2C stores this month. The same 3 leaks showed up in [X] of them.</p>
+  <div class="block"><h4>What it shows</h4><p>Only post if the audits are real; use the actual count. Three most common leaks, anonymised. If fewer than 5 audits are done, swap for a second Indian teardown.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record a tally sheet of the audits you actually ran (store names hidden) and anonymised screenshots of the three leaks.</li><li>Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. Use the real count. If under 5 audits, swap for a second Indian teardown and follow that recipe.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Counter animation for each leak&#x27;s tally.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-5-3">Copy caption</button></div>
+    <p class="caption" id="cap-5-3">What we keep finding when we audit D2C stores, with no names attached.<br><br>Comment AUDIT to get yours.<br><br>#d2c #cro #ecommercegrowth</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>Free 2-min teardown (manual)</dd></div><div><dt>Record in</dt><dd>Batch 3</dd></div></dl>
+</article>
+  <h2 id="how">How to make (no face)</h2><div class='tw'><table><thead><tr><th>Step</th><th>How</th></tr></thead><tbody><tr><td>Kit</td><td>Laptop with QuickTime (Mac) or OBS (Windows) for desktop recording; phone screen recorder; CapCut (free); Canva (free); wired earphones with mic or any USB mic. No camera needed.</td></tr><tr><td>Before recording</td><td>Do Not Disturb on, browser in a clean profile (no bookmarks, no logged-in personal accounts), zoom browser to 125-150% so text is readable on a phone.</td></tr><tr><td>Recording</td><td>Move the cursor slowly and pause 1 second on anything you will talk about. Record 20% more than you need.</td></tr><tr><td>Voiceover</td><td>Your own voice, phone held 15 cm away, in a room with soft furnishings. Read from the script, then do one natural take without reading; use whichever sounds less scripted. Instagram rewards real human content; skip AI voices.</td></tr><tr><td>If you do not want to use your voice</td><td>Text-only version: put each script line as a caption block (3-4 words per screen), add quiet background music from CapCut&#x27;s commercial library. Expect lower watch time; test it as a Trial Reel first.</td></tr><tr><td>Editing</td><td>CapCut: 9:16, Auto captions, hook text in the first 2 seconds, cut every pause over half a second, zoom and red-box highlights on whatever you name. Length 30-60 seconds.</td></tr><tr><td>Privacy</td><td>Blur names, emails, order numbers and any client data. Teardowns use public pages only.</td></tr><tr><td>Carousels</td><td>Canva 1080x1350, one template for all, max 25 words per slide, source line on stat slides, CTA slide last.</td></tr><tr><td>After posting</td><td>Reply to every comment in the first hour; check the auto-DM fired; log numbers in the Calendar tab after 7 days.</td></tr></tbody></table></div>
+  <h2 id="batches">Recording batches</h2><div class='tw'><table><thead><tr><th>Batch</th><th>Film on</th><th>Posts covered</th><th>What to prepare</th><th>Time needed</th></tr></thead><tbody><tr><td>Batch 1</td><td>Tue 13 Oct</td><td>Founder intro; ROAS 3x; COD RTO 26%; US/UK product page teardown; ₹1,000 order margin; 5 checkout pages</td><td>Pick the US/UK brand and 5 checkouts (public pages). Record all screen captures first, then write and record every voiceover in one sitting.</td><td>3 hours</td></tr><tr><td>Batch 2</td><td>Sat 24 Oct</td><td>Cart abandonment; Indian teardown; offshore trust; email ratings; site speed; agency questions</td><td>Pick the Indian brand and three order confirmation emails (your own inbox or public examples). Run PageSpeed on one public store.</td><td>3 hours</td></tr><tr><td>Batch 3</td><td>Sat 07 Nov</td><td>Tariffs; GST on ads; audit roundup</td><td>Count real audits done so far. If fewer than 5, film a second Indian teardown instead of the roundup.</td><td>2 hours</td></tr><tr><td>Design</td><td>Thu 15 Oct</td><td>All five carousels</td><td>Use the same template: navy and white, one idea per slide, source line on every stat slide. Canva or Figma.</td><td>4 hours</td></tr></tbody></table></div>
+  <h2 id="stories">Stories, every week</h2><div class='tw'><table><thead><tr><th>Day</th><th>Story type</th><th>What to post</th><th>Sticker</th><th>Why</th></tr></thead><tbody><tr><td>Monday</td><td>Poll</td><td>One question for founders, alternating markets. Examples: &#x27;What is your COD share? Under 30% / Over 30%&#x27;; &#x27;Do you track contribution margin weekly? Yes / No&#x27;.</td><td>Poll</td><td>Two-way interaction now ranks; poll answers tell you what to post next.</td></tr><tr><td>Wednesday</td><td>Behind the scenes</td><td>15 seconds from a teardown in progress: the store on screen, one thing you spotted. No client names.</td><td>Question box: &#x27;Want yours next?&#x27;</td><td>Shows the work, feeds AUDIT requests.</td></tr><tr><td>Friday</td><td>Reel share</td><td>Share the week&#x27;s best-performing reel with a one-line takeaway.</td><td>Link: marginwise.in booking</td><td>Stories with link stickers are the highest-intent surface.</td></tr><tr><td>Sunday</td><td>Answer</td><td>Answer one question from DMs as 2-3 text frames over a screen recording or screenshot of the relevant page.</td><td>None</td><td>Turns DMs into content and shows you reply.</td></tr></tbody></table></div>
+  <h2 id="setup">Setup before the first post</h2><ul class='checks'><li><input type='checkbox' id='s0'><label for='s0'><b>Switch to Business account, category Marketing Agency, contact email set</b><span>Unlocks insights, contact button and approved DM tools</span></label></li><li><input type='checkbox' id='s1'><label for='s1'><b>Bio, name field and website link with UTM added</b><span>Profile visits convert from here</span></label></li><li><input type='checkbox' id='s2'><label for='s2'><b>Two-factor authentication on, backup codes saved</b><span>A hacked brand account is hard to recover</span></label></li><li><input type='checkbox' id='s3'><label for='s3'><b>Five lead magnets uploaded (Drive or website) with share links</b><span>Every CTA keyword depends on these</span></label></li><li><input type='checkbox' id='s4'><label for='s4'><b>Auto-DM tool connected and the 7 keywords tested from a second account</b><span>Broken DMs waste the first reels</span></label></li><li><input type='checkbox' id='s5'><label for='s5'><b>Highlight covers made: Teardowns, How we work, US/UK clients, COD/RTO, Book a call</b><span>Profile looks complete from day one</span></label></li><li><input type='checkbox' id='s6'><label for='s6'><b>GA4 check that utm_source=instagram shows up</b><span>So calls can be traced to reels</span></label></li><li><input type='checkbox' id='s7'><label for='s7'><b>Employment-contract check done</b><span>Before posting anything publicly</span></label></li><li><input type='checkbox' id='s8'><label for='s8'><b>UK decision made (keep in bio and site, or remove)</b><span>Bio and website must match</span></label></li></ul>
+</main>
+<script>
+document.querySelectorAll("button.copy").forEach(function (b) {
+  b.addEventListener("click", function () {
+    var el = document.getElementById(b.dataset.target);
+    var text = el.innerText;
+    function selectIt() { var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selected, copy now"; }
+    try {
+      navigator.clipboard.writeText(text).then(function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy caption"; }, 1600); }, selectIt);
+    } catch (e) { selectIt(); }
+  });
+});
+document.querySelectorAll("ul.checks input").forEach(function (cb) {
+  try { cb.checked = localStorage.getItem("mw-" + cb.id) === "1"; } catch (e) {}
+  cb.addEventListener("change", function () { try { localStorage.setItem("mw-" + cb.id, cb.checked ? "1" : "0"); } catch (e) {} });
+});
+</script>
