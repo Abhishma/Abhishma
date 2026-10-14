@@ -106,17 +106,18 @@ Reels 1-12 are unchanged from the original plan. Reels 13-15 are added from the 
 
 ## 7. Comment keywords and lead magnets
 
-| Keyword | Delivers | File |
-|---|---|---|
-| PROFIT | USD ROAS-to-profit and conversion-lift calculator | `lead-magnets/marginwise-profit-calculator-usd.xlsx` |
-| MARGIN | INR contribution margin and GST-on-ads calculator | `lead-magnets/marginwise-margin-calculator-inr.xlsx` |
-| RTO | State and pin-code RTO finder | `lead-magnets/marginwise-rto-finder.xlsx` |
-| FLOWS | Post-purchase email checklist | `lead-magnets/marginwise-post-purchase-email-checklist.pdf` |
-| CHECKLIST | Agency hiring checklist | `lead-magnets/marginwise-agency-checklist.pdf` |
-| AUDIT | Free 2-minute video teardown, delivered by a person within one working day | none |
-| SPEED | Speed check, delivered by a person within one working day | none |
+Every keyword sends a file. AUDIT and SPEED also get a personal reply within one working day.
 
-The PROFIT auto-DM should mention both tabs: "It also shows what your ROAS really earns you after costs."
+| Keyword | Sends | Files in `lead-magnets/` |
+|---|---|---|
+| AUDIT | 30-point store leak audit + free 2-minute video teardown | `marginwise-store-leak-audit.pdf` |
+| PROFIT | ROAS-to-profit calculator (USD) + 10-step checklist | `marginwise-profit-calculator-usd.xlsx`, `marginwise-roas-to-profit-checklist.pdf` |
+| MARGIN | Contribution margin and GST-on-ads calculator (INR) + checklist | `marginwise-margin-calculator-inr.xlsx`, `marginwise-contribution-margin-checklist.pdf` |
+| RTO | State and pin-code RTO finder + COD/RTO playbook | `marginwise-rto-finder.xlsx`, `marginwise-cod-rto-playbook.pdf` |
+| SPEED | 15-fix Shopify speed checklist + personal speed check | `marginwise-shopify-speed-checklist.pdf` |
+| FLOWS | Post-purchase email checklist with 10-point scorecard | `marginwise-post-purchase-email-checklist.pdf` |
+| CHECKLIST | Agency hiring checklist | `marginwise-agency-checklist.pdf` |
+| BFCM | Black Friday checkout checklist with sale timeline | `marginwise-black-friday-checklist.pdf` |
 
 ## 8. Measurement
 

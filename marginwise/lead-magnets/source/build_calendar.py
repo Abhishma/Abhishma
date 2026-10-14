@@ -63,7 +63,7 @@ post(D(10, 14), "Reel (60s)", "Proof and trust", "Both",
      "your three biggest leaks ranked by revenue impact, one fix to ship this week, and a written summary.\n\n"
      "CRO, performance marketing, UX and app development for D2C and Shopify brands in India, the US and the UK.\n\n"
      "Comment AUDIT and we will send you a 2-minute teardown of your store.\n\n#d2c #shopify #ecommercegrowth",
-     "AUDIT", "Free 2-min teardown (manual)", "No", "Yes", "Batch 1")
+     "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "No", "Yes", "Batch 1")
 post(D(10, 16), "Reel (45s)", "Margin math", "Intl",
      "Your ROAS says 3x. Your bank account disagrees.",
      "Show 3x ROAS on screen. Remove over-attribution, returns, COGS, shipping, payment fees one by one. "
@@ -71,7 +71,7 @@ post(D(10, 16), "Reel (45s)", "Margin math", "Intl",
      "ROAS is not profit. Here is what a 3x ROAS can actually leave you with once over-attribution, returns, "
      "product cost, shipping and fees come out.\n\nComment PROFIT and we will send you the calculator to run it on "
      "your own numbers.\n\n#shopify #metaads #dtc",
-     "PROFIT", "marginwise-profit-calculator-usd.xlsx", "Yes", "Yes", "Batch 1")
+     "PROFIT", "marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf", "Yes", "Yes", "Batch 1")
 post(D(10, 17), "Carousel (7 slides)", "Margin math", "Both",
      "Where D2C revenue leaks: 4 numbers every founder should know",
      "S1 hook. S2 70.22% of carts abandoned (Baymard). S3 35% conversion gain from better checkout design (Baymard). "
@@ -80,7 +80,7 @@ post(D(10, 17), "Carousel (7 slides)", "Margin math", "Both",
      "Four published numbers that explain where most D2C stores lose revenue, and what to fix first for each. "
      "Sources on every slide.\n\nSave this for your next growth review. Comment AUDIT if you want us to check "
      "your store against them.\n\n#ecommerce #cro #d2cbrands",
-     "AUDIT", "Free 2-min teardown (manual)", "No", "No", "Design")
+     "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "No", "No", "Design")
 post(D(10, 18), "Reel (50s)", "COD/RTO", "India",
      "26% of your COD orders come back.",
      "Shipway FY25: 26% RTO on COD vs under 2% prepaid. What one RTO costs: forward and return shipping, "
@@ -89,7 +89,7 @@ post(D(10, 18), "Reel (50s)", "COD/RTO", "India",
      "Switching off COD everywhere is the wrong fix. Find the pin codes where it loses money and act only there.\n\n"
      "Comment RTO and we will send you the sheet that ranks your states and pin codes by RTO cost.\n\n"
      "#d2cindia #rto #shopifyindia",
-     "RTO", "marginwise-rto-finder.xlsx", "Yes", "Yes", "Batch 1")
+     "RTO", "marginwise-rto-finder.xlsx + marginwise-cod-rto-playbook.pdf", "Yes", "Yes", "Batch 1")
 
 # Week 2
 post(D(10, 20), "Reel (60s)", "Teardown", "Intl",
@@ -98,28 +98,28 @@ post(D(10, 20), "Reel (60s)", "Teardown", "Intl",
      "(hidden shipping cost, review placement, or slow image). What that leak costs in margin.",
      "A product page teardown with a margin lens: what converts, what leaks, and what the leak costs.\n\n"
      "Want this for your store? Comment AUDIT.\n\n#shopifycro #productpage #ecommerce",
-     "AUDIT", "Free 2-min teardown (manual)", "Yes", "No", "Batch 1")
+     "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "Yes", "No", "Batch 1")
 post(D(10, 22), "Reel (60s)", "Margin math", "India",
      "Your revenue is growing. Your profit isn't. Here's why.",
      "Break down a ₹1,000 order: GST, COGS, ad cost per order, shipping, RTO, gateway fees, discounts. "
      "Land on contribution margin per order. Investors now ask for this, not GMV.",
      "Contribution margin per order, explained with a real ₹1,000 example.\n\nComment MARGIN and we will send you "
      "the calculator, including a what-if for pushing more buyers to prepaid.\n\n#d2cindia #unitEconomics #founders",
-     "MARGIN", "marginwise-margin-calculator-inr.xlsx", "No", "No", "Batch 1")
+     "MARGIN", "marginwise-margin-calculator-inr.xlsx + marginwise-contribution-margin-checklist.pdf", "No", "No", "Batch 1")
 post(D(10, 24), "Carousel (8 slides)", "Margin math", "India",
      "What a ₹1,000 order actually earns you",
      "One cost per slide: GST, product cost, ad cost, shipping and packaging, RTO, COD fees, gateway fees. "
      "Final slide: contribution per order and the one lever that moves it most.",
      "Line by line, what is left of a ₹1,000 order once every cost is counted. Numbers are an example store; "
      "run your own with the calculator.\n\nComment MARGIN for the sheet.\n\n#d2cindia #ecommerceindia #margin",
-     "MARGIN", "marginwise-margin-calculator-inr.xlsx", "No", "No", "Design")
+     "MARGIN", "marginwise-margin-calculator-inr.xlsx + marginwise-contribution-margin-checklist.pdf", "No", "No", "Design")
 post(D(10, 25), "Reel (45s)", "Teardown", "Both",
      "Save these 5 checkout pages before you redesign yours.",
      "Five public checkouts (mix of US/UK and Indian). One thing each does well: trust badges placement, "
      "delivery date, COD/prepaid nudge, express pay, order summary clarity.",
      "Five checkouts worth studying before your next redesign, and the one thing each gets right.\n\n"
      "Save this. Comment AUDIT if you want yours reviewed.\n\n#checkout #shopify #cro",
-     "AUDIT", "Free 2-min teardown (manual)", "Yes", "No", "Batch 1")
+     "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "Yes", "No", "Batch 1")
 
 # Week 3
 post(D(10, 27), "Reel (45s)", "CRO", "Intl",
@@ -135,7 +135,7 @@ post(D(10, 29), "Reel (60s)", "Teardown", "India",
      "(COD/prepaid messaging, delivery date clarity, size guidance). The fix.",
      "A mobile product page teardown of an Indian D2C brand, and one fix that lifts conversion without a "
      "redesign.\n\nComment AUDIT for a teardown of your store.\n\n#d2cindia #cro #shopifyindia",
-     "AUDIT", "Free 2-min teardown (manual)", "Yes", "No", "Batch 2")
+     "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "Yes", "No", "Batch 2")
 post(D(10, 31), "Carousel (6 slides)", "Proof and trust", "Intl",
      "How a US or UK brand works with a team in India",
      "S1 hook. S2 overlap hours (your morning, our evening). S3 weekly written update, with redacted example. "
@@ -165,14 +165,14 @@ post(D(11, 5), "Reel (45s)", "CRO", "Both",
      "app scripts, oversized images, third-party widgets. Fix speed before buying more traffic.",
      "Fix speed before you buy more traffic. The three culprits on most Shopify stores.\n\n"
      "Comment SPEED and we will check your store.\n\n#shopifyspeed #cro #ecommerce",
-     "SPEED", "Speed check (manual)", "No", "No", "Batch 2")
+     "SPEED", "marginwise-shopify-speed-checklist.pdf + speed check", "No", "No", "Batch 2")
 post(D(11, 7), "Carousel (8 slides)", "CRO", "Intl",
      "Black Friday checkout checklist: 7 fixes before 27 November",
      "One fix per slide: shipping cost shown early, guest checkout, express pay, delivery date, "
      "stock and promo messaging, mobile speed, post-purchase upsell that keeps margin. Final slide CTA.",
      "Seven checkout fixes you can still ship before Black Friday, none of which need a redesign.\n\n"
-     "Save this. Comment AUDIT if you want us to check yours before the sale.\n\n#blackfriday #bfcm #shopify",
-     "AUDIT", "Free 2-min teardown (manual)", "No", "No", "Design")
+     "Save this. Comment BFCM for the full checklist with a sale timeline.\n\n#blackfriday #bfcm #shopify",
+     "BFCM", "marginwise-black-friday-checklist.pdf", "No", "No", "Design")
 post(D(11, 8), "Reel (50s)", "Proof and trust", "India",
      "Five questions to ask before you hire a D2C agency.",
      "Who works on my account? Whose name is the ad account in? Show a redacted report with CPA. "
@@ -188,14 +188,14 @@ post(D(11, 10), "Reel (50s)", "Margin math", "Intl",
      "Three levers besides price: AOV bundles, free-shipping threshold, push higher-margin products.",
      "Rising import costs hit contribution margin first. Three ways to protect it without a price rise.\n\n"
      "Comment PROFIT for the margin calculator.\n\n#dtc #tariffs #shopify",
-     "PROFIT", "marginwise-profit-calculator-usd.xlsx", "Yes", "No", "Batch 3")
+     "PROFIT", "marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf", "Yes", "No", "Batch 3")
 post(D(11, 12), "Reel (40s)", "Margin math", "India",
      "Your ₹1 lakh ad budget costs ₹1.18 lakh.",
      "Meta Ireland billing means 18% GST under reverse charge, paid in cash before credit. Show the cash timing. "
      "Add 18% to the ad budget in your cash-flow plan. Confirm with your CA.",
      "The GST line that catches founders short on cash. Not tax advice; confirm with your CA.\n\n"
      "Comment MARGIN for the calculator, which includes a GST-on-ads tab.\n\n#d2cindia #metaads #gst",
-     "MARGIN", "marginwise-margin-calculator-inr.xlsx", "No", "No", "Batch 3")
+     "MARGIN", "marginwise-margin-calculator-inr.xlsx + marginwise-contribution-margin-checklist.pdf", "No", "No", "Batch 3")
 post(D(11, 14), "Carousel (7 slides)", "Retention", "Both",
      "After the sale: turn festive and Black Friday buyers into repeat buyers",
      "S1 hook. S2 why sale buyers churn. S3 the delivered + how-to-use email. S4 review request timing. "
@@ -209,7 +209,7 @@ post(D(11, 15), "Reel (60s)", "Proof and trust", "Both",
      "If fewer than 5 audits are done, swap for a second Indian teardown.",
      "What we keep finding when we audit D2C stores, with no names attached.\n\nComment AUDIT to get yours.\n\n"
      "#d2c #cro #ecommercegrowth",
-     "AUDIT", "Free 2-min teardown (manual)", "No", "No", "Batch 3")
+     "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "No", "No", "Batch 3")
 
 
 # ------------------------------------------------------------------ faceless production steps
@@ -498,8 +498,8 @@ tasks = [
     ("Switch to Business account, category Marketing Agency, contact email set", "Unlocks insights, contact button and approved DM tools"),
     ("Bio, name field and website link with UTM added", "Profile visits convert from here"),
     ("Two-factor authentication on, backup codes saved", "A hacked brand account is hard to recover"),
-    ("Five lead magnets uploaded (Drive or website) with share links", "Every CTA keyword depends on these"),
-    ("Auto-DM tool connected and the 7 keywords tested from a second account", "Broken DMs waste the first reels"),
+    ("All lead magnets (3 sheets, 8 PDFs) uploaded to Drive or the website with share links", "Every CTA keyword depends on these"),
+    ("Auto-DM tool connected and the 8 keywords tested from a second account", "Broken DMs waste the first reels"),
     ("Highlight covers made: Teardowns, How we work, US/UK clients, COD/RTO, Book a call", "Profile looks complete from day one"),
     ("GA4 check that utm_source=instagram shows up", "So calls can be traced to reels"),
     ("Employment-contract check done", "Before posting anything publicly"),
