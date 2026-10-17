@@ -32,14 +32,13 @@ def header(ws, row, heads, widths):
     ws.row_dimensions[row].height = 32
 
 
-def local_times(d):
-    """19:30 IST on date d, shown in US Eastern and UK time with 2026 DST changes."""
-    utc = datetime(d.year, d.month, d.day, 14, 0, tzinfo=timezone.utc)
-    et_off = -4 if d < date(2026, 11, 1) else -5      # US DST ends Sun 1 Nov 2026
-    uk_off = 1 if d < date(2026, 10, 25) else 0        # UK BST ends Sun 25 Oct 2026
-    et = (utc + timedelta(hours=et_off)).strftime("%H:%M")
-    uk = (utc + timedelta(hours=uk_off)).strftime("%H:%M")
-    return "19:30", et, uk
+def local_times(d, market):
+    """Posting slot by market. Posts from 18 Oct aimed at Australia/NZ go out at 13:30 IST; India and Saudi
+    posts at 19:30 IST. Shows Riyadh (UTC+3), Sydney (AEDT, UTC+11) and Auckland (NZDT, UTC+13)."""
+    anz = d >= date(2026, 10, 18) and market not in ("India", "India + Saudi")
+    utc = datetime(d.year, d.month, d.day, 8 if anz else 14, 0, tzinfo=timezone.utc)
+    fmt = lambda h: (utc + timedelta(hours=h)).strftime("%H:%M")
+    return ("13:30" if anz else "19:30"), fmt(3), fmt(11), fmt(13)
 
 
 # ------------------------------------------------------------------ posts
@@ -54,7 +53,7 @@ def post(d, fmt, pillar, market, hook, outline, caption, cta, magnet, trial="No"
 D = lambda m, dd: date(2026, m, dd)
 
 # Week 1
-post(D(10, 14), "Reel (60s)", "Proof and trust", "Both",
+post(D(10, 14), "Reel (60s)", "Proof and trust", "All",
      "Every agency sells you ROAS. We sell you margin. This is what that looks like.",
      "Screen walkthrough of a Marginwise audit on a demo store (your own Shopify dev store or a public store, no client data): "
      "1) funnel numbers, 2) three leaks ranked by revenue impact, 3) the one fix to ship this week, 4) the written summary "
@@ -72,7 +71,7 @@ post(D(10, 16), "Reel (45s)", "Margin math", "Intl",
      "product cost, shipping and fees come out.\n\nComment PROFIT and we will send you the calculator to run it on "
      "your own numbers.\n\n#shopify #metaads #dtc",
      "PROFIT", "marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf", "Yes", "Yes", "Batch 1")
-post(D(10, 17), "Carousel (7 slides)", "Margin math", "Both",
+post(D(10, 17), "Carousel (7 slides)", "Margin math", "All",
      "Where D2C revenue leaks: 4 numbers every founder should know",
      "S1 hook. S2 70.22% of carts abandoned (Baymard). S3 35% conversion gain from better checkout design (Baymard). "
      "S4 8.4% more conversions from 0.1s faster mobile (Deloitte/Google). S5 26% RTO on COD vs under 2% prepaid "
@@ -81,7 +80,7 @@ post(D(10, 17), "Carousel (7 slides)", "Margin math", "Both",
      "Sources on every slide.\n\nSave this for your next growth review. Comment AUDIT if you want us to check "
      "your store against them.\n\n#ecommerce #cro #d2cbrands",
      "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "No", "No", "Design")
-post(D(10, 18), "Reel (50s)", "COD/RTO", "India",
+post(D(10, 18), "Reel (50s)", "COD/RTO", "India + Saudi",
      "26% of your COD orders come back.",
      "Shipway FY25: 26% RTO on COD vs under 2% prepaid. What one RTO costs: forward and return shipping, "
      "packaging, wasted ad spend. Three fixes: prepaid incentive, WhatsApp confirmation for risky COD, "
@@ -92,12 +91,12 @@ post(D(10, 18), "Reel (50s)", "COD/RTO", "India",
      "RTO", "marginwise-rto-finder.xlsx + marginwise-cod-rto-playbook.pdf", "Yes", "Yes", "Batch 1")
 
 # Week 2
-post(D(10, 20), "Reel (60s)", "Teardown", "Intl",
+post(D(10, 20), "Reel (60s)", "Teardown", "ANZ",
      "[Brand] does everything right on this page except one thing.",
-     "Screen-record a well-known US/UK brand's mobile product page. Two strengths, one leak "
-     "(hidden shipping cost, review placement, or slow image). What that leak costs in margin.",
+     "Screen-record a well-known Australian or New Zealand brand's mobile product page. Two strengths, one leak "
+     "(shipping cost hidden until checkout, Afterpay messaging buried, review placement, or a slow image). What that leak costs in margin.",
      "A product page teardown with a margin lens: what converts, what leaks, and what the leak costs.\n\n"
-     "Want this for your store? Comment AUDIT.\n\n#shopifycro #productpage #ecommerce",
+     "Want this for your store? Comment AUDIT.\n\n#shopifyaustralia #ecommerceaustralia #nzbusiness",
      "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "Yes", "No", "Batch 1")
 post(D(10, 22), "Reel (60s)", "Margin math", "India",
      "Your revenue is growing. Your profit isn't. Here's why.",
@@ -113,16 +112,15 @@ post(D(10, 24), "Carousel (8 slides)", "Margin math", "India",
      "Line by line, what is left of a ₹1,000 order once every cost is counted. Numbers are an example store; "
      "run your own with the calculator.\n\nComment MARGIN for the sheet.\n\n#d2cindia #ecommerceindia #margin",
      "MARGIN", "marginwise-margin-calculator-inr.xlsx + marginwise-contribution-margin-checklist.pdf", "No", "No", "Design")
-post(D(10, 25), "Reel (45s)", "Teardown", "Both",
+post(D(10, 25), "Reel (45s)", "Teardown", "All",
      "Save these 5 checkout pages before you redesign yours.",
-     "Five public checkouts (mix of US/UK and Indian). One thing each does well: trust badges placement, "
-     "delivery date, COD/prepaid nudge, express pay, order summary clarity.",
+     "Five public checkouts: two Australian or NZ, one Saudi, two Indian. One thing each does well: delivery date, "
+     "express pay (Apple Pay, Afterpay, mada, UPI), COD/prepaid nudge, trust badges, order summary clarity.",
      "Five checkouts worth studying before your next redesign, and the one thing each gets right.\n\n"
      "Save this. Comment AUDIT if you want yours reviewed.\n\n#checkout #shopify #cro",
      "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "Yes", "No", "Batch 1")
-
 # Week 3
-post(D(10, 27), "Reel (45s)", "CRO", "Intl",
+post(D(10, 27), "Reel (45s)", "CRO", "ANZ",
      "7 out of 10 people who add to cart never buy.",
      "Baymard: 70.22% average cart abandonment across 50 studies. Three fixable reasons: surprise costs, "
      "forced account creation, too many steps. Show one fix for each on a Shopify checkout.",
@@ -136,42 +134,43 @@ post(D(10, 29), "Reel (60s)", "Teardown", "India",
      "A mobile product page teardown of an Indian D2C brand, and one fix that lifts conversion without a "
      "redesign.\n\nComment AUDIT for a teardown of your store.\n\n#d2cindia #cro #shopifyindia",
      "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "Yes", "No", "Batch 2")
-post(D(10, 31), "Carousel (6 slides)", "Proof and trust", "Intl",
-     "How a US or UK brand works with a team in India",
-     "S1 hook. S2 overlap hours (your morning, our evening). S3 weekly written update, with redacted example. "
-     "S4 one senior contact. S5 billing in USD/GBP, NDA, 30-day notice. S6 CTA.",
+post(D(10, 31), "Carousel (6 slides)", "Proof and trust", "ANZ + Saudi",
+     "How Australian, NZ and Saudi brands work with a team in India",
+     "S1 hook. S2 overlap hours: Riyadh is 2.5 hours behind India, so the whole working day overlaps; Sydney and "
+     "Auckland afternoons are India's morning. S3 weekly written update, with redacted example. S4 one senior contact. "
+     "S5 billing in AUD, NZD or SAR, NDA, 30-day notice. S6 CTA.",
      "The three things founders worry about with an offshore team, and exactly how we handle each one.\n\n"
-     "See how we work at the link in bio.\n\n#ecommerceagency #shopifyexperts #dtc",
-     "Link in bio", "None", "No", "No", "Design")
-post(D(11, 1), "Reel (50s)", "Proof and trust", "Intl",
-     "Why US brands are scared to hire an agency in India.",
-     "Communication, time zones, quality. How each should be handled by any agency: overlap hours, "
-     "weekly written update, one senior point of contact. 'Ask any agency for these three.'",
+     "Comment CHECKLIST for the questions to ask any agency, us included.\n\n#ecommerceaustralia #saudibusiness #dtc",
+     "CHECKLIST", "marginwise-agency-checklist.pdf", "No", "No", "Design")
+post(D(11, 1), "Reel (50s)", "Proof and trust", "ANZ + Saudi",
+     "Why founders worry about hiring an agency in India.",
+     "Communication, time zones, quality. How each should be handled by any agency: overlap hours (Riyadh shares "
+     "India's working day; Sydney and Auckland afternoons are India's morning), weekly written update, one senior "
+     "point of contact. 'Ask any agency for these three.'",
      "What to ask any offshore agency before you sign, ourselves included.\n\nComment CHECKLIST for the full "
-     "agency hiring checklist.\n\n#ecommerceagency #shopify #dtcbrands",
+     "agency hiring checklist.\n\n#ecommerceagency #shopifyaustralia #saudibusiness",
      "CHECKLIST", "marginwise-agency-checklist.pdf", "No", "No", "Batch 2")
-
 # Week 4
-post(D(11, 3), "Reel (45s)", "Retention", "Both",
+post(D(11, 3), "Reel (45s)", "Retention", "All",
      "Rating post-purchase emails. This one is a 2/10.",
      "Rate three order confirmation emails (public or redacted) with a score and one reason each. "
      "End on what a 9/10 email contains.",
      "Your order confirmation email is the most-opened email you send. Most brands waste it on a receipt.\n\n"
      "Comment FLOWS for the post-purchase checklist and a 10-point scorecard.\n\n#klaviyo #emailmarketing #dtc",
      "FLOWS", "marginwise-post-purchase-email-checklist.pdf", "Yes", "No", "Batch 2")
-post(D(11, 5), "Reel (45s)", "CRO", "Both",
+post(D(11, 5), "Reel (45s)", "CRO", "All",
      "A tenth of a second changed conversions by 8.4%.",
      "Deloitte/Google study of 37 brands. Run a public store through PageSpeed. Show the three usual culprits: "
      "app scripts, oversized images, third-party widgets. Fix speed before buying more traffic.",
      "Fix speed before you buy more traffic. The three culprits on most Shopify stores.\n\n"
      "Comment SPEED and we will check your store.\n\n#shopifyspeed #cro #ecommerce",
      "SPEED", "marginwise-shopify-speed-checklist.pdf + speed check", "No", "No", "Batch 2")
-post(D(11, 7), "Carousel (8 slides)", "CRO", "Intl",
-     "Black Friday checkout checklist: 7 fixes before 27 November",
-     "One fix per slide: shipping cost shown early, guest checkout, express pay, delivery date, "
-     "stock and promo messaging, mobile speed, post-purchase upsell that keeps margin. Final slide CTA.",
-     "Seven checkout fixes you can still ship before Black Friday, none of which need a redesign.\n\n"
-     "Save this. Comment BFCM for the full checklist with a sale timeline.\n\n#blackfriday #bfcm #shopify",
+post(D(11, 7), "Carousel (8 slides)", "CRO", "ANZ + Saudi",
+     "Sale-season checkout checklist: 7 fixes before Click Frenzy, White Friday and Black Friday",
+     "One fix per slide: shipping cost shown early, guest checkout, express pay (Apple Pay, Afterpay, mada, Tabby or "
+     "Tamara), delivery date, honest offer messaging, mobile speed, post-purchase upsell that keeps margin. Final slide CTA.",
+     "Seven checkout fixes you can still ship before the November sales, none of which need a redesign.\n\n"
+     "Comment BFCM for the full checklist with a sale timeline.\n\n#blackfriday #clickfrenzy #whitefriday",
      "BFCM", "marginwise-black-friday-checklist.pdf", "No", "No", "Design")
 post(D(11, 8), "Reel (50s)", "Proof and trust", "India",
      "Five questions to ask before you hire a D2C agency.",
@@ -182,12 +181,13 @@ post(D(11, 8), "Reel (50s)", "Proof and trust", "India",
      "CHECKLIST", "marginwise-agency-checklist.pdf", "No", "No", "Batch 2")
 
 # Week 5
-post(D(11, 10), "Reel (50s)", "Margin math", "Intl",
-     "Tariffs went up. Your prices didn't. Here's the gap.",
-     "Since the $800 de minimis exemption ended, landed costs rose. Landed cost before and after (illustrative). "
-     "Three levers besides price: AOV bundles, free-shipping threshold, push higher-margin products.",
-     "Rising import costs hit contribution margin first. Three ways to protect it without a price rise.\n\n"
-     "Comment PROFIT for the margin calculator.\n\n#dtc #tariffs #shopify",
+post(D(11, 10), "Reel (50s)", "Margin math", "ANZ + Saudi",
+     "Buy now, pay later is not free. Here's what it costs you.",
+     "Afterpay in Australia and NZ, Tabby and Tamara in Saudi: every BNPL order carries a merchant fee. Enter your "
+     "own BNPL fee in the PROFIT calculator's payment fee line and show contribution per order before and after. "
+     "Three levers: show BNPL only above a minimum order value, price bundles to lift AOV, steer repeat buyers to cheaper payment.",
+     "BNPL can lift conversion, but every order pays a merchant fee. Know what it does to your margin before you push it.\n\n"
+     "Comment PROFIT for the calculator and run it with your own fee.\n\n#afterpay #tabby #ecommerceaustralia",
      "PROFIT", "marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf", "Yes", "No", "Batch 3")
 post(D(11, 12), "Reel (40s)", "Margin math", "India",
      "Your ₹1 lakh ad budget costs ₹1.18 lakh.",
@@ -196,14 +196,14 @@ post(D(11, 12), "Reel (40s)", "Margin math", "India",
      "The GST line that catches founders short on cash. Not tax advice; confirm with your CA.\n\n"
      "Comment MARGIN for the calculator, which includes a GST-on-ads tab.\n\n#d2cindia #metaads #gst",
      "MARGIN", "marginwise-margin-calculator-inr.xlsx + marginwise-contribution-margin-checklist.pdf", "No", "No", "Batch 3")
-post(D(11, 14), "Carousel (7 slides)", "Retention", "Both",
+post(D(11, 14), "Carousel (7 slides)", "Retention", "All",
      "After the sale: turn festive and Black Friday buyers into repeat buyers",
      "S1 hook. S2 why sale buyers churn. S3 the delivered + how-to-use email. S4 review request timing. "
      "S5 replenishment timed to your data. S6 win-back without a discount first. S7 CTA.",
      "Sale buyers are the easiest to lose. Five emails that bring them back without giving away margin.\n\n"
      "Comment FLOWS for the full checklist.\n\n#retention #emailmarketing #d2c",
      "FLOWS", "marginwise-post-purchase-email-checklist.pdf", "No", "No", "Design")
-post(D(11, 15), "Reel (60s)", "Proof and trust", "Both",
+post(D(11, 15), "Reel (60s)", "Proof and trust", "All",
      "We audited [N] D2C stores this month. The same 3 leaks showed up in [X] of them.",
      "Only post if the audits are real; use the actual count. Three most common leaks, anonymised. "
      "If fewer than 5 audits are done, swap for a second Indian teardown.",
@@ -284,7 +284,7 @@ STEPS = {
     D(10, 31): carousel_steps("Slide 3 shows a redacted sample weekly update; build it from a blank template, not client data."),
     D(11, 1): reel_steps(
         "Screen-record the agency checklist PDF scrolling to the 'If the agency is in another country' section, "
-        "plus a world clock showing IST vs ET overlap.",
+        "plus a world clock showing Riyadh, India, Sydney and Auckland side by side.",
         "Name the three worries, then the three answers.",
         "Text list builds one line at a time."),
     D(11, 3): reel_steps(
@@ -301,8 +301,8 @@ STEPS = {
         "Read each question and its red flag.",
         "Highlight each row as you read it."),
     D(11, 10): reel_steps(
-        "Screen-record the PROFIT calculator with COGS raised to show a tariff hit, then bundle/AOV changes recovering margin.",
-        "Before vs after landed cost; three levers.",
+        "Screen-record the PROFIT calculator: raise the payment fee line to your BNPL fee, then raise AOV to show margin recovering.",
+        "Before vs after contribution per order; three levers.",
         "Before/after numbers side by side as text.", trial=True),
     D(11, 12): reel_steps(
         "Screen-record the MARGIN calculator, GST on Ads tab, typing ₹1,00,000.",
@@ -353,8 +353,8 @@ lines = [
     ("t", "Weekly review: totals per week, calculated from the Calendar tab."),
     ("t", "Setup before 14 Oct: the checklist to finish before the first post."),
     ("h", "Rules"),
-    ("t", "All posts go out at 19:30 IST. That is 10:00 US Eastern and 15:00 UK until the clocks change "
-          "(UK 25 Oct, US 1 Nov); the Calendar tab shows the exact local times for each date."),
+    ("t", "From 18 Oct, posts for Australia, NZ or all markets go out at 13:30 IST (11:00 Riyadh, 19:00 Sydney, "
+          "21:00 Auckland). India and Saudi posts go out at 19:30 IST (17:00 Riyadh). The Calendar tab shows each date."),
     ("t", "No holiday greetings, memes or office posts. They underperformed for every competitor reviewed."),
     ("t", "Replace [Brand] placeholders with public pages only. Keep the tone constructive and keep logos out of thumbnails."),
     ("t", "Post Trial Reels first where marked; share to followers only if they hold viewers past 3 seconds."),
@@ -376,10 +376,10 @@ for kind, text in lines:
     r += 1
 
 cal = wb.create_sheet("Calendar")
-heads = ["Week", "Date", "Day", "IST", "US Eastern", "UK", "Format", "Pillar", "Market", "Hook (on screen)",
+heads = ["Week", "Date", "Day", "IST", "Riyadh", "Sydney", "Auckland", "Format", "Pillar", "Market", "Hook (on screen)",
          "Outline", "Step by step (no face)", "Caption", "CTA keyword", "Lead magnet", "Trial Reel first?", "Pin?", "Recording batch",
          "Status", "Post link", "Reach", "Saves", "Shares", "Comments", "DMs", "Calls booked"]
-widths = [7, 12, 6, 7, 9, 7, 15, 14, 8, 34, 45, 70, 55, 12, 30, 10, 6, 11, 11, 24, 9, 8, 8, 10, 8, 9]
+widths = [7, 12, 6, 7, 8, 8, 9, 15, 14, 8, 34, 45, 70, 55, 12, 30, 10, 6, 11, 11, 24, 9, 8, 8, 10, 8, 9]
 header(cal, 1, heads, widths)
 cal.freeze_panes = "D2"
 start = date(2026, 10, 12)
@@ -387,28 +387,28 @@ status_dv = DataValidation(type="list", formula1='"Planned,Filmed,Edited,Schedul
 cal.add_data_validation(status_dv)
 for i, (d, fmt, pillar, market, hook, outline, caption, cta, magnet, trial, pin, batch) in enumerate(P, 2):
     week = (d - start).days // 7 + 1
-    ist, et, uk = local_times(d)
-    vals = [week, d, d.strftime("%a"), ist, et, uk, fmt, pillar, market, hook, outline, STEPS[d], caption, cta, magnet,
+    ist, riy, syd, akl = local_times(d, market)
+    vals = [week, d, d.strftime("%a"), ist, riy, syd, akl, fmt, pillar, market, hook, outline, STEPS[d], caption, cta, magnet,
             trial, pin, batch, "Planned"]
     for col, v in enumerate(vals, 1):
         c = cal.cell(row=i, column=col, value=v)
-        c.font = f(bold=(col == 10))
+        c.font = f(bold=(col == 11))
         c.alignment = WRAP
         c.border = BOX
         if week % 2 == 0:
             c.fill = WEEKFILL
     cal.cell(row=i, column=2).number_format = "dd mmm yyyy"
-    status_dv.add(f"S{i}")
-    for col in range(20, 27):
+    status_dv.add(f"T{i}")
+    for col in range(21, 28):
         c = cal.cell(row=i, column=col)
         c.fill = INPUT
         c.font = f(color=BLUE)
         c.border = BOX
-        if col >= 21:
+        if col >= 22:
             c.number_format = "#,##0"
     cal.row_dimensions[i].height = 230
 last = len(P) + 1
-cal.auto_filter.ref = f"A1:Z{last}"
+cal.auto_filter.ref = f"A1:AA{last}"
 
 st = wb.create_sheet("Stories")
 header(st, 1, ["Day", "Story type", "What to post", "Sticker", "Why"], [10, 18, 60, 18, 45])
@@ -469,8 +469,8 @@ for w in range(1, 6):
     wr.cell(row=r, column=1, value=w)
     wr.cell(row=r, column=2, value=start + timedelta(days=7 * (w - 1))).number_format = "dd mmm yyyy"
     wr.cell(row=r, column=3, value=f"=COUNTIF({rng('A')},A{r})")
-    wr.cell(row=r, column=4, value=f'=COUNTIFS({rng("A")},A{r},{rng("S")},"Posted")')
-    for col, src in zip("EFGHIJ", "UVWXYZ"):
+    wr.cell(row=r, column=4, value=f'=COUNTIFS({rng("A")},A{r},{rng("T")},"Posted")')
+    for col, src in zip("EFGHIJ", ["V", "W", "X", "Y", "Z", "AA"]):
         wr[f"{col}{r}"] = f"=SUMIF({rng('A')},A{r},{rng(src)})"
         wr[f"{col}{r}"].number_format = "#,##0"
     wr[f"K{r}"] = f"=IFERROR(G{r}/E{r}*1000,0)"

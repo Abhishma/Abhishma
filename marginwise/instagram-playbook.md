@@ -5,7 +5,8 @@ Last updated: 12 Oct 2026. Content calendar: `instagram-content-calendar.xlsx`.
 
 ## 1. Positioning
 
-- Job of the account: discovery and trust for D2C and Shopify founders in India, the US and the UK, ending in a 30-minute call.
+- Job of the account: discovery and trust for D2C and Shopify founders, ending in a 30-minute call.
+- Markets (from 17 Oct 2026): India, Saudi Arabia, Australia and New Zealand. US and UK content that already exists stays up, but new international posts are aimed at Saudi and ANZ.
 - Angle: margin, not ROAS. Every competitor sells revenue and ROAS; Marginwise shows what the business keeps.
 - Language: English only. Indian context (rupee figures, Indian brands, COD and RTO) carries India topics.
 - Format: faceless. No one on camera; every post shows the work itself (screen recordings of stores, calculators, audits) with Abhimanyu's voiceover. Text-only voiceover-free versions are the fallback. Collab posts with Abhimanyu's personal handle are optional.
@@ -37,12 +38,31 @@ Four Indian D2C agencies, checked from their public profiles and last 12 reels.
 - Headline ROAS or revenue claims without context. They contradict our own agency checklist ("ask for a client you can call") and our margin message.
 - Showing client dashboards or naming clients without written permission.
 
+## 2b. Saudi Arabia, Australia and New Zealand
+
+| | Saudi Arabia | Australia and New Zealand |
+|---|---|---|
+| Posting time | 19:30 IST = 17:00 Riyadh (shared slot with India) | 13:30 IST = 19:00 Sydney, 21:00 Auckland (AEDT and NZDT until early April) |
+| Working week | Sunday to Thursday; weekend is Friday and Saturday | Monday to Friday |
+| Payments to mention | mada, Apple Pay, STC Pay, Tabby, Tamara; COD still common | Apple Pay, Google Pay, Afterpay, Shop Pay |
+| Store platforms | Salla and Zid are widely used alongside Shopify | Shopify is widely used |
+| Tax on prices | VAT 15% | GST 10% (AU), 15% (NZ) |
+| Sale moments | White Friday (November), 11.11, Ramadan and Eid | Click Frenzy and Black Friday (November), Boxing Day |
+| Content that fits | COD/RTO, checkout and BNPL fees, trust in an offshore team | Store teardowns of local brands, BNPL fees, sale-season checklists |
+| Billing | SAR | AUD, NZD |
+
+Open decisions for these markets:
+- Saudi: add a short Arabic line to captions for Saudi posts, or stay English only.
+- Saudi: decide whether Marginwise supports Salla and Zid stores, or only Shopify. Say it on the website either way.
+- Add Saudi, Australia and New Zealand to marginwise.in (hours, currency), so the bio and site match.
+- Seed followers with $10-15 a day of ads targeting Saudi Arabia, Australia and New Zealand instead of the US and UK.
+
 ## 3. Profile
 
 - Handle: **@marginwise.in**. @marginwise is taken by another account (checked 12 Oct 2026); @marginwise.in matches the domain and reinforces the URL. Register it now. Unclaimed backups as of 12 Oct 2026: @marginwisehq, @marginwise.co, @marginwise_in.
 - Name field: `Marginwise | D2C CRO & Growth`
 - Bio, until client proof exists:
-  > CRO, performance marketing and UX for D2C brands. India, US, UK.
+  > CRO, performance marketing and UX for D2C brands. India, Saudi, Australia, NZ.
   > 10 years building D2C and commerce products.
   > Free 30-min store review below.
 - Bio, once proof exists: replace line 2 with one verifiable number, for example "Margin up X% for [named client]", with permission.

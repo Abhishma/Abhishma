@@ -58,7 +58,7 @@ docs["marginwise-store-leak-audit"] = page(
         ]),
         ("4. Checkout", "Baymard Institute puts average cart abandonment at 70.22%; unexpected extra costs are among the most common reasons shoppers give.", [
             "Guest checkout is available; no forced account creation",
-            "Express payment is offered: Shop Pay, Apple Pay or Google Pay; UPI for India",
+            "Express payment is offered: Shop Pay, Apple Pay or Google Pay; Afterpay in Australia and NZ; mada, Tabby or Tamara in Saudi; UPI in India",
             "No new cost appears at the last step",
             "Only the fields you really need are asked for",
             "Trust signals (secure payment, returns) sit close to the pay button",
@@ -69,7 +69,7 @@ docs["marginwise-store-leak-audit"] = page(
             "Apps you no longer use are uninstalled and their leftover code removed",
             "Large images are compressed and below-the-fold images load lazily",
         ]),
-        ("6. India: COD and RTO", "", [
+        ("6. India and Saudi: COD and RTO", "", [
             "You know your RTO rate on COD orders, by state or pin code",
             "Prepaid has a reason to choose it: a small discount, faster dispatch or a gift",
             "Risky COD orders are confirmed by WhatsApp or call before dispatch",
@@ -229,14 +229,14 @@ docs["marginwise-cod-rto-playbook"] = page(
     keyword="RTO")
 
 docs["marginwise-black-friday-checklist"] = page(
-    "Black Friday checkout checklist: 7 fixes before 27 November",
-    "Sale traffic is the most expensive traffic you will buy all year. These fixes need no redesign and can ship "
-    "before the sale.",
+    "Sale-season checkout checklist: 7 fixes before Click Frenzy, White Friday and Black Friday",
+    "November is peak sale season in Australia, New Zealand, Saudi Arabia, the US and the UK. Sale traffic is the "
+    "most expensive traffic you will buy all year. These fixes need no redesign and can ship before the sale.",
     [
         ("The 7 fixes", "", [
             "Show shipping cost or the free-shipping threshold on the product page and in the cart",
             "Turn on guest checkout",
-            "Turn on express payment: Shop Pay, Apple Pay and Google Pay",
+            "Turn on express payment: Apple Pay and Google Pay everywhere, Shop Pay where available, Afterpay in Australia and NZ, mada and Tabby or Tamara in Saudi",
             "Show a delivery date that accounts for sale-week carrier delays",
             "Make stock and offer messaging honest and clear: what is discounted and until when",
             "Run a mobile speed test and remove any app added since the last one",
@@ -258,7 +258,7 @@ docs["marginwise-black-friday-checklist"] = page(
     cta=("Want a check before the sale?",
          "Comment <b>BFCM</b> or send your store link by DM for a free 2-minute teardown, or book a call at "
          "<b>marginwise.in</b>."),
-    sources="Source: Baymard Institute, checkout usability research. Black Friday 2026 falls on Friday 27 November.",
+    sources="Source: Baymard Institute, checkout usability research. Black Friday 2026 falls on Friday 27 November; check this year's Click Frenzy and White Friday dates with the event organisers and marketplaces.",
     keyword="BFCM")
 
 for name, body in docs.items():
