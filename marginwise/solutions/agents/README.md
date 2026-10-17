@@ -45,7 +45,7 @@ agents/
   - max_turns (default 10) caps model calls per run.
   - Tools listed in tools.json "requires_approval" never execute in the loop; the model receives a pending_approval object and the request is queued (RunResult.pending_approvals). A human approves later with AgentRunner.approve(approval_id). Handlers can also return pending_approval for unsafe arguments (for example non-whitelisted sync fixes).
   - Transcripts are JSON, written per run when transcript_dir or MARGINWISE_TRANSCRIPT_DIR is set, with emails, phones, card numbers and IBANs redacted. The model-facing conversation is not redacted.
-  - Safety refusals stop the run (stop_reason "refusal"). Real Sonnet/Opus calls use the server-side refusal fallback beta (fallbacks="default"); disable with MARGINWISE_SERVER_FALLBACKS=0 on platforms that do not support it.
+  - Safety refusals stop the run (stop_reason "refusal"). An optional server-side refusal fallback is off by default; confirm the beta in the current Anthropic docs, then enable it with MARGINWISE_SERVER_FALLBACKS=1.
 - Deterministic first: wherever money, tax, consent or compliance logic is involved (payout matching, landed cost, ICP scoring and consent, PO validation, GPSR validation, quote pricing, copy rule scan, National Address validation), the logic lives in plain Python and is unit-tested. The model explains and orchestrates.
 
 ## Setup and running
