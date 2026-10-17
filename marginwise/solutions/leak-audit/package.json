@@ -17,6 +17,6 @@
   "private": true,
   "dependencies": {
     "axe-core": "^4.14.0",
-    "playwright-core": "^1.56.1"
+    "playwright-core": "1.56.1"
   }
 }
