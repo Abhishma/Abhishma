@@ -58,7 +58,7 @@ docs["marginwise-store-leak-audit"] = page(
         ]),
         ("4. Checkout", "Baymard Institute puts average cart abandonment at 70.22%; unexpected extra costs are among the most common reasons shoppers give.", [
             "Guest checkout is available; no forced account creation",
-            "Express payment is offered: Shop Pay, Apple Pay or Google Pay; Afterpay in Australia and NZ; mada, Tabby or Tamara in Saudi; UPI in India",
+            "Express payment is offered: Shop Pay, Apple Pay or Google Pay",
             "No new cost appears at the last step",
             "Only the fields you really need are asked for",
             "Trust signals (secure payment, returns) sit close to the pay button",
@@ -69,10 +69,10 @@ docs["marginwise-store-leak-audit"] = page(
             "Apps you no longer use are uninstalled and their leftover code removed",
             "Large images are compressed and below-the-fold images load lazily",
         ]),
-        ("6. India and Saudi: COD and RTO", "", [
-            "You know your RTO rate on COD orders, by state or pin code",
-            "Prepaid has a reason to choose it: a small discount, faster dispatch or a gift",
-            "Risky COD orders are confirmed by WhatsApp or call before dispatch",
+        ("6. Payments, delivery and returns", "", [
+            "Buy now, pay later (Afterpay, Klarna, Clearpay or Affirm) is offered only where its fee still leaves margin",
+            "Delivery promises on the product page match what your carrier actually achieves",
+            "The returns process is simple to start online, and you track the main return reasons",
         ]),
         ("7. After the first order", "", [
             "The order confirmation email does more than show a receipt",
@@ -229,14 +229,14 @@ docs["marginwise-cod-rto-playbook"] = page(
     keyword="RTO")
 
 docs["marginwise-black-friday-checklist"] = page(
-    "Sale-season checkout checklist: 7 fixes before Click Frenzy, White Friday and Black Friday",
-    "November is peak sale season in Australia, New Zealand, Saudi Arabia, the US and the UK. Sale traffic is the "
+    "Black Friday checkout checklist: 7 fixes before 27 November",
+    "November is peak sale season in the US, the UK and Australia, with Black Friday, Cyber Monday and Click Frenzy. Sale traffic is the "
     "most expensive traffic you will buy all year. These fixes need no redesign and can ship before the sale.",
     [
         ("The 7 fixes", "", [
             "Show shipping cost or the free-shipping threshold on the product page and in the cart",
             "Turn on guest checkout",
-            "Turn on express payment: Apple Pay and Google Pay everywhere, Shop Pay where available, Afterpay in Australia and NZ, mada and Tabby or Tamara in Saudi",
+            "Turn on express payment: Shop Pay, Apple Pay and Google Pay, plus a buy-now-pay-later option if its fee still leaves margin",
             "Show a delivery date that accounts for sale-week carrier delays",
             "Make stock and offer messaging honest and clear: what is discounted and until when",
             "Run a mobile speed test and remove any app added since the last one",
@@ -260,6 +260,89 @@ docs["marginwise-black-friday-checklist"] = page(
          "<b>marginwise.in</b>."),
     sources="Source: Baymard Institute, checkout usability research. Black Friday 2026 falls on Friday 27 November; check this year's Click Frenzy and White Friday dates with the event organisers and marketplaces.",
     keyword="BFCM")
+
+docs["marginwise-ai-search-visibility-checklist"] = page(
+    "AI search visibility checklist: get named when shoppers ask AI what to buy",
+    "Shoppers now ask ChatGPT, Perplexity, Gemini and Google's AI answers which product to buy. These answers draw on "
+    "pages they can read and sources they trust. This checklist covers what you control. It builds on good SEO; it does "
+    "not replace it.",
+    [
+        ("1. Can AI and search engines read your store?", "", [
+            "Your robots.txt does not block the search crawlers you want to appear in",
+            "Key pages load fast on mobile and show their main content without needing a click",
+            "Product, collection and policy pages are in your sitemap and indexed in Google Search Console",
+        ]),
+        ("2. Do your pages answer real questions?", "", [
+            "Each product page states the facts shoppers ask about: size, material, fit, care, delivery and returns",
+            "You have an FAQ on the product page or a help page that answers the top 10 pre-purchase questions in plain words",
+            "You have honest comparison or 'which one is right for me' pages for your main product lines",
+            "Product titles and descriptions use the words customers use, not only internal names",
+        ]),
+        ("3. Is your data structured and consistent?", "", [
+            "Product pages carry structured data: Product, Offer (price and stock) and Review or AggregateRating",
+            "FAQ content is marked up where it is visible on the page",
+            "Your Google Merchant Center feed matches the prices and stock on your site",
+            "Brand name, prices and key facts are the same on your site, marketplaces and social profiles",
+        ]),
+        ("4. Do other sites vouch for you?", "", [
+            "You collect reviews on at least one independent review site, not only on your own store",
+            "Your brand appears in relevant 'best of' lists, press or creator content in your category",
+            "You answer questions about your category where shoppers ask them (forums, communities), without spamming",
+        ]),
+        ("5. Test and measure every month", "", [
+            "Ask ChatGPT, Perplexity, Gemini and Google the same 5 buying questions for your category and log who is named",
+            "Track visits from AI assistants in GA4 (for example referrals from chatgpt.com or perplexity.ai)",
+            "Note which pages AI answers cite, and improve the pages they skip",
+        ]),
+    ],
+    box="<b>SEO, AEO, GEO in one line each.</b> SEO: rank in search results. AEO (answer engine optimisation): be the "
+        "answer in featured snippets and AI answers. GEO (generative engine optimisation): be named and cited by "
+        "generative AI tools such as ChatGPT and Perplexity.",
+    cta=("Want to know where you stand?",
+         "Comment <b>GEO</b> or send your store link by DM. We will run the 5-question AI test for your category and "
+         "send you the results within one working day."),
+    sources="This checklist reflects current practice; AI search tools change how they choose sources often, so re-test "
+            "monthly rather than relying on a one-off fix.",
+    keyword="GEO")
+
+docs["marginwise-ai-for-ecommerce-builds"] = page(
+    "10 AI builds worth starting with for ecommerce brands",
+    "AI is most useful where your team repeats the same work every week. Each build below lists what it does, what data "
+    "it needs, and what to watch. Start with one, measure it for a month, then add the next.",
+    [
+        ("Customer service", "", [
+            "<b>Support assistant for the top questions.</b> Answers 'where is my order', returns and sizing from your own policies and order data; hands over to a person when unsure. Watch: wrong answers on refunds, so keep a person in the loop.",
+            "<b>Reply drafting for your team.</b> Drafts answers to tickets in your brand voice for an agent to approve. Watch: tone and promises.",
+            "<b>Return reason sorting.</b> Groups return and review comments into reasons (size, quality, delivery) so you fix the product page or the product.",
+        ]),
+        ("Content and SEO", "", [
+            "<b>Product description and alt text drafts.</b> Writes first drafts from spec sheets; a person checks every claim. Watch: identical, generic copy.",
+            "<b>Review summaries for product pages.</b> Turns hundreds of reviews into the top pros and objections, so copy answers what buyers worry about.",
+            "<b>FAQ and comparison pages.</b> Drafts answers to the questions customers actually ask, for search and AI answers.",
+        ]),
+        ("Ads and growth", "", [
+            "<b>Ad copy and hook variations.</b> Generates many hooks from one brief so you can test more angles. Watch: claims that breach ad policies.",
+            "<b>Weekly performance summary.</b> Pulls Shopify, GA4 and ad platform numbers into a plain-English summary every Monday, with the three things that changed.",
+        ]),
+        ("Operations", "", [
+            "<b>Stock and demand alerts.</b> Flags best sellers about to run out and slow movers to promote.",
+            "<b>Personalised post-purchase emails.</b> Recommends the next product from what the customer bought, inside your email tool.",
+        ]),
+        ("Before you build anything", "", [
+            "Pick one task your team repeats weekly and measure how long it takes today",
+            "Decide what a person must always check before the AI output reaches a customer",
+            "Keep customer data inside tools you already trust, and check each tool's data terms",
+            "Measure the result after 30 days: hours saved, tickets resolved, conversion or revenue change",
+        ]),
+    ],
+    box="<b>How we use AI ourselves:</b> to read every review and ticket, draft test ideas and first drafts, and summarise "
+        "data. A person who has built D2C products decides what to fix first and checks everything before it ships.",
+    cta=("Want to find the right first build?",
+         "Comment <b>AI</b> or book a free 30-minute call at <b>marginwise.in</b>. We will look at where your team spends "
+         "the most repeated time and suggest one build to start with."),
+    sources="Marginwise works with ecommerce brands in Australia, the US and the UK on performance marketing, CRO, website "
+            "development, SEO/AEO/GEO and AI solutions.",
+    keyword="AI")
 
 for name, body in docs.items():
     with open(os.path.join(OUT, name + ".html"), "w") as fh:

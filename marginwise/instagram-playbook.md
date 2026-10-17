@@ -6,7 +6,8 @@ Last updated: 12 Oct 2026. Content calendar: `instagram-content-calendar.xlsx`.
 ## 1. Positioning
 
 - Job of the account: discovery and trust for D2C and Shopify founders, ending in a 30-minute call.
-- Markets (from 17 Oct 2026): India, Saudi Arabia, Australia and New Zealand. US and UK content that already exists stays up, but new international posts are aimed at Saudi and ANZ.
+- Markets (from 17 Oct 2026): Australia, the US and the UK. India content is retired; Saudi Arabia and New Zealand are out of scope.
+- Services shown: performance marketing, CRO, website development, SEO/AEO/GEO, and AI solutions (AI we build for brands, and AI in our own delivery).
 - Angle: margin, not ROAS. Every competitor sells revenue and ROAS; Marginwise shows what the business keeps.
 - Language: English only. Indian context (rupee figures, Indian brands, COD and RTO) carries India topics.
 - Format: faceless. No one on camera; every post shows the work itself (screen recordings of stores, calculators, audits) with Abhimanyu's voiceover. Text-only voiceover-free versions are the fallback. Collab posts with Abhimanyu's personal handle are optional.
@@ -38,31 +39,26 @@ Four Indian D2C agencies, checked from their public profiles and last 12 reels.
 - Headline ROAS or revenue claims without context. They contradict our own agency checklist ("ask for a client you can call") and our margin message.
 - Showing client dashboards or naming clients without written permission.
 
-## 2b. Saudi Arabia, Australia and New Zealand
+## 2b. Australia, US and UK
 
-| | Saudi Arabia | Australia and New Zealand |
-|---|---|---|
-| Posting time | 19:30 IST = 17:00 Riyadh (shared slot with India) | 13:30 IST = 19:00 Sydney, 21:00 Auckland (AEDT and NZDT until early April) |
-| Working week | Sunday to Thursday; weekend is Friday and Saturday | Monday to Friday |
-| Payments to mention | mada, Apple Pay, STC Pay, Tabby, Tamara; COD still common | Apple Pay, Google Pay, Afterpay, Shop Pay |
-| Store platforms | Salla and Zid are widely used alongside Shopify | Shopify is widely used |
-| Tax on prices | VAT 15% | GST 10% (AU), 15% (NZ) |
-| Sale moments | White Friday (November), 11.11, Ramadan and Eid | Click Frenzy and Black Friday (November), Boxing Day |
-| Content that fits | COD/RTO, checkout and BNPL fees, trust in an offshore team | Store teardowns of local brands, BNPL fees, sale-season checklists |
-| Billing | SAR | AUD, NZD |
+| | Australia | US | UK |
+|---|---|---|---|
+| Posting time | 13:30 IST = 19:00 Sydney (AEDT) | 19:30 IST = 10:00 New York until 31 Oct, 09:00 from 1 Nov | 19:30 IST = 15:00 London until 24 Oct, 14:00 from 25 Oct |
+| Payments to mention | Apple Pay, Google Pay, Shop Pay, Afterpay | Shop Pay, Apple Pay, Klarna, Affirm | Shop Pay, Apple Pay, Klarna, Clearpay |
+| Sale moments | Click Frenzy, Black Friday, Boxing Day | Black Friday, Cyber Monday | Black Friday, Boxing Day |
+| Billing | AUD | USD | GBP |
 
-Open decisions for these markets:
-- Saudi: add a short Arabic line to captions for Saudi posts, or stay English only.
-- Saudi: decide whether Marginwise supports Salla and Zid stores, or only Shopify. Say it on the website either way.
-- Add Saudi, Australia and New Zealand to marginwise.in (hours, currency), so the bio and site match.
-- Seed followers with $10-15 a day of ads targeting Saudi Arabia, Australia and New Zealand instead of the US and UK.
+Open decisions:
+- Update marginwise.in: markets (Australia, US, UK), services (add website development, SEO/AEO/GEO and AI solutions), currencies.
+- Seed followers with $10-15 a day of ads targeting Australia, the US and the UK.
+- Every AI claim must be something you can demo on a development store or have delivered. No invented client results.
 
 ## 3. Profile
 
 - Handle: **@marginwise.in**. @marginwise is taken by another account (checked 12 Oct 2026); @marginwise.in matches the domain and reinforces the URL. Register it now. Unclaimed backups as of 12 Oct 2026: @marginwisehq, @marginwise.co, @marginwise_in.
 - Name field: `Marginwise | D2C CRO & Growth`
 - Bio, until client proof exists:
-  > CRO, performance marketing and UX for D2C brands. India, Saudi, Australia, NZ.
+  > Performance marketing, CRO, web, SEO/AEO/GEO and AI for ecommerce. Australia, US, UK.
   > 10 years building D2C and commerce products.
   > Free 30-min store review below.
 - Bio, once proof exists: replace line 2 with one verifiable number, for example "Margin up X% for [named client]", with permission.
@@ -126,18 +122,18 @@ Reels 1-12 are unchanged from the original plan. Reels 13-15 are added from the 
 
 ## 7. Comment keywords and lead magnets
 
-Every keyword sends a file. AUDIT and SPEED also get a personal reply within one working day.
-
 | Keyword | Sends | Files in `lead-magnets/` |
 |---|---|---|
 | AUDIT | 30-point store leak audit + free 2-minute video teardown | `marginwise-store-leak-audit.pdf` |
-| PROFIT | ROAS-to-profit calculator (USD) + 10-step checklist | `marginwise-profit-calculator-usd.xlsx`, `marginwise-roas-to-profit-checklist.pdf` |
-| MARGIN | Contribution margin and GST-on-ads calculator (INR) + checklist | `marginwise-margin-calculator-inr.xlsx`, `marginwise-contribution-margin-checklist.pdf` |
-| RTO | State and pin-code RTO finder + COD/RTO playbook | `marginwise-rto-finder.xlsx`, `marginwise-cod-rto-playbook.pdf` |
+| PROFIT | ROAS-to-profit calculator + 10-step checklist | `marginwise-profit-calculator-usd.xlsx`, `marginwise-roas-to-profit-checklist.pdf` |
+| GEO | AI search visibility checklist + 5-question AI test of their category | `marginwise-ai-search-visibility-checklist.pdf` |
+| AI | 10 AI builds worth starting with for ecommerce | `marginwise-ai-for-ecommerce-builds.pdf` |
 | SPEED | 15-fix Shopify speed checklist + personal speed check | `marginwise-shopify-speed-checklist.pdf` |
 | FLOWS | Post-purchase email checklist with 10-point scorecard | `marginwise-post-purchase-email-checklist.pdf` |
 | CHECKLIST | Agency hiring checklist | `marginwise-agency-checklist.pdf` |
 | BFCM | Black Friday checkout checklist with sale timeline | `marginwise-black-friday-checklist.pdf` |
+
+Retired with the India focus: MARGIN (INR calculator, contribution margin checklist) and RTO (RTO finder, COD playbook). The files stay in `lead-magnets/` in case India returns.
 
 ## 8. Measurement
 

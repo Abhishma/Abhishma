@@ -33,7 +33,7 @@ for w, rs in weeks.items():
         cards.append(f"""
 <article class="post">
   <header class="post-head">
-    <div class="when"><b>{d.strftime('%a %d %b')}</b><span class="mono">{E(r[ix['IST']])} IST · {E(r[ix['Riyadh']])} Riyadh · {E(r[ix['Sydney']])} Sydney · {E(r[ix['Auckland']])} Auckland</span></div>
+    <div class="when"><b>{d.strftime('%a %d %b')}</b><span class="mono">{E(r[ix['IST']])} IST · {E(r[ix['Sydney']])} Sydney · {E(r[ix['London']])} London · {E(r[ix['New York']])} New York</span></div>
     <div class="tags"><span class="chip {kind}">{fmt}</span><span class="chip">{E(r[ix['Market']])}</span><span class="chip">{E(r[ix['Pillar']])}</span>{''.join(flags)}</div>
   </header>
   <p class="hook">{E(r[ix['Hook (on screen)']])}</p>
@@ -137,8 +137,8 @@ ul.checks label {{ display:grid; gap:2px; min-width:0 }} ul.checks span {{ color
 </div></nav>
 <main class="wrap">
   <h1>@marginwise.in content calendar</h1>
-  <p class="lede">14 Oct to 15 Nov 2026. 20 posts, no face on camera: every post shows the work, with your voiceover.</p>
-  <p class="rule">From 18 Oct: Australia, NZ and all-market posts at 13:30 IST; India and Saudi posts at 19:30 IST. Reply to every comment in the first hour. Don't publish a keyword until its auto-DM works.</p>
+  <p class="lede">14 Oct to 15 Nov 2026. Australia, US and UK. No face on camera: every post shows the work, with your voiceover.</p>
+  <p class="rule">From 18 Oct: Australia posts at 13:30 IST; US/UK and all-market posts at 19:30 IST. Reply to every comment in the first hour. Don't publish a keyword until its auto-DM works.</p>
   <h2 id="calendar">Calendar</h2>
   {''.join(cards)}
   <h2 id="how">How to make (no face)</h2>{sop}

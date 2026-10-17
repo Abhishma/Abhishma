@@ -33,12 +33,14 @@ def header(ws, row, heads, widths):
 
 
 def local_times(d, market):
-    """Posting slot by market. Posts from 18 Oct aimed at Australia/NZ go out at 13:30 IST; India and Saudi
-    posts at 19:30 IST. Shows Riyadh (UTC+3), Sydney (AEDT, UTC+11) and Auckland (NZDT, UTC+13)."""
-    anz = d >= date(2026, 10, 18) and market not in ("India", "India + Saudi")
-    utc = datetime(d.year, d.month, d.day, 8 if anz else 14, 0, tzinfo=timezone.utc)
+    """Australia-only posts go out at 13:30 IST; US/UK and all-market posts at 19:30 IST.
+    Shows Sydney (AEDT, UTC+11), London (BST until 24 Oct, then GMT) and New York (EDT until 31 Oct, then EST)."""
+    au = market == "AU"
+    utc = datetime(d.year, d.month, d.day, 8 if au else 14, 0, tzinfo=timezone.utc)
     fmt = lambda h: (utc + timedelta(hours=h)).strftime("%H:%M")
-    return ("13:30" if anz else "19:30"), fmt(3), fmt(11), fmt(13)
+    lon = 1 if d < date(2026, 10, 25) else 0
+    ny = -4 if d < date(2026, 11, 1) else -5
+    return ("13:30" if au else "19:30"), fmt(11), fmt(lon), fmt(ny)
 
 
 # ------------------------------------------------------------------ posts
@@ -80,136 +82,9 @@ post(D(10, 17), "Carousel (7 slides)", "Margin math", "All",
      "Sources on every slide.\n\nSave this for your next growth review. Comment AUDIT if you want us to check "
      "your store against them.\n\n#ecommerce #cro #d2cbrands",
      "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "No", "No", "Design")
-post(D(10, 18), "Reel (50s)", "COD/RTO", "India + Saudi",
-     "26% of your COD orders come back.",
-     "Shipway FY25: 26% RTO on COD vs under 2% prepaid. What one RTO costs: forward and return shipping, "
-     "packaging, wasted ad spend. Three fixes: prepaid incentive, WhatsApp confirmation for risky COD, "
-     "switch off COD only in high-RTO pin codes.",
-     "Switching off COD everywhere is the wrong fix. Find the pin codes where it loses money and act only there.\n\n"
-     "Comment RTO and we will send you the sheet that ranks your states and pin codes by RTO cost.\n\n"
-     "#d2cindia #rto #shopifyindia",
-     "RTO", "marginwise-rto-finder.xlsx + marginwise-cod-rto-playbook.pdf", "Yes", "Yes", "Batch 1")
-
-# Week 2
-post(D(10, 20), "Reel (60s)", "Teardown", "ANZ",
-     "[Brand] does everything right on this page except one thing.",
-     "Screen-record a well-known Australian or New Zealand brand's mobile product page. Two strengths, one leak "
-     "(shipping cost hidden until checkout, Afterpay messaging buried, review placement, or a slow image). What that leak costs in margin.",
-     "A product page teardown with a margin lens: what converts, what leaks, and what the leak costs.\n\n"
-     "Want this for your store? Comment AUDIT.\n\n#shopifyaustralia #ecommerceaustralia #nzbusiness",
-     "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "Yes", "No", "Batch 1")
-post(D(10, 22), "Reel (60s)", "Margin math", "India",
-     "Your revenue is growing. Your profit isn't. Here's why.",
-     "Break down a ₹1,000 order: GST, COGS, ad cost per order, shipping, RTO, gateway fees, discounts. "
-     "Land on contribution margin per order. Investors now ask for this, not GMV.",
-     "Contribution margin per order, explained with a real ₹1,000 example.\n\nComment MARGIN and we will send you "
-     "the calculator, including a what-if for pushing more buyers to prepaid.\n\n#d2cindia #unitEconomics #founders",
-     "MARGIN", "marginwise-margin-calculator-inr.xlsx + marginwise-contribution-margin-checklist.pdf", "No", "No", "Batch 1")
-post(D(10, 24), "Carousel (8 slides)", "Margin math", "India",
-     "What a ₹1,000 order actually earns you",
-     "One cost per slide: GST, product cost, ad cost, shipping and packaging, RTO, COD fees, gateway fees. "
-     "Final slide: contribution per order and the one lever that moves it most.",
-     "Line by line, what is left of a ₹1,000 order once every cost is counted. Numbers are an example store; "
-     "run your own with the calculator.\n\nComment MARGIN for the sheet.\n\n#d2cindia #ecommerceindia #margin",
-     "MARGIN", "marginwise-margin-calculator-inr.xlsx + marginwise-contribution-margin-checklist.pdf", "No", "No", "Design")
-post(D(10, 25), "Reel (45s)", "Teardown", "All",
-     "Save these 5 checkout pages before you redesign yours.",
-     "Five public checkouts: two Australian or NZ, one Saudi, two Indian. One thing each does well: delivery date, "
-     "express pay (Apple Pay, Afterpay, mada, UPI), COD/prepaid nudge, trust badges, order summary clarity.",
-     "Five checkouts worth studying before your next redesign, and the one thing each gets right.\n\n"
-     "Save this. Comment AUDIT if you want yours reviewed.\n\n#checkout #shopify #cro",
-     "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "Yes", "No", "Batch 1")
-# Week 3
-post(D(10, 27), "Reel (45s)", "CRO", "ANZ",
-     "7 out of 10 people who add to cart never buy.",
-     "Baymard: 70.22% average cart abandonment across 50 studies. Three fixable reasons: surprise costs, "
-     "forced account creation, too many steps. Show one fix for each on a Shopify checkout.",
-     "Cart abandonment averages 70% (Baymard Institute). Three fixes that do not need a redesign.\n\n"
-     "Save this for your next checkout review.\n\n#checkout #shopifytips #ecommerce",
-     "Save", "None", "Yes", "No", "Batch 2")
-post(D(10, 29), "Reel (60s)", "Teardown", "India",
-     "[Indian Brand] is losing mobile buyers here.",
-     "Screen-record an Indian D2C brand's mobile product page. Two strengths, one leak "
-     "(COD/prepaid messaging, delivery date clarity, size guidance). The fix.",
-     "A mobile product page teardown of an Indian D2C brand, and one fix that lifts conversion without a "
-     "redesign.\n\nComment AUDIT for a teardown of your store.\n\n#d2cindia #cro #shopifyindia",
-     "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "Yes", "No", "Batch 2")
-post(D(10, 31), "Carousel (6 slides)", "Proof and trust", "ANZ + Saudi",
-     "How Australian, NZ and Saudi brands work with a team in India",
-     "S1 hook. S2 overlap hours: Riyadh is 2.5 hours behind India, so the whole working day overlaps; Sydney and "
-     "Auckland afternoons are India's morning. S3 weekly written update, with redacted example. S4 one senior contact. "
-     "S5 billing in AUD, NZD or SAR, NDA, 30-day notice. S6 CTA.",
-     "The three things founders worry about with an offshore team, and exactly how we handle each one.\n\n"
-     "Comment CHECKLIST for the questions to ask any agency, us included.\n\n#ecommerceaustralia #saudibusiness #dtc",
-     "CHECKLIST", "marginwise-agency-checklist.pdf", "No", "No", "Design")
-post(D(11, 1), "Reel (50s)", "Proof and trust", "ANZ + Saudi",
-     "Why founders worry about hiring an agency in India.",
-     "Communication, time zones, quality. How each should be handled by any agency: overlap hours (Riyadh shares "
-     "India's working day; Sydney and Auckland afternoons are India's morning), weekly written update, one senior "
-     "point of contact. 'Ask any agency for these three.'",
-     "What to ask any offshore agency before you sign, ourselves included.\n\nComment CHECKLIST for the full "
-     "agency hiring checklist.\n\n#ecommerceagency #shopifyaustralia #saudibusiness",
-     "CHECKLIST", "marginwise-agency-checklist.pdf", "No", "No", "Batch 2")
-# Week 4
-post(D(11, 3), "Reel (45s)", "Retention", "All",
-     "Rating post-purchase emails. This one is a 2/10.",
-     "Rate three order confirmation emails (public or redacted) with a score and one reason each. "
-     "End on what a 9/10 email contains.",
-     "Your order confirmation email is the most-opened email you send. Most brands waste it on a receipt.\n\n"
-     "Comment FLOWS for the post-purchase checklist and a 10-point scorecard.\n\n#klaviyo #emailmarketing #dtc",
-     "FLOWS", "marginwise-post-purchase-email-checklist.pdf", "Yes", "No", "Batch 2")
-post(D(11, 5), "Reel (45s)", "CRO", "All",
-     "A tenth of a second changed conversions by 8.4%.",
-     "Deloitte/Google study of 37 brands. Run a public store through PageSpeed. Show the three usual culprits: "
-     "app scripts, oversized images, third-party widgets. Fix speed before buying more traffic.",
-     "Fix speed before you buy more traffic. The three culprits on most Shopify stores.\n\n"
-     "Comment SPEED and we will check your store.\n\n#shopifyspeed #cro #ecommerce",
-     "SPEED", "marginwise-shopify-speed-checklist.pdf + speed check", "No", "No", "Batch 2")
-post(D(11, 7), "Carousel (8 slides)", "CRO", "ANZ + Saudi",
-     "Sale-season checkout checklist: 7 fixes before Click Frenzy, White Friday and Black Friday",
-     "One fix per slide: shipping cost shown early, guest checkout, express pay (Apple Pay, Afterpay, mada, Tabby or "
-     "Tamara), delivery date, honest offer messaging, mobile speed, post-purchase upsell that keeps margin. Final slide CTA.",
-     "Seven checkout fixes you can still ship before the November sales, none of which need a redesign.\n\n"
-     "Comment BFCM for the full checklist with a sale timeline.\n\n#blackfriday #clickfrenzy #whitefriday",
-     "BFCM", "marginwise-black-friday-checklist.pdf", "No", "No", "Design")
-post(D(11, 8), "Reel (50s)", "Proof and trust", "India",
-     "Five questions to ask before you hire a D2C agency.",
-     "Who works on my account? Whose name is the ad account in? Show a redacted report with CPA. "
-     "Notice period? Which one metric in month one?",
-     "Most founders pick an agency from the pitch deck. Ask these five questions instead, including to us.\n\n"
-     "Comment CHECKLIST for the full list.\n\n#d2c #marketingagency #founders",
-     "CHECKLIST", "marginwise-agency-checklist.pdf", "No", "No", "Batch 2")
-
-# Week 5
-post(D(11, 10), "Reel (50s)", "Margin math", "ANZ + Saudi",
-     "Buy now, pay later is not free. Here's what it costs you.",
-     "Afterpay in Australia and NZ, Tabby and Tamara in Saudi: every BNPL order carries a merchant fee. Enter your "
-     "own BNPL fee in the PROFIT calculator's payment fee line and show contribution per order before and after. "
-     "Three levers: show BNPL only above a minimum order value, price bundles to lift AOV, steer repeat buyers to cheaper payment.",
-     "BNPL can lift conversion, but every order pays a merchant fee. Know what it does to your margin before you push it.\n\n"
-     "Comment PROFIT for the calculator and run it with your own fee.\n\n#afterpay #tabby #ecommerceaustralia",
-     "PROFIT", "marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf", "Yes", "No", "Batch 3")
-post(D(11, 12), "Reel (40s)", "Margin math", "India",
-     "Your ₹1 lakh ad budget costs ₹1.18 lakh.",
-     "Meta Ireland billing means 18% GST under reverse charge, paid in cash before credit. Show the cash timing. "
-     "Add 18% to the ad budget in your cash-flow plan. Confirm with your CA.",
-     "The GST line that catches founders short on cash. Not tax advice; confirm with your CA.\n\n"
-     "Comment MARGIN for the calculator, which includes a GST-on-ads tab.\n\n#d2cindia #metaads #gst",
-     "MARGIN", "marginwise-margin-calculator-inr.xlsx + marginwise-contribution-margin-checklist.pdf", "No", "No", "Batch 3")
-post(D(11, 14), "Carousel (7 slides)", "Retention", "All",
-     "After the sale: turn festive and Black Friday buyers into repeat buyers",
-     "S1 hook. S2 why sale buyers churn. S3 the delivered + how-to-use email. S4 review request timing. "
-     "S5 replenishment timed to your data. S6 win-back without a discount first. S7 CTA.",
-     "Sale buyers are the easiest to lose. Five emails that bring them back without giving away margin.\n\n"
-     "Comment FLOWS for the full checklist.\n\n#retention #emailmarketing #d2c",
-     "FLOWS", "marginwise-post-purchase-email-checklist.pdf", "No", "No", "Design")
-post(D(11, 15), "Reel (60s)", "Proof and trust", "All",
-     "We audited [N] D2C stores this month. The same 3 leaks showed up in [X] of them.",
-     "Only post if the audits are real; use the actual count. Three most common leaks, anonymised. "
-     "If fewer than 5 audits are done, swap for a second Indian teardown.",
-     "What we keep finding when we audit D2C stores, with no names attached.\n\nComment AUDIT to get yours.\n\n"
-     "#d2c #cro #ecommercegrowth",
-     "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "No", "No", "Batch 3")
+from posts_v3 import POSTS, REC, BATCHES
+for (m, dd, fmt_, pillar_, market_, hook_, outline_, caption_, cta_, magnet_, trial_, pin_, batch_) in POSTS:
+    post(D(m, dd), fmt_, pillar_, market_, hook_, outline_, caption_, cta_, magnet_, trial_, pin_, batch_)
 
 
 # ------------------------------------------------------------------ faceless production steps
@@ -221,7 +96,7 @@ def reel_steps(record, script, edit_extra="", trial=False):
     t = " as a Trial Reel (share to followers only if 3-second hold beats your average)" if trial else ""
     return "\n".join([
         "1. Record: " + record,
-        "2. Script the voiceover (about 130 words for 60s): hook, the work, the takeaway, CTA. " + script,
+        "2. Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. " + script,
         "3. Voiceover: record in a quiet room on your phone (Voice Memos or CapCut > Audio > Record). One clean take; no AI voice.",
         "4. Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), "
         "hook text on screen for the first 2 seconds. " + edit_extra,
@@ -315,6 +190,14 @@ STEPS = {
         "Counter animation for each leak's tally."),
 }
 
+for (m, dd, fmt_, *_rest) in POSTS:
+    trial_ = _rest[-3] == "Yes"
+    if "Carousel" in fmt_:
+        STEPS[D(m, dd)] = carousel_steps("Same template as the first carousel. Check every claim against its source line.")
+    else:
+        rec, scr, ed = REC[(m, dd)]
+        STEPS[D(m, dd)] = reel_steps(rec, scr, ed, trial=trial_)
+
 SOP = [
     ("Kit", "Laptop with QuickTime (Mac) or OBS (Windows) for desktop recording; phone screen recorder; CapCut (free); "
             "Canva (free); wired earphones with mic or any USB mic. No camera needed."),
@@ -328,7 +211,7 @@ SOP = [
                                              "add quiet background music from CapCut's commercial library. Expect lower watch time; "
                                              "test it as a Trial Reel first."),
     ("Editing", "CapCut: 9:16, Auto captions, hook text in the first 2 seconds, cut every pause over half a second, "
-                "zoom and red-box highlights on whatever you name. Length 30-60 seconds."),
+                "zoom and red-box highlights on whatever you name. Length 10 seconds; Google Flow clips work as b-roll."),
     ("Privacy", "Blur names, emails, order numbers and any client data. Teardowns use public pages only."),
     ("Carousels", "Canva 1080x1350, one template for all, max 25 words per slide, source line on stat slides, CTA slide last."),
     ("After posting", "Reply to every comment in the first hour; check the auto-DM fired; log numbers in the Calendar tab after 7 days."),
@@ -353,8 +236,9 @@ lines = [
     ("t", "Weekly review: totals per week, calculated from the Calendar tab."),
     ("t", "Setup before 14 Oct: the checklist to finish before the first post."),
     ("h", "Rules"),
-    ("t", "From 18 Oct, posts for Australia, NZ or all markets go out at 13:30 IST (11:00 Riyadh, 19:00 Sydney, "
-          "21:00 Auckland). India and Saudi posts go out at 19:30 IST (17:00 Riyadh). The Calendar tab shows each date."),
+    ("t", "From 18 Oct the account targets Australia, the US and the UK. Australia posts go out at 13:30 IST "
+          "(19:00 Sydney); US/UK and all-market posts at 19:30 IST (afternoon in London, morning in New York). "
+          "The Calendar tab shows each date's local times."),
     ("t", "No holiday greetings, memes or office posts. They underperformed for every competitor reviewed."),
     ("t", "Replace [Brand] placeholders with public pages only. Keep the tone constructive and keep logos out of thumbnails."),
     ("t", "Post Trial Reels first where marked; share to followers only if they hold viewers past 3 seconds."),
@@ -376,7 +260,7 @@ for kind, text in lines:
     r += 1
 
 cal = wb.create_sheet("Calendar")
-heads = ["Week", "Date", "Day", "IST", "Riyadh", "Sydney", "Auckland", "Format", "Pillar", "Market", "Hook (on screen)",
+heads = ["Week", "Date", "Day", "IST", "Sydney", "London", "New York", "Format", "Pillar", "Market", "Hook (on screen)",
          "Outline", "Step by step (no face)", "Caption", "CTA keyword", "Lead magnet", "Trial Reel first?", "Pin?", "Recording batch",
          "Status", "Post link", "Reach", "Saves", "Shares", "Comments", "DMs", "Calls booked"]
 widths = [7, 12, 6, 7, 8, 8, 9, 15, 14, 8, 34, 45, 70, 55, 12, 30, 10, 6, 11, 11, 24, 9, 8, 8, 10, 8, 9]
@@ -387,8 +271,8 @@ status_dv = DataValidation(type="list", formula1='"Planned,Filmed,Edited,Schedul
 cal.add_data_validation(status_dv)
 for i, (d, fmt, pillar, market, hook, outline, caption, cta, magnet, trial, pin, batch) in enumerate(P, 2):
     week = (d - start).days // 7 + 1
-    ist, riy, syd, akl = local_times(d, market)
-    vals = [week, d, d.strftime("%a"), ist, riy, syd, akl, fmt, pillar, market, hook, outline, STEPS[d], caption, cta, magnet,
+    ist, syd, lon, nyc = local_times(d, market)
+    vals = [week, d, d.strftime("%a"), ist, syd, lon, nyc, fmt, pillar, market, hook, outline, STEPS[d], caption, cta, magnet,
             trial, pin, batch, "Planned"]
     for col, v in enumerate(vals, 1):
         c = cal.cell(row=i, column=col, value=v)
@@ -440,16 +324,7 @@ for i, (k, v) in enumerate(SOP, 2):
 
 fb = wb.create_sheet("Recording batches")
 header(fb, 1, ["Batch", "Film on", "Posts covered", "What to prepare", "Time needed"], [10, 14, 50, 60, 12])
-batches = [
-    ("Batch 1", date(2026, 10, 13), "Founder intro; ROAS 3x; COD RTO 26%; US/UK product page teardown; ₹1,000 order margin; 5 checkout pages",
-     "Pick the US/UK brand and 5 checkouts (public pages). Record all screen captures first, then write and record every voiceover in one sitting.", "3 hours"),
-    ("Batch 2", date(2026, 10, 24), "Cart abandonment; Indian teardown; offshore trust; email ratings; site speed; agency questions",
-     "Pick the Indian brand and three order confirmation emails (your own inbox or public examples). Run PageSpeed on one public store.", "3 hours"),
-    ("Batch 3", date(2026, 11, 7), "Tariffs; GST on ads; audit roundup",
-     "Count real audits done so far. If fewer than 5, film a second Indian teardown instead of the roundup.", "2 hours"),
-    ("Design", date(2026, 10, 15), "All five carousels",
-     "Use the same template: navy and white, one idea per slide, source line on every stat slide. Canva or Figma.", "4 hours"),
-]
+batches = [(n, D(*md), c, w, t) for (n, md, c, w, t) in BATCHES]
 for i, row in enumerate(batches, 2):
     for col, v in enumerate(row, 1):
         c = fb.cell(row=i, column=col, value=v)
@@ -498,12 +373,12 @@ tasks = [
     ("Switch to Business account, category Marketing Agency, contact email set", "Unlocks insights, contact button and approved DM tools"),
     ("Bio, name field and website link with UTM added", "Profile visits convert from here"),
     ("Two-factor authentication on, backup codes saved", "A hacked brand account is hard to recover"),
-    ("All lead magnets (3 sheets, 8 PDFs) uploaded to Drive or the website with share links", "Every CTA keyword depends on these"),
+    ("All lead magnets (1 sheet, 8 PDFs) uploaded to Drive or the website with share links", "Every CTA keyword depends on these"),
     ("Auto-DM tool connected and the 8 keywords tested from a second account", "Broken DMs waste the first reels"),
     ("Highlight covers made: Teardowns, How we work, US/UK clients, COD/RTO, Book a call", "Profile looks complete from day one"),
     ("GA4 check that utm_source=instagram shows up", "So calls can be traced to reels"),
     ("Employment-contract check done", "Before posting anything publicly"),
-    ("UK decision made (keep in bio and site, or remove)", "Bio and website must match"),
+    ("Website updated for Australia, US and UK (hours, currency, services)", "Bio and website must match"),
 ]
 for i, (t, why) in enumerate(tasks, 2):
     su.cell(row=i, column=1).fill = INPUT

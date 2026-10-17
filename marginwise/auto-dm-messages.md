@@ -1,4 +1,4 @@
-# Marginwise auto-DM messages (8 keywords)
+# Marginwise auto-DM messages (8 keywords: Australia, US, UK)
 
 Paste into ManyChat or your Meta-approved DM tool. Replace every `[...]` link with the Drive share link for that file.
 Booking link pattern: `https://marginwise.in/?utm_source=instagram&utm_medium=dm&utm_campaign=<keyword>#book`
@@ -6,7 +6,7 @@ Booking link pattern: `https://marginwise.in/?utm_source=instagram&utm_medium=dm
 Setup for every keyword:
 - Trigger on the keyword in any case, in comments and in DMs.
 - Rotate the three public replies.
-- Tag each lead with the keyword and market (India, US, UK, Other).
+- Tag each lead with the keyword and market (Australia, US, UK, Other).
 - One automatic follow-up only. After 24 hours, a person replies.
 
 ---
@@ -27,7 +27,7 @@ Here is the 30-point store leak audit: [AUDIT PDF link]
 Want us to look at your store too? Reply with:
 1. Your store URL
 2. Roughly how many sessions a month
-3. Where you mainly sell (India, US, UK, other)
+3. Where you mainly sell (Australia, US, UK, other)
 
 We will send you a 2-minute video teardown within one working day.
 
@@ -96,79 +96,66 @@ Want to go through your numbers on a free 30-minute call? You leave with your to
 
 **DM 2: Not running ads**
 ```
-Then conversion and repeat purchases are your biggest levers. Reply FLOWS for the post-purchase email checklist.
+Then conversion, search and repeat purchases are your biggest levers. Reply GEO to see whether AI search recommends your brand, or FLOWS for the post-purchase email checklist.
 ```
 
 ---
 
-## MARGIN
+## GEO
 
 **Public replies**
 1. Sent to your DMs.
-2. Just sent. Try it with your last month's numbers.
+2. Just sent the checklist.
 3. In your inbox now.
 
 **DM 1**
 ```
-Hi [first name], here are the two files from the post:
+Hi [first name], here is the AI search visibility checklist: [GEO PDF link]
 
-1. Contribution margin calculator, INR (make a copy): [MARGIN sheet link]
-2. Contribution margin checklist: [MARGIN PDF link]
+It covers what ChatGPT, Perplexity and Google's AI answers need to name your brand: readable pages, real answers, structured data, and proof from other sites.
 
-The calculator shows what each order really earns after COD, RTO, shipping, ad cost and GST. The second tab shows the cash your ad budget needs once 18% GST is added.
-
-One question: what share of your orders are COD?
+Want us to run the test for you? Reply with your store URL and your main product category. We will ask the AI tools 5 buying questions and send you who gets named, within one working day.
 
 Marginwise
 ```
-Quick replies: Under 30% / 30-60% / Over 60% / Not sure
+Quick replies: Send my store link / Just the checklist, thanks
 
-**DM 2: Over 60% or Not sure**
+**DM 2a (they send details)**
 ```
-That is usually where the biggest margin leak is. Reply RTO and we will send the sheet that finds which states and pin codes cost you most.
+Got it. Your AI search test results will reach you within one working day.
+
+If you want to talk through SEO, AEO and GEO together, here is a free 30-minute slot: [booking link: geo]
 ```
 
-**DM 2: Under 30% or 30-60%**
+**DM 2b (just the checklist)**
 ```
-Good base. Most of the margin then sits in conversion and ad efficiency.
-
-Want to go through your numbers on a free 30-minute call? [booking link: margin]
+No problem. Start with section 5: ask the AI tools 5 buying questions for your category this week and note who gets named. That is your baseline.
 ```
 
 ---
 
-## RTO
+## AI
 
 **Public replies**
-1. Sent. Check your DMs.
-2. Just sent the sheet and the playbook.
+1. Sent to your DMs.
+2. Just sent the list.
 3. In your inbox now.
 
 **DM 1**
 ```
-Hi [first name], here are the two files:
+Hi [first name], here are 10 AI builds worth starting with for ecommerce brands: [AI PDF link]
 
-1. RTO finder sheet (make a copy): [RTO sheet link]
-2. COD and RTO playbook: [RTO PDF link]
+Each one lists what it does, what data it needs and what to watch.
 
-Paste in your last 90 days of orders (pin code, state, payment method, final status). The sheet ranks states and pin codes by RTO rate and cost, so you switch off COD only where it loses money.
-
-Which platform is your store on?
+Which area takes most of your team's repeated time?
 
 Marginwise
 ```
-Quick replies: Shopify / WooCommerce / Other / Marketplace only
+Quick replies: Customer service / Content and SEO / Ads and reporting / Operations
 
-**DM 2: Shopify or WooCommerce**
+**DM 2 (any answer)**
 ```
-Good, the export is quick. Once you have run it, if more than 20% of your COD orders come back, the fix is usually at checkout and before dispatch.
-
-Happy to read your numbers with you on a free 30-minute call: [booking link: rto]
-```
-
-**DM 2: Other or Marketplace only**
-```
-The sheet works with any order export that has pin code and payment type. If you launch your own store later, reply AUDIT and we will take a look.
+That is usually the best place to start. Want to map one AI build for your store on a free 30-minute call? We will look at the task, the data and how to measure it: [booking link: ai]
 ```
 
 ---
@@ -323,9 +310,9 @@ Thanks for the message. We read every DM and reply within one working day.
 
 For something specific, reply with one of these:
 AUDIT, store leak audit
-PROFIT, profit calculator (USD)
-MARGIN, margin calculator (INR)
-RTO, COD and RTO sheet
+PROFIT, profit calculator
+GEO, AI search visibility checklist
+AI, 10 AI builds for ecommerce
 SPEED, speed checklist
 FLOWS, post-purchase emails
 CHECKLIST, agency hiring checklist
