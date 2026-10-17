@@ -126,6 +126,7 @@ export async function snapshotPage(browser, url, opts = {}) {
     snap.headers = resp ? await resp.allHeaders().catch(() => ({})) : {};
     snap.finalUrl = page.url();
     snap.ok = snap.status > 0 && snap.status < 400;
+    if (!snap.ok) note('navigation', `HTTP ${snap.status}${snap.status === 403 || snap.status === 405 ? ' (blocked by the site or a proxy)' : ''}`);
     await page.waitForLoadState('load', { timeout: 20000 }).catch((e) => note('load', e));
     await page.waitForLoadState('networkidle', { timeout: 6000 }).catch(() => {});
     await page.waitForTimeout(settleMs);

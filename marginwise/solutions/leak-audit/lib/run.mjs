@@ -101,6 +101,14 @@ export async function runAudit(url, opts = {}) {
     log(`Loading homepage ${url}`);
     const home = await snapshotPage(browser, url, { ...snapOpts, probes: probes.home });
 
+    // Without a homepage every check would be guesswork, and a partial score
+    // would mislead the client, so stop here with a clear error.
+    if (!home.ok) {
+      const err = new Error(`Homepage could not be loaded: ${home.errors.join('; ') || 'HTTP ' + home.status}`);
+      err.code = 'HOME_UNREACHABLE';
+      throw err;
+    }
+
     let pdpSource = opts.pdp || null;
     let pdpVia = opts.pdp ? '--pdp' : null;
     if (!pdpSource && home.ok) {

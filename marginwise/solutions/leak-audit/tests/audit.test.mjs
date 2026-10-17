@@ -141,3 +141,10 @@ test('US market doubles accessibility weight', () => {
   assert.equal(score(mk(), 'AU'), 50);
   assert.equal(score(mk(), 'US'), 33);
 });
+
+test('unreachable homepage aborts with a clear error instead of a misleading score', async () => {
+  const dead = await startServer(fx('au'));
+  const url = dead.url + '/';
+  await dead.close(); // port now refuses connections
+  await assert.rejects(runAudit(url, { market: 'AU', stubExternal: true, settleMs: 0 }), (err) => err.code === 'HOME_UNREACHABLE');
+});
