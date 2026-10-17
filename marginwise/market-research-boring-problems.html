@@ -1,0 +1,2363 @@
+<title>Marginwise Market Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Layout: single reading column with a sticky chip nav of sections; wide tables scroll inside their own box */
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --fg: #1b2333; --muted: #5b6577;
+  --navy: #1F2A44; --green: #2E9E7E; --red: #C0533A; --line: #dde2ea; --code: #eef1f5;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11161f; --surface: #171d29; --fg: #e4e8ef; --muted: #9aa4b5;
+  --navy: #9fb3e0; --green: #4cc29f; --red: #e07a62; --line: #2a3242; --code: #1e2533; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11161f; --surface: #171d29; --fg: #e4e8ef; --muted: #9aa4b5;
+  --navy: #9fb3e0; --green: #4cc29f; --red: #e07a62; --line: #2a3242; --code: #1e2533; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 15px/1.6 var(--body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line);
+  display: flex; gap: 8px; overflow-x: auto; padding-block: 10px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); scrollbar-width: thin; }
+nav a { flex: none; font: 600 13px var(--body); color: var(--navy); text-decoration: none; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; white-space: nowrap; }
+nav a:hover, nav a:focus-visible { border-color: var(--green); color: var(--green); outline: none; }
+main { max-width: 860px; margin: 0 auto; padding-block: 24px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1 { font: 800 clamp(26px, 5vw, 38px)/1.15 var(--display); color: var(--navy); text-wrap: balance; margin: 8px 0 12px; }
+h2 { font: 800 24px/1.25 var(--display); color: var(--navy); margin: 48px 0 12px; padding-top: 16px; border-top: 3px solid var(--green); text-wrap: balance; scroll-margin-top: 64px; }
+h3 { font: 700 18px/1.3 var(--display); margin: 28px 0 8px; scroll-margin-top: 64px; }
+p, li { max-width: 68ch; }
+a { color: var(--green); }
+strong { color: var(--fg); }
+.tw { overflow-x: auto; margin: 12px 0 20px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; font-size: 13.5px; min-width: 640px; width: 100%; font-variant-numeric: tabular-nums; }
+th { text-align: left; background: var(--navy); color: var(--surface); font: 600 12.5px var(--body); letter-spacing: .02em; padding: 8px 10px; }
+td { padding: 8px 10px; border-top: 1px solid var(--line); vertical-align: top; }
+tr:last-child td strong { color: var(--green); }
+.cb { position: relative; margin: 10px 0 18px; }
+pre { background: var(--code); border: 1px solid var(--line); border-radius: 6px; padding: 14px; overflow-x: auto; white-space: pre-wrap; font: 13px/1.55 var(--mono); }
+code { font-family: var(--mono); font-size: 0.92em; }
+.copy { position: absolute; top: 8px; right: 8px; font: 600 12px var(--body); background: var(--green); color: #fff; border: 0; border-radius: 4px; padding: 5px 10px; cursor: pointer; }
+.copy:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+hr { border: 0; height: 0; margin: 0; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+<nav aria-label="Sections"><a href="#0-the-decision-in-ten-lines">The decision in ten lines</a><a href="#1-where-the-money-is">Where the money is</a><a href="#2-which-market-to-start-first">Which market to start first</a><a href="#3-offer-catalogue-with-usd-pricing">Offer catalogue with USD pricing</a><a href="#4-market-deep-dives">Market deep dives</a><a href="#5-competitor-agencies-and-their-methodology">Competitor agencies and their methodology</a><a href="#6-positioning">Positioning</a><a href="#7-90-day-revenue-forecast-per-market-usd-booked-contract-value">90-day revenue forecast per market (USD, booked contract value)</a><a href="#8-first-30-days-action-plan">First 30 days action plan</a><a href="#9-outreach-message-templates-per-market">Outreach message templates per market</a><a href="#10-linkedin-content-plan-per-market">LinkedIn content plan per market</a><a href="#11-what-could-go-wrong">What could go wrong</a><a href="#12-sources-and-items-to-verify">Sources and items to verify</a></nav>
+<main>
+<h1 id="marginwise-market-research-boring-problems-we-can-solve">Marginwise market research: boring problems we can solve</h1>
+<p>Australia, New Zealand (Auckland), US, Canada, Germany (Berlin), Saudi Arabia. Research date 17 Oct 2026.</p>
+<p>How to read this: "boring problems" are operational, recurring and often compliance-driven. Brands must fix them whether or not the economy is good, which makes them easier to sell than "growth". Every statistic has a source in section 12. Anything marked (unverified) has not been confirmed against a primary source and must not go into client-facing material until it is. Deal sizes and forecasts are our planning estimates, not market data.</p>
+<p>Planning exchange rates used for USD pricing (check before quoting): 1 AUD = 0.66 USD, 1 NZD = 0.59 USD, 1 CAD = 0.72 USD, 1 EUR = 1.10 USD, 1 USD = 3.75 SAR (pegged).</p>
+<hr />
+<h2 id="0-the-decision-in-ten-lines">0. The decision in ten lines</h2>
+<ol>
+<li>Start with <strong>Australia</strong>, and run the <strong>US</strong> alongside it. Both are English-speaking, the Instagram account already targets them, and each has a live trigger right now: the Australian card surcharge ban (1 Oct 2026) and US tariff repricing.</li>
+<li>Add <strong>New Zealand</strong> at almost no extra cost. Sell to it through Xero bookkeepers and trans-Tasman brands, using the same AU content.</li>
+<li>Start <strong>Germany (Berlin)</strong> in month 2, aimed at English-speaking startups. Lead with B2B e-invoicing (mandatory from 1 Jan 2027) and the withdrawal-button and accessibility rules. Before you start, line up a German-speaking reviewer and a law-firm partner.</li>
+<li>Start <strong>Canada</strong> in month 2 as an extension of the US work. Lead with cross-border duties and Quebec French requirements.</li>
+<li>Start <strong>Saudi Arabia</strong> in month 3, through white-label partners only. Lead with ZATCA Wave 25 e-invoicing (deadline 1 Feb 2027). Do not sell brand marketing there yet.</li>
+<li>Lead with <strong>fixed-fee entry offers</strong> ($1,500 to $8,000). Then convert clients into retainers: performance marketing, CRO, and AI agent monitoring. The retainers are where the money compounds.</li>
+<li>The edge to sell: <strong>integration plus AI at India cost</strong>. Most local agencies do creative work or platform work. Few do Shopify plus ERP plus Salesforce plus compliance in a single fixed scope.</li>
+<li>Price at about 40-60% below local agencies. Sell the outcome, not the hourly rate. Buyers read a very low price as risk.</li>
+<li>90-day booked revenue forecast across all markets: <strong>$11.5K conservative, $72K base, $162K stretch</strong> (section 7). The base case assumes about 1,500 targeted contacts and an average deal size of $5-8K.</li>
+<li>Biggest risk: delivery capacity and trust. Fix both with a named founder on calls, a fixed-scope contract, and one case study from a demo store before day 21.</li>
+</ol>
+<hr />
+<h2 id="1-where-the-money-is">1. Where the money is</h2>
+<p>Ranked by expected cash in the next 90 days. Score = deal size x speed to cash x win odds x (inverse of) competition, each rated 1-5.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>Market</th>
+<th>Offer</th>
+<th>First deal (USD)</th>
+<th>Speed to cash</th>
+<th>Why it pays</th>
+<th>Score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Australia</td>
+<td>Surcharge Ban Margin Rescue</td>
+<td>$3,900 fixed</td>
+<td>2-3 weeks</td>
+<td>The ban has been live since 1 Oct 2026 and hits every AU checkout that surcharged cards. It is a quick win and opens the door to CRO and ERP work.</td>
+<td>4x5x4x4 = 320</td>
+</tr>
+<tr>
+<td>2</td>
+<td>US</td>
+<td>Tariff and Margin Command Center</td>
+<td>$8,000-18,000 + retainer</td>
+<td>4-6 weeks</td>
+<td>Four tariff regimes in 12 months. Finance-led buyers with budget. Fits the founder's ERP and PM background.</td>
+<td>5x3x4x4 = 240</td>
+</tr>
+<tr>
+<td>3</td>
+<td>AU, NZ, US</td>
+<td>Shopify-to-ERP Sync Fix + AI Exception Agent</td>
+<td>$7,500-25,000 + $900-2,000/mo</td>
+<td>4-8 weeks</td>
+<td>Pain recurs every month (Cin7, Unleashed, Xero, NetSuite, QuickBooks). Retainers stick. Few creative agencies compete here.</td>
+<td>5x3x4x4 = 240</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Germany</td>
+<td>E-Rechnung and DATEV automation</td>
+<td>$8,500-29,000</td>
+<td>4-8 weeks</td>
+<td>Issuing structured e-invoices is mandatory from 1 Jan 2027 for firms over EUR 800K turnover. Shopify has no native DATEV link. German rates are EUR 100-160/hr.</td>
+<td>5x3x3x5 = 225</td>
+</tr>
+<tr>
+<td>5</td>
+<td>US</td>
+<td>ADA + Privacy Compliance Sprint</td>
+<td>$6,000-15,000 + $1,000-2,000/mo</td>
+<td>3-4 weeks</td>
+<td>5,000+ digital accessibility lawsuits in 2025, about 70% against ecommerce. California privacy fines for broken opt-outs.</td>
+<td>4x4x3x3 = 144</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Germany</td>
+<td>"Abmahnsicher" compliance sprint</td>
+<td>$6,500-19,500 + $550-1,500/mo</td>
+<td>3-5 weeks</td>
+<td>Withdrawal button in force since 19 Jun 2026. BFSG accessibility since Jun 2025. Green-claims ban from 27 Sep 2026. Warning letters are already circulating.</td>
+<td>4x4x3x3 = 144</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Saudi Arabia</td>
+<td>ZATCA Wave 25 + National Address sprint</td>
+<td>$4,000-8,000 + $300-800/mo</td>
+<td>3-4 weeks</td>
+<td>Hard deadline of 1 Feb 2027 for firms over SAR 187.5K. Few productised Shopify options. Can be delivered fully remotely.</td>
+<td>3x4x3x4 = 144</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Canada</td>
+<td>Cross-Border Duties Checkout Kit</td>
+<td>$7,500-18,000</td>
+<td>4-6 weeks</td>
+<td>De minimis has ended and 50% tariffs apply to about 554 Canadian product lines. Canada Post strikes in 2024 and 2025.</td>
+<td>4x3x3x4 = 144</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Australia</td>
+<td>July 2027 Subscription and Drip Pricing Readiness</td>
+<td>$4,500-9,500</td>
+<td>3-4 weeks</td>
+<td>The law passed on 2 Jul 2026 and commences 1 Jul 2027, with penalties up to A$100M. Buyers will act from Q1 2027, so build content now.</td>
+<td>3x3x4x4 = 144</td>
+</tr>
+<tr>
+<td>10</td>
+<td>DE, AU, US</td>
+<td>Magento / Shopware 5 / SFCC to Shopify Plus</td>
+<td>$25,000-120,000</td>
+<td>8-16 weeks</td>
+<td>Biggest tickets. Magento 2.4.6 support ended Aug 2026; Shopware 5 end of life was Jul 2024. Needs a case study first.</td>
+<td>5x1x2x3 = 30</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Where the compounding money is:</strong> each entry offer should lead into one of these retainers.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Retainer</th>
+<th>USD per month</th>
+<th>Natural lead-in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Performance marketing</td>
+<td>$2,500-6,000 (3-month minimum)</td>
+<td>Server-side tracking fix</td>
+</tr>
+<tr>
+<td>CRO programme</td>
+<td>$3,000-6,000</td>
+<td>Surcharge, ADA or withdrawal-button work</td>
+</tr>
+<tr>
+<td>AEO/GEO programme</td>
+<td>$1,500-4,000</td>
+<td>GEO lead magnet, AI search test</td>
+</tr>
+<tr>
+<td>AI agent monitoring and tuning</td>
+<td>$450-3,000</td>
+<td>ERP sync, reconciliation, WhatsApp, support agent</td>
+</tr>
+<tr>
+<td>Fractional Salesforce admin</td>
+<td>$1,800-3,500</td>
+<td>Data hygiene project</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Target client profile (all markets):</strong>
+- Revenue: $2M-50M.
+- Stack: Shopify or Shopify Plus, plus an ERP or accounting tool (Xero, MYOB, NetSuite, QuickBooks, DATEV, Odoo).
+- Spend: running paid ads.
+- Team: 5-50 staff, no in-house developer.</p>
+<p>These brands are too big for freelancers and too small for the Big 4 or a Salesforce Platinum partner.</p>
+<hr />
+<h2 id="2-which-market-to-start-first">2. Which market to start first</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Wave</th>
+<th>Dates</th>
+<th>Markets</th>
+<th>Why now</th>
+<th>Trigger to move to next wave</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Day 1-30 (19 Oct to 17 Nov 2026)</td>
+<td><strong>Australia (lead), US</strong>; NZ via partners</td>
+<td>English-speaking. The Instagram account already targets AU and US. Both have live triggers. AU overlaps well with an early IST shift; US with an evening IST shift.</td>
+<td>10 discovery calls booked or 2 paid deals, plus a German-speaking reviewer and a law-firm partner signed</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Day 31-60 (18 Nov to 17 Dec 2026)</td>
+<td><strong>Germany (Berlin startups first), Canada</strong></td>
+<td>Germany's e-invoicing mandate starts 1 Jan 2027 and German day rates are high. India has 5.5 hours of overlap with German working hours in winter. Canada reuses the US work.</td>
+<td>4 paid deals in total, one written case study, and an Arabic-native reviewer contracted</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Day 61-90 (18 Dec 2026 to 16 Jan 2027)</td>
+<td><strong>Saudi Arabia (white-label partners only)</strong></td>
+<td>ZATCA Wave 25 deadline is 1 Feb 2027. Selling through Riyadh and Dubai agencies avoids needing a local entity and relationships.</td>
+<td>Review at day 90: keep, scale or pause</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Why not start with Germany, even though the money is good:</strong>
+- German customer copy and legal text need native German review.
+- Cold email to businesses without consent is generally unlawful there (section 9).
+- Compliance work needs a law-firm partner to sign off.</p>
+<p>Set these up during wave 1 so wave 2 starts ready.</p>
+<p><strong>Why Saudi Arabia goes last:</strong>
+- Buying is driven by relationships.
+- Arabic is needed for copy and calls.
+- Government and enterprise work needs a local entity.</p>
+<p>The ZATCA deadline is real, but the cheap way to reach it is through partners.</p>
+<p><strong>The UK</strong> was not part of this research. It stays in the Instagram mix and should be revisited at day 90.</p>
+<hr />
+<h2 id="3-offer-catalogue-with-usd-pricing">3. Offer catalogue with USD pricing</h2>
+<p><strong>Pricing logic:</strong>
+- Fixed fee for entry offers.
+- Ranges for builds, quoted after a paid audit or a free call.
+- Monthly retainers with a 3-month minimum.</p>
+<p>Effective blended rate target: $55-90/hr. That compares with:
+- AU agencies: A$120-250/hr (about $80-165).
+- US Shopify Plus agencies: $120-250/hr.
+- German agencies: EUR 100-160/hr (about $110-175).
+- India directory rates: $25-50/hr.</p>
+<p>So we sit 40-60% below local agencies and well above commodity India rates.</p>
+<h3 id="3a-offers-that-work-in-every-market">3a. Offers that work in every market</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Offer</th>
+<th>What the client gets</th>
+<th>USD price</th>
+<th>Upsell</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Free 2-minute video teardown</td>
+<td>Loom video covering one leak and one fix</td>
+<td>Free (lead magnet, AUDIT keyword)</td>
+<td>Paid audit</td>
+</tr>
+<tr>
+<td>Revenue Leak Audit</td>
+<td>2-week audit: 30-point store review, tracking check, checkout, speed, AI search test, written plan with fixes ranked by revenue</td>
+<td>$1,500 fixed (credited against any project within 60 days)</td>
+<td>Any sprint</td>
+</tr>
+<tr>
+<td>Server-side tracking and consent fix</td>
+<td>GA4 rebuild, Consent Mode v2, server-side GTM, Meta CAPI, privacy-signal (GPC) handling</td>
+<td>$3,500-9,500</td>
+<td>Performance retainer</td>
+</tr>
+<tr>
+<td>Performance marketing retainer</td>
+<td>Meta, Google and TikTok management, creative testing, profit-based reporting</td>
+<td>$2,500-6,000/mo, or 10% of spend (whichever is higher)</td>
+<td>CRO</td>
+</tr>
+<tr>
+<td>CRO programme</td>
+<td>2-4 tests a month, research, development, reporting</td>
+<td>$3,000-6,000/mo</td>
+<td>Replatform</td>
+</tr>
+<tr>
+<td>AEO/GEO programme</td>
+<td>Schema, product feed, FAQ hubs, monthly AI visibility tracking across ChatGPT, Perplexity and Google</td>
+<td>$1,500-4,000/mo</td>
+<td>Content</td>
+</tr>
+<tr>
+<td>AI support agent</td>
+<td>Order-status (WISMO), returns and order-edit agent on Gorgias, Zendesk or Service Cloud, with measured resolution rate</td>
+<td>$9,500-30,000 + $750-2,500/mo</td>
+<td>More intents</td>
+</tr>
+<tr>
+<td>Shopify-ERP sync + AI exception agent</td>
+<td>Middleware rebuild or repair, monitoring, Slack alerts, auto-fix of SKU and address errors</td>
+<td>$7,500-25,000 + $900-2,000/mo</td>
+<td>B2B portal</td>
+</tr>
+<tr>
+<td>Payout reconciliation agent</td>
+<td>Matches Shopify Payments, PayPal, Klarna, Afterpay and Zip payouts and fees to Xero, QuickBooks or DATEV</td>
+<td>$2,500-6,000 + $450-1,000/mo</td>
+<td>ERP sync</td>
+</tr>
+<tr>
+<td>Salesforce data hygiene + speed-to-lead agent</td>
+<td>Dedupe, routing, required fields, pipeline dashboards, AI lead triage</td>
+<td>$9,500-30,000 + $1,800-3,500/mo fractional admin</td>
+<td>Agentforce</td>
+</tr>
+<tr>
+<td>B2B wholesale portal</td>
+<td>Shopify B2B, price lists, net terms, AI agent that turns emailed or PDF purchase orders into orders</td>
+<td>$9,500-40,000</td>
+<td>ERP sync</td>
+</tr>
+<tr>
+<td>Replatform to Shopify Plus</td>
+<td>From Magento, Shopware 5 or WooCommerce: data, redirects, ERP connector</td>
+<td>$25,000-120,000 (SFCC $60,000+, only after case studies)</td>
+<td>CRO + SEO</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="3b-market-specific-offers">3b. Market-specific offers</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Market</th>
+<th>Offer</th>
+<th>Scope</th>
+<th>USD price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Australia</td>
+<td>Surcharge Ban Margin Rescue</td>
+<td>Remove surcharge logic, reprice or absorb costs, steer customers to cheaper payment methods, payment-fee margin report</td>
+<td>$3,900 fixed + optional margin agent $750/mo</td>
+</tr>
+<tr>
+<td>Australia</td>
+<td>July 2027 Subscription and Drip Pricing Readiness</td>
+<td>Cancel flow, fee display near the base price, save offers that do not block cancellation, retention CRO</td>
+<td>$4,500-9,500</td>
+</tr>
+<tr>
+<td>Australia</td>
+<td>Carrier Rewire and Delivery Promise</td>
+<td>Multi-carrier rates after the Sendle collapse, delivery dates on product and checkout pages, click-and-collect</td>
+<td>$2,500-6,500</td>
+</tr>
+<tr>
+<td>New Zealand</td>
+<td>Xero Payout Reconciliation Agent</td>
+<td>Shopify, Afterpay and Laybuy payouts into Xero, ahead of GST periods and the 31 March year-end</td>
+<td>$2,500 + $450/mo</td>
+</tr>
+<tr>
+<td>New Zealand</td>
+<td>B2B Portal + Peppol-ready invoicing</td>
+<td>Trade portal for Auckland distributors. Peppol for government suppliers (NZ$33M+ revenue from 1 Jan 2027)</td>
+<td>$9,500-25,000</td>
+</tr>
+<tr>
+<td>US</td>
+<td>Tariff and Margin Command Center</td>
+<td>SKU-level landed-cost model, IEEPA refund back into COGS, AI agent that flags SKUs below their margin floor and drafts Shopify price changes</td>
+<td>$8,000-18,000 + $2,000-3,500/mo</td>
+</tr>
+<tr>
+<td>US</td>
+<td>ADA + Privacy Compliance Sprint</td>
+<td>WCAG 2.2 AA fixes, AI alt text, accessibility check in the release pipeline, GPC consent, California auto-renewal cancel flow</td>
+<td>$6,000-15,000 + $1,000-2,000/mo</td>
+</tr>
+<tr>
+<td>US</td>
+<td>ERP-Shopify Reconciliation Agent</td>
+<td>NetSuite, QuickBooks or Dynamics: orders, payouts and bank lines matched, exceptions raised automatically</td>
+<td>$10,000-30,000</td>
+</tr>
+<tr>
+<td>Canada</td>
+<td>Cross-Border Duties Checkout Kit</td>
+<td>Duties-included pricing (Shopify Managed Markets or Zonos), AI-assisted HS-code classification, CUSMA documentation workflow, multi-carrier backup to Canada Post</td>
+<td>$7,500-18,000</td>
+</tr>
+<tr>
+<td>Canada</td>
+<td>Quebec Readiness Pack</td>
+<td>French storefront and product data (AI translation plus human review), Law 25 cookie consent. Packaging goes to counsel</td>
+<td>$6,000-15,000</td>
+</tr>
+<tr>
+<td>Germany</td>
+<td>Abmahnsicher Compliance Sprint</td>
+<td>Accessibility (BFSG) fixes, withdrawal and cancel buttons, 30-day price rule on strike-through prices (PAngV), product safety data (GPSR), green-claims copy audit, consent. A German law firm signs off</td>
+<td>$6,500-19,500 + $550-1,500/mo</td>
+</tr>
+<tr>
+<td>Germany</td>
+<td>E-Rechnung and DATEV automation</td>
+<td>XRechnung/ZUGFeRD from Shopify or Shopware, DATEV or lexoffice export, PayPal and Klarna payout matching</td>
+<td>$8,500-29,000</td>
+</tr>
+<tr>
+<td>Germany</td>
+<td>Shopware 5 / Magento end-of-life migration</td>
+<td>Move to Shopware 6 or Shopify Plus, protecting German SEO</td>
+<td>$27,000-120,000</td>
+</tr>
+<tr>
+<td>Saudi Arabia</td>
+<td>ZATCA Wave 25 + National Address sprint</td>
+<td>Shopify, Woo or Magento orders to a certified e-invoicing provider; National Address short-code capture and validation at checkout</td>
+<td>$4,000-8,000 + $300-800/mo</td>
+</tr>
+<tr>
+<td>Saudi Arabia</td>
+<td>Arabic WhatsApp Commerce Agent</td>
+<td>COD confirmation, order status, address capture, prepay or BNPL nudge, Gulf Arabic and English</td>
+<td>$5,000-15,000 + $1,000-3,000/mo</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Rule for all compliance offers:</strong> Marginwise implements; it does not give legal advice. Every compliance proposal says so, and in Germany, Australia and Canada a partner law firm signs off.</p>
+<hr />
+<h2 id="4-market-deep-dives">4. Market deep dives</h2>
+<h3 id="41-australia">4.1 Australia</h3>
+<p><strong>Snapshot</strong>
+- Online spend: A$82.6bn in 2025, up about 14%, around 24% of retail (Australia Post 2026 report).
+- Shopify stores: about 152K active (Storeleads, May 2026, secondary). About 4,169 Shopify Plus sites (BuiltWith).
+- Labour cost: minimum wage A$26.44/hr from 1 Jul 2026, which strengthens the case for automation.
+- AI search: 83% of Australians have used an AI assistant for shopping research (vendor survey, Aug 2026).</p>
+<p><strong>Forced-demand calendar</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Change</th>
+<th>Who must act</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Oct 2026 (live)</td>
+<td>RBA ban on surcharging Visa, Mastercard and eftpos cards, plus lower interchange</td>
+<td>Every checkout that surcharged</td>
+</tr>
+<tr>
+<td>10 Dec 2026</td>
+<td>Privacy Act: privacy policies must describe automated decision-making</td>
+<td>Brands using AI personalisation or fraud scoring</td>
+</tr>
+<tr>
+<td>1 Apr 2027</td>
+<td>Foreign-card interchange cap and transparency rules</td>
+<td>Payments</td>
+</tr>
+<tr>
+<td>1 Jul 2027</td>
+<td>Unfair trading practices, subscription traps and drip pricing ban (penalties up to A$100M)</td>
+<td>Subscription brands, any checkout that adds fees late</td>
+</tr>
+<tr>
+<td>Pending</td>
+<td>Privacy tranche 2 (exposure draft Aug 2026)</td>
+<td>CRM and marketing data</td>
+</tr>
+<tr>
+<td>Live now (market shock)</td>
+<td>Sendle shut down Jan 2026; Australia Post fuel surcharge rose to 12%</td>
+<td>Shopify SMB shipping</td>
+</tr>
+<tr>
+<td>Live now (platform)</td>
+<td>Shopify Scripts stopped running 30 Jun 2026; Magento 2.4.6 support ended Aug 2026</td>
+<td>Plus and Magento merchants</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Boring problems by stack</strong>
+- <strong>Shopify D2C:</strong>
+  - Surcharge removal and repricing.
+  - Shipping cost hidden until checkout.
+  - Afterpay/Zip checkout clutter.
+  - Carrier rewiring after Sendle.
+  - Payout reconciliation in Xero/MYOB.
+  - Scripts-to-Functions clean-up.
+  - Returns (41% of online shoppers returned an item).
+  - Subscription cancel flows.
+- <strong>Salesforce:</strong>
+  - Sales Cloud data hygiene and lead routing for A$10-200M B2B distributors.
+  - Service Cloud deflection: Fisher &amp; Paykel reports 30% fewer calls with Agentforce (vendor-reported).
+- <strong>Custom / legacy:</strong>
+  - Cin7, Unleashed, MYOB or NetSuite sync failures (documented in app reviews and vendor FAQs).
+  - Magento end-of-life replatforming.
+  - B2B ordering by email or PDF.
+  - Peppol for suppliers to the Commonwealth government (target, not a mandate).</p>
+<p><strong>Buyer signals</strong>
+- Surcharge text in checkout ("1.5% card fee").
+- Cin7 or Unleashed apps with 1-2 star reviews.
+- Seek job ads for "ecommerce operations coordinator" or "Salesforce administrator".
+- Flat-rate-only shipping.
+- Old Magento version strings.
+- Recharge or Skio installed.</p>
+<p><strong>Working hours:</strong> An ANZ shift of 06:30-15:30 IST gives about 5 hours of overlap with Sydney in summer, and 1 hour more in the southern winter.</p>
+<h3 id="42-new-zealand-auckland">4.2 New Zealand (Auckland)</h3>
+<p><strong>Snapshot</strong>
+- Online spend: NZ$6.1bn in 2024, up 5%, 72% of it with domestic retailers (NZ Post). 2025 growth was about 10% (secondary).
+- Auckland is about 38% of NZ's economy, with about 222K business units.
+- Auckland GDP softened in the year to March 2025, so buyers are cost-sensitive and want ROI-framed automation.
+- Minimum wage is NZ$23.95/hr from 1 Apr 2026.</p>
+<p><strong>Forced-demand calendar</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Change</th>
+<th>Who must act</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 May 2026 (live)</td>
+<td>Privacy Act IPP3A: people must be told when their data is collected from third parties</td>
+<td>Loyalty partners, data enrichment, bought lists</td>
+</tr>
+<tr>
+<td>1 Jan 2027</td>
+<td>Peppol e-invoicing to government required for suppliers with NZ$33M+ revenue</td>
+<td>B2B suppliers</td>
+</tr>
+<tr>
+<td>Ongoing</td>
+<td>Commerce Commission scrutiny of subscription traps</td>
+<td>Subscription brands</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Boring problems by stack</strong>
+- <strong>Shopify plus Xero:</strong> payout reconciliation, Cin7 or Unleashed sync (all three tools were founded in NZ, so the user base is dense), and trans-Tasman AUD/NZD Markets with separate GST.
+- <strong>B2B:</strong> wholesale portals for Auckland food, beverage and homewares distributors.
+- <strong>Salesforce:</strong> low relevance at this size.</p>
+<p><strong>Fit:</strong> Deal sizes are about 20-30% below Australia (estimate). Treat NZ as a partner-led add-on to Australia: sell through Xero bookkeepers and through trans-Tasman brands that already sell in AU.</p>
+<p><strong>Working hours:</strong> Auckland in summer is 7.5 hours ahead of IST. The best overlap is 2-3 hours, at 06:30-09:30 IST.</p>
+<h3 id="43-united-states">4.3 United States</h3>
+<p><strong>Snapshot</strong>
+- Q2 2026 ecommerce: $340.2bn, 17.1% of retail, up 12.2% year on year (Census, via secondary sources).
+- Shopify Q2 2026 GMV: $115.6bn, up 32% (10-Q).
+- About 739K live US Shopify stores (StoreCensus, Oct 2026).
+- Salesforce FY26 revenue: $41.5bn. Agentforce ARR: $800M.</p>
+<p><strong>Forced-demand calendar</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Change</th>
+<th>Who must act</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Live (since Aug 2025, now indefinite)</td>
+<td>$800 de minimis exemption suspended for all countries; statutory repeal 1 Jul 2027</td>
+<td>Every importer and cross-border D2C brand</td>
+</tr>
+<tr>
+<td>Live</td>
+<td>IEEPA tariffs struck down (20 Feb 2026), refunds via CBP. Section 122 tariff replaced by Section 301 on 24 Jul 2026. Section 338 50% tariffs on Canadian goods</td>
+<td>Margin and pricing</td>
+</tr>
+<tr>
+<td>Live (1 Jul 2025)</td>
+<td>California auto-renewal law (AB 2863): express consent, click-to-cancel, save-offer rules. FTC click-to-cancel rule vacated, but ROSCA still applies</td>
+<td>Subscription brands</td>
+</tr>
+<tr>
+<td>Live</td>
+<td>FTC fake reviews rule: up to $53,088 per violation; warning letters sent Dec 2025</td>
+<td>Review apps and incentives</td>
+</tr>
+<tr>
+<td>1 Jan 2026 (live)</td>
+<td>New state privacy laws in Indiana, Kentucky and Rhode Island. California regulator fined Tractor Supply $1.35M and Todd Snyder $345K</td>
+<td>Consent and opt-out tracking</td>
+</tr>
+<tr>
+<td>Ongoing</td>
+<td>5,000+ digital accessibility lawsuits in 2025, about 70% against ecommerce (UsableNet, secondary)</td>
+<td>Every B2C store</td>
+</tr>
+<tr>
+<td>2026</td>
+<td>States dropping the 200-transaction nexus test (Illinois from 1 Jan 2026)</td>
+<td>Sales tax</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Boring problems by stack</strong>
+- <strong>Shopify:</strong>
+  - Tariff repricing.
+  - Landed cost and duties.
+  - Accessibility remediation.
+  - Returns: $849.9bn returned in 2025, 9% of returns fraudulent (NRF).
+  - Chargebacks.
+  - Subscription compliance.
+  - Consent and server-side tracking.
+  - AI shopping visibility.
+- <strong>Salesforce:</strong>
+  - Data quality: 76% of firms say less than half their CRM data is accurate (Validity 2025).
+  - Agentforce readiness.
+  - Marketing Cloud cost versus Klaviyo.
+  - SFCC to Shopify Plus migration (licence cited at 1-3% of GMV, agency source).
+- <strong>Custom:</strong>
+  - NetSuite, QuickBooks and Dynamics sync errors (documented in Celigo's own help files).
+  - B2B portals.
+  - BigCommerce and Magento migrations.</p>
+<p><strong>Buyer signals</strong>
+- Defendants in accessibility lawsuits (PACER, CourtListener, UsableNet lists).
+- Accessibility overlay widgets detected (a sign of weak compliance).
+- Importer-of-record data (ImportYeti).
+- Job posts for "NetSuite administrator" or "pricing analyst".
+- Demandware (SFCC) detected by BuiltWith.</p>
+<p><strong>Risk:</strong> The HIRE Act (proposed 25% excise tax on offshore services) was stalled in committee as of Feb 2026 (unverified since then). Watch it. Mitigation: a US LLC and a US-hours contact.</p>
+<p><strong>Working hours:</strong> A 18:30-23:30 IST shift covers 9am-2pm Eastern. From 1 Nov, the US is 10.5 hours behind IST. Sell overnight delivery: "brief at 5pm ET, done by 9am."</p>
+<h3 id="44-canada">4.4 Canada</h3>
+<p><strong>Snapshot</strong>
+- June 2026 retail ecommerce: C$5.7bn, 7.7% of retail (StatCan, via secondary source).
+- About 170K Shopify stores (Store Leads, secondary). Shopify is Canadian, so Canadian brands expect strong Shopify skills.</p>
+<p><strong>Forced-demand calendar</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Change</th>
+<th>Who must act</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aug 2026 (live)</td>
+<td>US Section 338 tariffs of 50% on about 554 Canadian product lines, including CUSMA-qualifying goods</td>
+<td>Brands selling into the US</td>
+</tr>
+<tr>
+<td>Live</td>
+<td>US de minimis suspended</td>
+<td>Brands selling into the US</td>
+</tr>
+<tr>
+<td>2024-2025</td>
+<td>Canada Post strikes (CFIB estimated C$1.6bn cost to small business). New contracts run to 2029</td>
+<td>Carrier diversification</td>
+</tr>
+<tr>
+<td>1 Jun 2025 (live), grace to 1 Jun 2027</td>
+<td>Quebec Bill 96: French on packaging and generic terms</td>
+<td>Anyone selling into Quebec</td>
+</tr>
+<tr>
+<td>Live</td>
+<td>Quebec Law 25: consent before non-essential cookies</td>
+<td>Tracking</td>
+</tr>
+<tr>
+<td>C$30K threshold</td>
+<td>GST/HST simplified registration for non-residents selling digital goods and services</td>
+<td>Cross-border digital sellers</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Boring problems:</strong>
+- Cross-border duties at checkout.
+- HS-code classification.
+- CUSMA documentation.
+- French storefront and product data.
+- Law 25 consent.
+- Carrier backup to Canada Post.</p>
+<p><strong>Fit:</strong> Run Canada as an extension of the US pod; it is on the same time zones (ET and PT).</p>
+<h3 id="45-germany-berlin">4.5 Germany (Berlin)</h3>
+<p><strong>Snapshot</strong>
+- 2025 online sales: EUR 92.3bn net, up 3.9% (HDE). 2026 forecast: up 4.3%. 57% of online sales go through marketplaces.
+- Platforms:
+  - Shopware leads among the top 1,000 shops with 11.5% (EHI 2025).
+  - Shopify leads among SMB shops at about 40% (secondary).
+  - About 121K live Shopify stores and about 20K Shopware stores; Shopware is down 11% year on year.
+- Berlin startups: 218 funding rounds and EUR 2.68bn raised in 2025. 42% of Berlin startup employees are international, which makes English-first selling viable.
+- IT skills shortage: about 79K IT roles unfilled (Bitkom, Sep 2026).</p>
+<p><strong>Forced-demand calendar</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Change</th>
+<th>Who must act</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>28 Jun 2025 (live)</td>
+<td>BFSG accessibility for B2C ecommerce (microbusinesses exempt). Fines up to EUR 100K; warning letters of EUR 595-2,700 reported</td>
+<td>B2C shops above micro size</td>
+</tr>
+<tr>
+<td>19 Jun 2026 (live)</td>
+<td>Withdrawal button (new section 356a of the civil code, BGB)</td>
+<td>Every B2C shop</td>
+</tr>
+<tr>
+<td>2 Aug 2026 (live)</td>
+<td>EU AI Act Art. 50: chatbots must disclose that they are AI</td>
+<td>Every AI chatbot we build</td>
+</tr>
+<tr>
+<td>27 Sep 2026 (live)</td>
+<td>EmpCo green-claims rules: offset-based "klimaneutral" claims and self-made sustainability labels banned</td>
+<td>Sustainable, beauty and food brands</td>
+</tr>
+<tr>
+<td>1 Jan 2027</td>
+<td>Issuing structured B2B e-invoices mandatory above EUR 800K turnover (XRechnung or ZUGFeRD; a plain PDF does not count)</td>
+<td>Any brand with a B2B or wholesale channel</td>
+</tr>
+<tr>
+<td>1 Jan 2028</td>
+<td>E-invoicing for all businesses</td>
+<td>Remaining B2B</td>
+</tr>
+<tr>
+<td>Live</td>
+<td>Cancel button (section 312k BGB, widened by the Federal Court of Justice, BGH, in May 2025). GPSR product safety data on every listing since Dec 2024. 30-day lowest price for strike-through prices (PAngV). Packaging register (LUCID)</td>
+<td>All shops</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Boring problems by stack</strong>
+- <strong>Shopify and Shopware:</strong>
+  - Exposure to warning letters (Abmahnungen): 18% of retailers received one in 2024 (Händlerbund).
+  - Accessibility, withdrawal button, strike-through prices, product safety data, green claims, consent.
+  - Payment mix: 2025 checkout share was PayPal 28.7%, invoice purchase (Kauf auf Rechnung) 26.1%, direct debit 14.4%, cards 13.7% (EHI).
+  - Fashion returns.
+  - German-language AI search: AI Overviews cut clicks by 17.8% in one German study.
+- <strong>Salesforce:</strong> GDPR-compliant CRM with a consent model and deletion routines, Agentforce readiness for Mittelstand B2B.
+- <strong>Custom:</strong>
+  - Shopware 5 end of life (Jul 2024).
+  - Magento 2.4.6 end of support.
+  - JTL, plentymarkets, Xentral or SAP sync.
+  - Multi-country EU expansion: OSS VAT, hreflang, translation.</p>
+<p><strong>Buyer signals</strong>
+- No withdrawal button in the footer or account area.
+- Overlay accessibility widgets.
+- Shopware 5 paths in page source.
+- "Klimaneutral" in product page copy.
+- A B2B or trader ("Händler") login on a Shopify store.
+- Tax advisers (Steuerberater) posting about the e-invoicing deadline.</p>
+<p><strong>Language:</strong> Berlin startups are fine in English. The Mittelstand needs German for sales and contracts. Make native German review a standard, priced line item on every project.</p>
+<p><strong>Data protection:</strong> India has no EU adequacy decision, so every engagement needs a GDPR processing agreement (AVV, Art. 28), Standard Contractual Clauses and a transfer impact assessment.</p>
+<p><strong>Working hours:</strong> 10:00-19:00 IST covers 09:00-14:30 CET in winter. This is the best overlap of any market in this research.</p>
+<h3 id="46-saudi-arabia">4.6 Saudi Arabia</h3>
+<p><strong>Snapshot</strong>
+- mada debit card ecommerce: SAR 88.3bn in Q3 2025. Record month of SAR 30.7bn in October 2025, up 68% (SAMA). This undercounts the market because it excludes Visa and Mastercard.
+- 43,854 ecommerce registrations in Q4 2025 (Ministry of Commerce).
+- Non-cash retail payments: 79% in 2024.
+- Platforms: Salla leads the SME tail (44% of stores by AfterShip count), then Zid, WooCommerce and Shopify (9-14%).
+- Salesforce has announced a $500M investment and a Riyadh hub. In-Kingdom Hyperforce general availability: unverified.</p>
+<p><strong>Forced-demand calendar</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Change</th>
+<th>Who must act</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Jan 2026 (live)</td>
+<td>Carriers reject parcels without a valid National Address</td>
+<td>All D2C, especially on Shopify, Woo or Magento</td>
+</tr>
+<tr>
+<td>19 Apr 2026 (live)</td>
+<td>60% Saudization of marketing and sales roles</td>
+<td>Pushes brands to outsource execution</td>
+</tr>
+<tr>
+<td>1 Feb 2027</td>
+<td>ZATCA Phase 2 e-invoicing, Wave 25 (VAT revenue above SAR 187.5K)</td>
+<td>Largest SME cohort so far</td>
+</tr>
+<tr>
+<td>Consultation to 5 Nov 2026</td>
+<td>Draft PDPL amendments: in-Kingdom data storage, stricter marketing consent</td>
+<td>Shopify, Klaviyo and Salesforce users</td>
+</tr>
+<tr>
+<td>Live</td>
+<td>E-Commerce Law: all-in prices including VAT and shipping, returns policy; penalties up to SAR 1M</td>
+<td>All sellers</td>
+</tr>
+<tr>
+<td>UAE: 1 Jan 2027 and 1 Jul 2027</td>
+<td>UAE e-invoicing go-live (large, then all businesses)</td>
+<td>Same build reusable for UAE</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Boring problems by stack</strong>
+- <strong>Shopify, Woo and Magento:</strong>
+  - ZATCA integration.
+  - National Address capture.
+  - COD failure and return-to-origin.
+  - Arabic right-to-left layout and bilingual product data.
+  - Arabic AEO: Google AI Mode has been available in Arabic since Oct 2025.
+  - Tabby and Tamara placement.
+  - Shopify Payments is reported unavailable in KSA (unverified), so third-party gateways are needed.
+- <strong>Salla and Zid:</strong> may handle ZATCA natively (unverified; check before targeting them). Better fits are the WhatsApp agent and ERP sync.
+- <strong>Salesforce:</strong> real estate and automotive CRM with WhatsApp. Big 4 dominated, and data residency is unresolved, so defer.
+- <strong>Custom:</strong> Odoo, SAP B1 or Dynamics sync to the storefront. A direct fit for the founder's NAV background.</p>
+<p><strong>Channel:</strong> white-label for Riyadh and Dubai agencies, plus e-invoicing providers and accountants. Government work requires a regional headquarters (RHQ) and a local entity, so skip it.</p>
+<p><strong>Working hours:</strong> KSA is 2.5 hours behind IST. Full overlap is Monday to Thursday (the KSA weekend is Friday-Saturday). Hours are shorter during Ramadan.</p>
+<hr />
+<h2 id="5-competitor-agencies-and-their-methodology">5. Competitor agencies and their methodology</h2>
+<p>Sources:
+- Each agency's own site.
+- Shopify Partner Directory.
+- Clutch, DesignRush and Shopware Store profiles.</p>
+<p>Partner tiers and client names come from those sources. Where an agency claimed something about itself and it could not be checked, it is marked (unverified). Clutch rates are the hourly bands shown on each agency's profile.</p>
+<h3 id="51-australia">5.1 Australia</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Agency</th>
+<th>Type</th>
+<th>Methodology / entry offer</th>
+<th>Pricing signal</th>
+<th>Gap for us</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://theworkingparty.com.au/">The Working Party</a> (Melbourne, also NZ)</td>
+<td>Shopify Plus build. Says it is a Shopify Platinum and Klaviyo Elite partner</td>
+<td>Long-term "growth, design, engineering" partnership. No fixed entry offer</td>
+<td>Not published</td>
+<td>Premium onshore build. No ERP, AI or compliance offer</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.shopify.in/plus/partners/convert-digital">Convert Digital</a> (Melbourne, Sydney, Brisbane, Auckland)</td>
+<td>Shopify Plus Platinum. Clients include Modibodi, Cadbury, Puma, Camilla and Marc</td>
+<td>Builds, migrations, custom apps</td>
+<td>Contact only</td>
+<td>Enterprise retail. Mid-market brands get pushed toward big retainers</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://clutch.co/profile/hope-factory">The Hope Factory</a> (Melbourne)</td>
+<td>Shopify Premier build and growth</td>
+<td>"Not produce and disappear": ongoing support after launch</td>
+<td>Clutch: $5K+ minimum, $150-199/hr</td>
+<td>Onshore rates. We can match the scope at about half the price</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.designrush.com/agency/profile/clever-conversions">Clever Conversions</a> (Sydney)</td>
+<td>CRO specialist</td>
+<td>Productised "Express UX Audit" and "Ultimate CRO Report"</td>
+<td>About $199/hr; $1-10K budgets</td>
+<td>Stops at recommendations. No build, media or ERP</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.goodfirms.co/company/annexa">Annexa</a> (Melbourne)</td>
+<td>NetSuite integrator, mid-market</td>
+<td>NetSuite implementation and integration</td>
+<td>Not found</td>
+<td>ERP only. The Shopify and NetSuite sides get sold as two separate projects</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>What Australian agencies do:</strong>
+- Onshore Premier and Platinum build shops.
+- Klaviyo-led retention.
+- A few CRO audit shops.</p>
+<p><strong>What none of them offer:</strong>
+- A surcharge-ban margin package (checkout, pricing and margin model together).
+- A fixed-scope Shopify plus ERP sync with AI monitoring.</p>
+<h3 id="52-new-zealand">5.2 New Zealand</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Agency</th>
+<th>Type</th>
+<th>Methodology / entry offer</th>
+<th>Pricing signal</th>
+<th>Gap for us</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://pocketsquare.co.nz/">Pocket Square</a> (Auckland, now part of Fusion5)</td>
+<td>Shopify Plus. Claims it was NZ's first Plus partner; 45+ Plus launches. Clients include Walker and Hall, Bendon, Life Pharmacy</td>
+<td>"360 business transformation" with Fusion5</td>
+<td>Not published</td>
+<td>Now inside a systems integrator, so enterprise process and cost</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.shopify.com/plus/partners/zyber">Zyber</a> (Auckland)</td>
+<td>Shopify Premier/Plus, B2B, NetSuite and ERP sync. Klaviyo Platinum</td>
+<td>B2B and wholesale, migrations, CRO</td>
+<td>Services from $1,250</td>
+<td>Closest to our model. No paid media or AI shown</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://clutch.co/profile/flight-digital">Flight Digital</a> (Auckland)</td>
+<td>Customer-experience studio plus CRO</td>
+<td>CRO, analytics, site performance</td>
+<td>Clutch: $10K+ minimum, $150-199/hr</td>
+<td>Senior studio rates. No ERP or AI</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.shopify.com/partners/directory/partner/cyberworkshop">CyberWorkshop</a> (Auckland)</td>
+<td>Shopify Plus with MYOB</td>
+<td>Wholesale and B2C builds</td>
+<td>From $5,000</td>
+<td>One connector focus</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>What New Zealand agencies do:</strong> the market is small and consolidating. Agencies charge $150-199/hr, and entry offers run $1,250-5,000.</p>
+<p><strong>What none of them offer:</strong> ERP sync with Xero, Cin7 or Unleashed, plus performance marketing and AEO, priced at mid-market budgets.</p>
+<h3 id="53-united-states">5.3 United States</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Agency</th>
+<th>Type</th>
+<th>Methodology / entry offer</th>
+<th>Pricing signal</th>
+<th>Gap for us</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://clutch.co/profile/fuel-made">Fuel Made</a></td>
+<td>Shopify Plus, CRO, Klaviyo Master Elite. Clients include Pela, Smidge</td>
+<td>Optimises conversion rate, AOV and lifetime value</td>
+<td>Clutch: $50K+ minimum, $150-199/hr</td>
+<td>Prices out $2-5M brands</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://clutch.co/profile/good">The Good</a> (Oregon)</td>
+<td>CRO. Clients include Adobe, Nike</td>
+<td>"Digital Experience Optimization Program", month to month</td>
+<td>Market range $5-35K/mo</td>
+<td>Research and tests only. The client's team has to build the changes</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://speero.com/experimentation-services/conversion-rate-optimization">Speero</a> (US, UK, AU)</td>
+<td>CRO, formerly CXL</td>
+<td>ResearchXL framework</td>
+<td>From $10K/mo on a 12-month programme (published)</td>
+<td>Long commitment. No build or media</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://clutch.co/profile/common-thread-collective">Common Thread Collective</a></td>
+<td>Performance marketing</td>
+<td>Flat retainer or 10-20% of ad spend</td>
+<td>Clutch: $5K+, $150-199/hr</td>
+<td>Media-heavy. No ERP or development</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://netalico.com/blogs/netalico-digest/top-shopify-agencies-in-the-us">Netalico</a></td>
+<td>Shopify Plus generalist. Runs landing pages for Sydney, Toronto, Montreal</td>
+<td>Retainers and hourly packages</td>
+<td>$5K+, $150-199/hr; retainers about $2.7-10K/mo (unverified)</td>
+<td>Generalist. Not ERP-led</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.shopify.com/partners/directory/partner/kensium16">Kensium</a></td>
+<td>Shopify with Acumatica or NetSuite B2B integration</td>
+<td>Commerce connector for B2B pricing and quotes</td>
+<td>Quote-based</td>
+<td>Integration-first. Weak on growth</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>What US agencies do:</strong>
+- Named CRO frameworks: ResearchXL, The Good's programme, Conversion's LIFT.
+- 12-month CRO programmes.
+- Media fees charged as a percentage of ad spend.
+- Shopify Plus builds with $25-75K+ minimums.</p>
+<p><strong>What none of them offer:</strong> ADA remediation tied to CRO, tariff repricing tied to the ERP, or catalogue readiness for AI shopping agents.</p>
+<h3 id="54-canada">5.4 Canada</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Agency</th>
+<th>Type</th>
+<th>Methodology / entry offer</th>
+<th>Pricing signal</th>
+<th>Gap for us</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://clutch.co/profile/diff-agency">Diff Agency</a> (Montreal, owned by WPP/VML)</td>
+<td>Shopify Plus Platinum. Clients include Giant Tiger, Anine Bing, PopSockets</td>
+<td>Full-stack replatforming, 200+ custom apps</td>
+<td>Clutch: $100-149/hr</td>
+<td>Network-owned, enterprise scale</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://clutch.co/profile/conversion-0">Conversion (formerly Widerfunnel)</a> (Vancouver)</td>
+<td>CRO</td>
+<td>Infinity Optimization Process, LIFT Model</td>
+<td>Clutch: $10K+ minimum</td>
+<td>Experimentation only</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.shopify.com/partners/directory/partner/acorn-digital-strategy">Acorn Strategy</a> (Vancouver)</td>
+<td>Shopify Plus, CRO, email</td>
+<td>CRO packages, Klaviyo</td>
+<td>Older listing: CRO $250-5,000</td>
+<td>Small team. No ERP or B2B</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.graphicallyspeaking.ca/services/ecommerce-website-design-and-development/shopify-b2b-development">Graphically Speaking</a></td>
+<td>Shopify Plus B2B with NetSuite sync</td>
+<td>B2B and wholesale ERP sync</td>
+<td>Not found</td>
+<td>The only Canadian ERP-plus-Shopify player found</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>What none of them offer:</strong> a Bill 96 French storefront build. Only translation apps (from $49/mo) and translation firms cover it. Nobody found sells cross-border duty logic tied to ERP and checkout either.</p>
+<h3 id="55-germany-dach">5.5 Germany / DACH</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Agency</th>
+<th>Type</th>
+<th>Methodology / entry offer</th>
+<th>Pricing signal</th>
+<th>Gap for us</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.latori.com/">Latori</a> (Wuppertal, Stuttgart, Munich)</td>
+<td>Shopify Plus build, B2B, headless. Says it is a Platinum partner (directories conflict)</td>
+<td>Project plus support. Claims 100+ enterprise projects. Clients include mymuesli, Kärcher</td>
+<td>Not published</td>
+<td>Big projects. Weak performance marketing and AEO layer</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.eshop-guide.de/">Eshop Guide</a> (Bochum, owned by Strix)</td>
+<td>Shopify Plus for the Mittelstand. Builds its own Lexware and sevdesk apps</td>
+<td>Pitch: "no frills, no ghosting"</td>
+<td>Project budgets $5-10K (directory)</td>
+<td>German only. Growth work is thin</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://tante-e.com/en/pages/services-shopify-agentur">Tante-e</a> (Cologne)</td>
+<td>Shopify Platinum (self-stated). Clients include FC Union Berlin, fritz-kola, reisenthel</td>
+<td>Productised menu: Setup, Migration, Relaunch, Growth Retainer, Shopify Audit, CRO module</td>
+<td>Not published</td>
+<td>No compliance or e-invoicing package</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.abxpert.de/">ABxpert (formerly PsyCommerce)</a> (Bielefeld)</td>
+<td>Shopify Premier, CRO and A/B testing. Clients include Tom Tailor, Dermalogica</td>
+<td>Recordings and surveys, then hypotheses, then tests, with a learning database. Claims 2,500+ tests. Free shop analysis</td>
+<td>From $1,500</td>
+<td>CRO only. No media, SEO or backend</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://acid21.com/en/shopify-agency-berlin">ACID21</a> (Berlin, Heidelberg)</td>
+<td>Shopify and Shopware (Bronze). Clients include Globus Baumarkt, Somfy, BASF</td>
+<td>Six-step lifecycle</td>
+<td>Not published</td>
+<td>No productised entry offer</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.xictron.com/de/bfsg/">XICTRON</a> (Lower Saxony)</td>
+<td>Shopware/ERP agency. BFSG service and DATEV plugin</td>
+<td>BFSG audit (automated, manual and assistive-technology testing), WCAG fixes, accessibility statement</td>
+<td>Market reference: audit from EUR 600, shop fix from EUR 5K</td>
+<td>Shopware-first, German only, not bundled for Shopify D2C brands</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://n8nlab.io/de/n8n-agency-experts-berlin">n8n Lab</a> (Berlin)</td>
+<td>AI and workflow automation</td>
+<td>Free automation audit; GDPR-compliant self-hosted n8n</td>
+<td>Not published</td>
+<td>Generic automation. No commerce-specific agents</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>What German agencies do:</strong>
+- Offer a free analysis as the entry point.
+- Sell from a productised menu.
+- Show the process as a lifecycle diagram.
+- Prove capability with counts ("2,500 tests", "100+ projects").
+- None offers a guarantee.</p>
+<p>Shopify e-invoicing is mostly sold as cheap apps at EUR 9-25/mo with few reviews. Nobody sells it as a tested setup service.</p>
+<p>Few Shopify Plus specialists are based in Berlin. The big ones target Berlin through SEO landing pages.</p>
+<p><strong>What none of them offer:</strong>
+- Compliance (BFSG, withdrawal button, e-invoicing) sold together with growth work in one sprint.
+- A tested Shopify to e-invoice to DATEV workflow.
+- German-language AEO.</p>
+<h3 id="56-saudi-arabia-gcc">5.6 Saudi Arabia / GCC</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Agency</th>
+<th>Type</th>
+<th>Methodology / entry offer</th>
+<th>Pricing signal</th>
+<th>Gap for us</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.shopify.com/partners/directory/partner/creative971">Creative971</a> (Dubai)</td>
+<td>Shopify Plus, GCC focus. Arabic RTL work for Aleph KSA, Nayomi</td>
+<td>Builds, migrations, CRO, speed. 5.0 from 42 reviews</td>
+<td>Not published</td>
+<td>No ERP, ZATCA or full-funnel media</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.shopify.com/partners/directory/partner/the-i-o-agency-plus">The i.o agency</a> (Dubai)</td>
+<td>Shopify UX, migrations, multilingual stores</td>
+<td>Conversion-focused UX plus automation</td>
+<td>Not published</td>
+<td>Same as Creative971</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://clutch.co/profile/racting">Racting</a> (KSA)</td>
+<td>Performance agency (Meta, Google, TikTok, Snap)</td>
+<td>"Transparent reporting"</td>
+<td>Clutch: $1K+ minimum, under $25/hr</td>
+<td>Low-cost media only</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://seosherpa.com/">SEO Sherpa</a> (Dubai, Riyadh)</td>
+<td>SEO, GEO, PPC. Clients include Amazon, Farfetch, Aramex</td>
+<td>Free proposal with audit; short sprints</td>
+<td>Premium (unverified)</td>
+<td>No builds, integrations or automation</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.sendantech.com/en-SA/riyadh/salesforce">Sendan Technology</a> (Riyadh)</td>
+<td>Salesforce implementer, plus ZATCA Phase 2 integration</td>
+<td>Fixed-scope pricing, free technical discovery, Arabic delivery</td>
+<td>Not published</td>
+<td>No D2C growth work: no CRO, ads or storefront</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://letsbot.net/en/salla.html">LetsBot</a>, ChatMaxima</td>
+<td>Self-serve Arabic WhatsApp bots for Salla and Zid</td>
+<td>7-day free trial</td>
+<td>SAR 49-119/mo; $19/mo and up</td>
+<td>No setup, training on the catalogue, OMS connection or revenue measurement</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://ecosire.com/apps/shopify/shopify-zatca-einvoicing">ECOSIRE</a>, Wafeq</td>
+<td>ZATCA Phase 2 software</td>
+<td>Custom Shopify app built in 2-4 weeks</td>
+<td>From $499 one-off; SAR 99/mo and up</td>
+<td>Software only. Nobody covers store to ERP to Fatoora end to end</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>What Saudi and GCC agencies do:</strong>
+- Free discovery.
+- Fixed scope (Sendan).
+- Self-serve SaaS trials.
+- Arabic RTL storefronts as proof.</p>
+<p>Salla store builds are mostly a freelancer market at SAR 399-799. No public Salla or Zid agency partner tier was found.</p>
+<p><strong>What none of them offer:</strong> a single provider that connects the storefront, ERP or Salesforce, and ZATCA, and adds WhatsApp agents measured on recovered revenue.</p>
+<h3 id="57-india-based-competitors-selling-into-these-markets">5.7 India-based competitors selling into these markets</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Agency</th>
+<th>Where it sells</th>
+<th>Model</th>
+<th>Pricing signal</th>
+<th>Gap for us</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.shopify.com/partners/directory/partner/zip-infosolutions-pvt-ltd">Growisto</a> (Mumbai, US entity)</td>
+<td>US, CA (unverified)</td>
+<td>Shopify, SEO, CRO, marketplaces. Claims Puma, Victorinox</td>
+<td>Not found</td>
+<td>Weak on Salesforce, ERP and AI agents</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.ranosys.com/">Ranosys</a> (Singapore HQ, delivery from Jaipur, Pune, Bikaner)</td>
+<td>US, UK, GCC</td>
+<td>Shopify Plus, Adobe, Salesforce (Platinum, unverified). Enterprise logos</td>
+<td>Not found</td>
+<td>Enterprise-sized and slow. Not built for mid-market D2C</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.codilar.com/">Codilar</a> (Bengaluru)</td>
+<td>US, CA, AU, GCC</td>
+<td>Magento-first, plus Shopify Plus and CRO</td>
+<td>Not found</td>
+<td>No Salla, no Arabic media</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.2hatslogic.com/">2Hats Logic</a> (Kochi)</td>
+<td>Germany, NL, CH, Nordics</td>
+<td>Shopware Bronze plus 38 extensions. German speaker in Berlin (unverified). Often white-labels for German agencies</td>
+<td>Not published</td>
+<td>Delivery shop. Weak growth offer</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://webkul.com/shopware/">Webkul</a> (Noida)</td>
+<td>EU, global</td>
+<td>Plugin marketplace</td>
+<td>Plugin prices</td>
+<td>A product catalogue, not consulting</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://clutch.co/profile/cartcoders-ecommerce-it-solutions">CartCoders</a>, <a target="_blank" rel="noopener" href="https://clutch.co/profile/crawlapps-shopify-plus-agency">Crawlapps</a>, Dynamic Dreamz</td>
+<td>US, AU</td>
+<td>Volume Shopify development</td>
+<td>Clutch: $5K+, $25-49/hr</td>
+<td>Development hours only. Compete on price</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://netsuite.folio3.com/netsuite-shopify-connector">Folio3</a></td>
+<td>US</td>
+<td>NetSuite-Shopify connector</td>
+<td>$2,400/yr plus $500 setup</td>
+<td>A connector. We can implement on top of it</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>How Indian competitors win:</strong> low development rates ($25-49/hr), a plugin catalogue, or enterprise logos.</p>
+<p><strong>What none of them sell to mid-market D2C:</strong> a packaged offer of compliance trigger plus ERP sync plus growth, under a named method.</p>
+<h3 id="58-what-this-means-for-marginwise">5.8 What this means for Marginwise</h3>
+<ol>
+<li><strong>Price corridor.</strong></li>
+<li>Onshore agencies: $100-199/hr.</li>
+<li>CRO programmes: $10K+/mo, often on 12-month terms.</li>
+<li>US Shopify Plus builds: $25-75K+ minimums.</li>
+<li>Offshore development: $25-49/hr.</li>
+<li><strong>Our position:</strong> fixed-scope outcomes at a $55-90/hr equivalent. That is above commodity India and about half of onshore.</li>
+<li><strong>Name the method.</strong> Named frameworks only exist in CRO (ResearchXL, LIFT, The Good). Build and ERP agencies sell "partnership". Our method, used across every market and offer:</li>
+<li><strong>Find:</strong> paid Revenue Leak Audit, AI-assisted crawl, a written list of fixes ranked by revenue.</li>
+<li><strong>Fix:</strong> fixed-scope sprint with acceptance criteria and daily Loom updates.</li>
+<li><strong>Grow:</strong> retainer for CRO, performance and AEO, plus AI agent monitoring, reported on profit, not ROAS.</li>
+</ol>
+<p>Call it <strong>"Find, Fix, Grow"</strong> in all materials.
+3. <strong>Compliance-triggered offers are almost uncontested.</strong> Only point solutions exist: translation apps, e-invoice apps, payment processor guides and connectors. Every market has a trigger nobody packages:
+   - AU: surcharge ban.
+   - US: ADA and tariffs.
+   - Canada: Bill 96 and cross-border duties.
+   - Germany: BFSG, withdrawal button and e-invoicing.
+   - Saudi Arabia: ZATCA and National Address.
+4. <strong>AI agent services are thin.</strong> No notable ecommerce AI-agent agency was found in AU, NZ or Canada. The US has only listicle-level players. Saudi bots are self-serve SaaS. Shopify's agentic storefronts launched in 2026. "We build, connect and measure the agent" is open ground.
+5. <strong>How competitors open the door</strong> (copy this): free analysis (ABxpert, Sendan, SEO Sherpa), a productised audit (Clever Conversions, Tante-e), and published starting prices (Zyber from $1,250, ABxpert from $1,500). We publish ours too: <strong>free 2-minute teardown, $1,500 paid audit, sprints from $3,900.</strong></p>
+<hr />
+<h2 id="6-positioning">6. Positioning</h2>
+<p><strong>One line for all markets:</strong>
+"We fix the boring problems that quietly cost ecommerce brands money. Checkout, compliance, ERP sync and tracking, built with AI and priced as fixed sprints."</p>
+<p><strong>Per market:</strong>
+- <strong>Australia:</strong> "Surcharge ban, Sendle gone, Afterpay buried: we fix the checkout and margin leaks Australian Shopify brands are living with."
+- <strong>New Zealand:</strong> "Shopify, Xero and Cin7 that actually agree with each other."
+- <strong>US:</strong> "Tariff-proof margins and lawsuit-proof storefronts, delivered overnight."
+- <strong>Canada:</strong> "Sell into the US without surprise duties, and into Quebec without fines."
+- <strong>Germany:</strong> "Abmahnsicher (warning-letter-proof) and e-invoice ready by 1 January, for Shopify and Shopware brands."
+- <strong>Saudi Arabia:</strong> "ZATCA-ready Shopify and Arabic WhatsApp commerce, through your agency."</p>
+<hr />
+<h2 id="7-90-day-revenue-forecast-per-market-usd-booked-contract-value">7. 90-day revenue forecast per market (USD, booked contract value)</h2>
+<p><strong>Assumptions</strong> (the same funnel in every market, so the markets can be compared):
+- <strong>Contacts:</strong> targeted contacts per week, each receiving a 3-step sequence. Wave 2 markets run for 8 weeks, wave 3 for 4.
+- <strong>Positive reply rate:</strong>
+  - Conservative: 2%
+  - Base: 3.5%
+  - Stretch: 5%
+- <strong>Discovery calls:</strong> 70% of positive replies book a call.
+- <strong>Close rate on calls:</strong>
+  - Conservative: 15%
+  - Base: 25%
+  - Stretch: 35%
+- <strong>Deal size:</strong> first-deal value adjusted by 0.85 (conservative), 1.0 (base) or 1.15 (stretch).
+- <strong>Retainers:</strong> 0%, 30% or 50% of deals add a retainer, counted at 1.5 months inside the window.
+- <strong>Not counted:</strong> Instagram and LinkedIn inbound leads, and partner referrals. These are upside.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Market</th>
+<th>Weeks active</th>
+<th>Contacts</th>
+<th>Avg first deal</th>
+<th>Retainer/mo</th>
+<th>Conservative (calls / deals / USD)</th>
+<th>Base (calls / deals / USD)</th>
+<th>Stretch (calls / deals / USD)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Australia</td>
+<td>12</td>
+<td>480</td>
+<td>$5,500</td>
+<td>$900</td>
+<td>7 / 1 / $4,700</td>
+<td>12 / 3 / $17,800</td>
+<td>17 / 6 / $42,000</td>
+</tr>
+<tr>
+<td>New Zealand</td>
+<td>12</td>
+<td>120</td>
+<td>$3,000</td>
+<td>$450</td>
+<td>2 / 0 / $0</td>
+<td>3 / 1 / $3,000</td>
+<td>4 / 1 / $3,400</td>
+</tr>
+<tr>
+<td>US</td>
+<td>12</td>
+<td>480</td>
+<td>$8,000</td>
+<td>$1,500</td>
+<td>7 / 1 / $6,800</td>
+<td>12 / 3 / $26,200</td>
+<td>17 / 6 / $61,900</td>
+</tr>
+<tr>
+<td>Canada</td>
+<td>8</td>
+<td>160</td>
+<td>$7,500</td>
+<td>$1,000</td>
+<td>2 / 0 / $0</td>
+<td>4 / 1 / $7,500</td>
+<td>6 / 2 / $18,800</td>
+</tr>
+<tr>
+<td>Germany / Berlin</td>
+<td>8</td>
+<td>240</td>
+<td>$8,000</td>
+<td>$900</td>
+<td>3 / 0 / $0</td>
+<td>6 / 2 / $17,400</td>
+<td>8 / 3 / $30,300</td>
+</tr>
+<tr>
+<td>Saudi Arabia</td>
+<td>4</td>
+<td>60</td>
+<td>$5,000</td>
+<td>$600</td>
+<td>1 / 0 / $0</td>
+<td>1 / 0 / $0</td>
+<td>2 / 1 / $5,800</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td><strong>1,540</strong></td>
+<td></td>
+<td></td>
+<td><strong>$11,500</strong></td>
+<td><strong>$72,000</strong></td>
+<td><strong>$162,200</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>How to read it:</strong>
+- <strong>Conservative</strong> is a cold start with no inbound and weak replies. If you land here at day 45, change the offer or the list, not the volume.
+- <strong>Base</strong> needs about 40 calls and 10 deals. That takes about 15-20 hours a week of founder selling time, plus a delivery pod of 2-3 people from week 4.
+- <strong>Stretch</strong> needs 17 deals. It is only reachable with that delivery pod and at least one partner channel (Xero bookkeepers, a Shopify agency overflow arrangement, or a Riyadh agency).
+- <strong>Cash collected</strong> lags booked value. Take 50% upfront on every project and bill retainers monthly in advance. Expect about 60-70% of booked value as cash inside the window.
+- <strong>Saudi Arabia</strong> contributes almost nothing in 90 days. It is a bet for Q1 2027, timed to the ZATCA deadline.</p>
+<p><strong>Weekly targets to track:</strong>
+- Contacts sent.
+- Positive replies.
+- Calls booked.
+- Paid audits sold. This is the leading indicator: one paid audit converts to a project far more often than a cold call does.
+- Deals closed.
+- Cash collected.</p>
+<hr />
+<h2 id="8-first-30-days-action-plan">8. First 30 days action plan</h2>
+<p>Day 1 = Mon 19 Oct 2026. Instagram keeps running on the existing calendar throughout.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Date</th>
+<th>Focus</th>
+<th>Tasks</th>
+<th>Done when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Mon 19 Oct</td>
+<td>Offers</td>
+<td>Lock 4 wave-1 offers and prices: Revenue Leak Audit $1,500, Surcharge Ban Margin Rescue $3,900, Tariff and Margin Command Center from $8,000, ERP Sync + AI Agent from $7,500</td>
+<td>One-page offer sheet</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Tue 20 Oct</td>
+<td>Website</td>
+<td>Add 2 offer pages to marginwise.in (AU surcharge, US tariff margin) with booking link and UTMs. Post the AU teardown reel (13:30 IST)</td>
+<td>Pages live</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Wed 21 Oct</td>
+<td>Payments and legal</td>
+<td>Stripe or Wise accounts for USD and AUD invoicing. Master services agreement and statement-of-work template with fixed scope, acceptance criteria and 50% upfront. NDA and data-processing addendum template</td>
+<td>Can invoice tomorrow</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Thu 22 Oct</td>
+<td>LinkedIn profile</td>
+<td>Rewrite headline and About section to the positioning line. Featured section: AUDIT checklist, AI builds PDF. Post 1 (US)</td>
+<td>Profile live</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Fri 23 Oct</td>
+<td>Lead lists AU</td>
+<td>Build 200 AU leads: Shopify stores A$2-50M from Storeleads or BuiltWith, filtered on surcharge text, Cin7/Unleashed, Afterpay. Find decision makers (founder, ecommerce manager, finance manager) with Apollo or LinkedIn</td>
+<td>200 rows with a trigger note each</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Sat 24 Oct</td>
+<td>Proof</td>
+<td>Build the demo Shopify dev store: surcharge removed, delivery-date promise, AI exception agent mock-up. Record a 3-minute Loom</td>
+<td>Demo video</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Sun 25 Oct</td>
+<td>Review</td>
+<td>Plan week 2, write the first 10 personalised AU emails</td>
+<td>Queue ready</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Mon 26 Oct</td>
+<td>Outreach AU</td>
+<td>Warm the sending domain (a separate domain such as getmarginwise.com, not the main one). Send the first 20 AU emails and 20 LinkedIn connection requests</td>
+<td>40 touches</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Tue 27 Oct</td>
+<td>Lead lists US</td>
+<td>Build 200 US leads: Shopify + NetSuite/QuickBooks, importers (ImportYeti), accessibility lawsuit defendants, Recharge stores</td>
+<td>200 rows</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Wed 28 Oct</td>
+<td>Outreach US</td>
+<td>20 US emails and 20 LinkedIn requests. LinkedIn post (AU surcharge)</td>
+<td>40 touches</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Thu 29 Oct</td>
+<td>Partners AU/NZ</td>
+<td>Email 15 Xero/MYOB bookkeepers and 5 AU Shopify agencies offering white-label delivery and a referral fee (10%)</td>
+<td>20 partner touches</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Fri 30 Oct</td>
+<td>Teardowns</td>
+<td>Record 5 free 2-minute teardowns for the best AU and US prospects and send them</td>
+<td>5 Looms sent</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Sat 31 Oct</td>
+<td>Content</td>
+<td>Write and schedule week-3 LinkedIn posts. Turn the demo store into a mini case study (setup, what changed, what to measure)</td>
+<td>Case study draft</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Sun 1 Nov</td>
+<td>Review</td>
+<td>US clocks change: update outreach and call windows (19:00-23:30 IST). Review reply rates</td>
+<td>Week 2 numbers</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Mon 2 Nov</td>
+<td>Follow-ups</td>
+<td>Follow-up 1 to all AU and US contacts from week 2. 20 new AU, 20 new US</td>
+<td>80 touches</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Tue 3 Nov</td>
+<td>Calls</td>
+<td>Take first discovery calls. Offer the paid audit as the next step on every call</td>
+<td>First calls held</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Wed 4 Nov</td>
+<td>Germany prep</td>
+<td>Contract a German-speaking reviewer (freelance). Shortlist 3 German law firms or legal-tech providers (e.g. those running Abmahnung protection services) for compliance sign-off</td>
+<td>Reviewer signed</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Thu 5 Nov</td>
+<td>NZ</td>
+<td>30 NZ leads (Shopify + Xero + Cin7/Unleashed, Auckland first). 10 emails. 5 bookkeeper partner emails</td>
+<td>NZ live</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Fri 6 Nov</td>
+<td>Proposals</td>
+<td>Send proposals within 24 hours of each call, with fixed scope, price, start date and 50% invoice attached</td>
+<td>Proposals out</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Sat 7 Nov</td>
+<td>Germany assets</td>
+<td>German-language versions of the withdrawal-button and e-invoicing checklists, checked by the reviewer</td>
+<td>2 German PDFs</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Sun 8 Nov</td>
+<td>Review</td>
+<td>Mid-point: calls booked, audits sold. If fewer than 4 calls, change subject lines and triggers before raising volume</td>
+<td>Decision logged</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Mon 9 Nov</td>
+<td>Outreach</td>
+<td>20 AU, 20 US new contacts. Follow-up 2 for week 2 contacts</td>
+<td>80 touches</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Tue 10 Nov</td>
+<td>Delivery</td>
+<td>Start the first paid audit or sprint. Daily Loom updates to the client</td>
+<td>Kick-off held</td>
+</tr>
+<tr>
+<td>24</td>
+<td>Wed 11 Nov</td>
+<td>Canada prep</td>
+<td>100 Canadian leads: .ca stores shipping to the US, Quebec sellers without a /fr locale</td>
+<td>List ready</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Thu 12 Nov</td>
+<td>Germany lists</td>
+<td>150 Berlin leads: Shopify or Shopware D2C, English-language job ads, no withdrawal button, B2B login</td>
+<td>List ready</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Fri 13 Nov</td>
+<td>Saudi prep</td>
+<td>Shortlist 10 Riyadh and Dubai Shopify or Salla agencies and 3 ZATCA e-invoicing providers for partner outreach. Find an Arabic-native reviewer</td>
+<td>Partner list</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Sat 14 Nov</td>
+<td>BFCM</td>
+<td>Run the BFCM checklist push on Instagram and LinkedIn (CTA keyword BFCM). Offer a 48-hour checkout fix before 27 Nov</td>
+<td>BFCM leads</td>
+</tr>
+<tr>
+<td>28</td>
+<td>Sun 15 Nov</td>
+<td>Case study</td>
+<td>Write the first client result (with permission), or the demo-store case study if none yet</td>
+<td>Case study published</td>
+</tr>
+<tr>
+<td>29</td>
+<td>Mon 16 Nov</td>
+<td>Wave-2 go</td>
+<td>Germany: 15 LinkedIn requests and 3 partner intros. Canada: 15 emails</td>
+<td>Wave 2 started</td>
+</tr>
+<tr>
+<td>30</td>
+<td>Tue 17 Nov</td>
+<td>Review</td>
+<td>Day-30 scorecard (below). Decide whether to move to wave 2 at full volume</td>
+<td>Scorecard</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Day-30 scorecard targets (base case):</strong>
+- 400+ touches sent.
+- 12+ positive replies.
+- 8+ calls.
+- 2+ paid audits or sprints.
+- $5K+ booked.
+- 1 partner agreement.
+- 1 case study.</p>
+<p><strong>Tools:</strong> Storeleads or BuiltWith for tech-stack lists, Apollo for contacts, Instantly or Lemlist on a separate domain, Loom, Cal.com booking, a CRM (HubSpot free or Notion), and Stripe or Wise.</p>
+<hr />
+<h2 id="9-outreach-message-templates-per-market">9. Outreach message templates per market</h2>
+<p><strong>Rules for every market:</strong>
+- Write as Abhimanyu, in first person.
+- Lead with one specific thing you saw on their store.
+- No attachments in the first email.
+- One question as the call to action.
+- Always include identification and an unsubscribe line.
+- Do not name an employer.
+- Do not claim client results we do not have.</p>
+<p><strong>Outreach law to follow (not legal advice):</strong>
+- <strong>Australia:</strong> Spam Act 2003 allows "inferred consent" only for a conspicuously published business address where the message relates to the person's role. Identify the sender and include a working unsubscribe.
+- <strong>New Zealand:</strong> Unsolicited Electronic Messages Act 2007; same approach as Australia.
+- <strong>US:</strong> CAN-SPAM requires a physical address, an opt-out honoured within 10 business days, and honest subject lines.
+- <strong>Canada:</strong> CASL allows implied consent only for conspicuously published addresses relevant to the role, with no "no unsolicited messages" notice. Identify the sender, give an address and include an unsubscribe. Penalties are high.
+- <strong>Germany:</strong> UWG section 7 generally prohibits cold advertising email to businesses without prior consent. <strong>Do not cold email German contacts.</strong> Use LinkedIn conversations, partner introductions and inbound leads, and email only after someone asks for it.
+- <strong>Saudi Arabia:</strong> use LinkedIn and partner introductions. Use WhatsApp only after the person opts in.</p>
+<h3 id="91-australia">9.1 Australia</h3>
+<p><strong>Cold email 1 (surcharge trigger)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: Card surcharge on [store]
+
+Hi [first name],
+
+Since 1 October the RBA ban means Australian merchants can no longer surcharge Visa, Mastercard or eftpos. Your checkout still shows [the 1.5% card fee / surcharge line] on [product].
+
+Two things usually follow: the fee has to come out of the checkout, and the cost lands in margin unless prices or payment mix change. We run a fixed-fee sprint that does both and shows you margin by product after payment fees.
+
+Would a 2-minute video of what I would change on [store] be useful?
+
+Abhimanyu Sharma
+Marginwise | marginwise.in
+[Business address] | Reply &quot;no thanks&quot; and I will not email again.
+</code></pre></div>
+<p><strong>Cold email 2 (ERP sync trigger)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: Cin7 and Shopify on [store]
+
+Hi [first name],
+
+I noticed [store] runs Shopify with [Cin7 / Unleashed / MYOB]. The most common problem we see in that setup is orders that fail to import or stock that drifts between the two, which usually gets fixed by hand every morning.
+
+We rebuild or repair the sync and add a small AI agent that fixes the routine errors and flags the rest in Slack. Fixed scope, quoted after a free 30-minute call.
+
+Is order or stock sync something your team spends time on today?
+
+Abhimanyu Sharma
+Marginwise | marginwise.in
+[Business address] | Reply &quot;no thanks&quot; to opt out.
+</code></pre></div>
+<p><strong>Follow-up (day 4)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Hi [first name], one more note on [store]: [one specific observation, e.g. shipping cost only appears at checkout]. Unexpected extra costs are the top reason shoppers abandon carts (Baymard). Happy to send a 2-minute teardown if useful.
+</code></pre></div>
+<p><strong>LinkedIn connection note (under 300 characters)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Hi [first name], I work on Shopify checkout and margin for Australian brands. Saw [store] after the surcharge ban came in. Would be good to connect.
+</code></pre></div>
+<p><strong>LinkedIn message after they accept</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Thanks for connecting. I recorded a 2-minute look at [store]'s product page and cart: two things it does well and one leak. Want me to send it here?
+</code></pre></div>
+<p><strong>Bookkeeper partner email</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: Shopify and Afterpay payouts in Xero
+
+Hi [first name],
+
+Your clients selling on Shopify probably bring you Afterpay, Zip and Shopify Payments payouts that never quite match the bank feed. We build a reconciliation agent that matches payouts, fees and refunds into Xero before you see them.
+
+We pay a 10% referral fee on the first project and never touch your advisory relationship. Worth a 20-minute call?
+
+Abhimanyu Sharma, Marginwise
+</code></pre></div>
+<h3 id="92-new-zealand">9.2 New Zealand</h3>
+<p><strong>Cold email</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: Xero and [store]
+
+Hi [first name],
+
+[Store] looks like it runs Shopify with Xero [and Cin7/Unleashed]. With GST periods and the 31 March year-end, the payout and fee reconciliation tends to land on someone's desk every month.
+
+We set up an agent that matches Shopify, Afterpay and Laybuy payouts and fees into Xero automatically, for a fixed setup fee and a small monthly charge.
+
+Would it help if I showed you how it would look for [store] in a 2-minute video?
+
+Abhimanyu Sharma
+Marginwise | marginwise.in
+[Business address] | Reply &quot;no thanks&quot; to opt out.
+</code></pre></div>
+<p><strong>Distributor (B2B) email</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: Trade orders by email at [company]
+
+Hi [first name],
+
+If [company]'s trade customers still order by email or PDF, someone is re-keying those orders. We build a Shopify B2B portal with customer price lists, plus an agent that turns emailed orders into sales orders. If you supply government, it can be made Peppol-ready for the January 2027 rules.
+
+Open to a 30-minute look at your current order flow?
+</code></pre></div>
+<p><strong>LinkedIn note</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Kia ora [first name], I help NZ Shopify brands get Shopify, Xero and their inventory system to agree. Would be good to connect.
+</code></pre></div>
+<h3 id="93-us">9.3 US</h3>
+<p><strong>Cold email 1 (tariff margin)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: Margin on [product line] after the July tariff change
+
+Hi [first name],
+
+[Company] imports [category] and sells on Shopify. Since de minimis ended and the Section 301 tariff replaced Section 122 in July, most brands I talk to are pricing on landed costs that are a quarter out of date, and some still have IEEPA refunds to put back into COGS.
+
+We build a SKU-level landed-cost and margin model from your ERP and customs entries, plus an agent that flags SKUs below your margin floor and drafts price changes for review.
+
+Is SKU-level margin something your team can see today?
+
+Abhimanyu Sharma
+Marginwise | marginwise.in
+[US business address] | Reply &quot;unsubscribe&quot; to opt out.
+</code></pre></div>
+<p><strong>Cold email 2 (accessibility and privacy)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: Accessibility on [store] checkout
+
+Hi [first name],
+
+I ran a quick accessibility check on [store]. The [checkout button / product image / form field] fails [specific check, e.g. missing label]. Ecommerce stores received most of the 5,000+ digital accessibility lawsuits filed in 2025, and checkout is where demand letters usually point.
+
+We fix the theme against WCAG 2.2 AA, add automated checks to every release and monitor monthly. We are not lawyers; we do the fixes your counsel asks for.
+
+Want the list of the five issues I found?
+
+Abhimanyu Sharma
+Marginwise | marginwise.in
+[US business address] | Reply &quot;unsubscribe&quot; to opt out.
+</code></pre></div>
+<p><strong>Cold email 3 (NetSuite/QuickBooks reconciliation)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: Month-end at [company]
+
+Hi [first name],
+
+Shopify plus [NetSuite / QuickBooks] usually means payouts, refunds and FX differences matched by hand at month-end. We build an agent that matches orders, payouts and bank lines and opens tickets only for real exceptions.
+
+How many days does your month-end close take right now?
+</code></pre></div>
+<p><strong>Follow-up (day 4)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Hi [first name], we work US business hours from India on a split shift, so a brief at 5pm ET is usually done by 9am. Happy to send a 2-minute teardown of [store] if that is easier than a call.
+</code></pre></div>
+<p><strong>LinkedIn connection note</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Hi [first name], I work on Shopify, NetSuite and margin for US ecommerce brands, mostly the operational problems nobody enjoys fixing. Would be good to connect.
+</code></pre></div>
+<h3 id="94-canada">9.4 Canada</h3>
+<p><strong>Cold email (cross-border duties)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: US orders from [store]
+
+Hi [first name],
+
+[Store] ships to the US. With de minimis gone and the August 50% tariffs on [category], US customers either see duties at the door or you absorb them blind.
+
+We set up duties-included pricing for US orders, classify your HS codes with AI plus human review, and document CUSMA origin where it still helps. We can also add a second carrier so a Canada Post disruption does not stop shipping.
+
+Are US customers seeing brokerage or duty charges on delivery today?
+
+Abhimanyu Sharma
+Marginwise | marginwise.in
+[Business address] | Unsubscribe: reply &quot;unsubscribe&quot;
+</code></pre></div>
+<p><strong>Cold email (Quebec)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: French version of [store]
+
+Hi [first name],
+
+[Store] sells into Quebec but has no French storefront [or: the French product pages are partly machine-translated]. Bill 96 grace periods for some products end on 1 June 2027, and Law 25 requires cookie consent before tracking.
+
+We build the French storefront and product data (AI translation reviewed by a native speaker) and set up Law 25 consent. Packaging and legal sign-off stay with your counsel.
+
+Is Quebec a market you want to grow, or keep as is?
+</code></pre></div>
+<p><strong>LinkedIn note</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Hi [first name], I help Canadian Shopify brands sell into the US and Quebec without surprise duties or compliance gaps. Would be good to connect.
+</code></pre></div>
+<h3 id="95-germany-linkedin-and-partner-introductions-only-no-cold-email">9.5 Germany (LinkedIn and partner introductions only; no cold email)</h3>
+<p><strong>LinkedIn connection note (English, for Berlin startups)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Hi [first name], I work with Shopify and Shopware brands on the withdrawal button, accessibility and the 2027 e-invoicing switch. Saw [brand] and would be glad to connect.
+</code></pre></div>
+<p><strong>LinkedIn connection note (German, for Mittelstand; reviewer to check before use)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Hallo [Vorname], ich unterstütze Shopify- und Shopware-Händler bei Widerrufsbutton, Barrierefreiheit und der E-Rechnung ab 2027. Würde mich über eine Vernetzung freuen.
+</code></pre></div>
+<p><strong>Message after they accept</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Thanks for connecting. I checked [shop] against the rules that came in this year. The withdrawal button [is missing from the account area / needs a confirmation step], and [one more specific item]. I can send the list with how we would fix each one. We implement; your lawyer signs off.
+</code></pre></div>
+<p><strong>E-invoicing message (to a finance or operations lead)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>From 1 January 2027 [company] has to issue B2B invoices as XRechnung or ZUGFeRD if turnover was above EUR 800K, and a PDF from Shopify no longer counts. We build the invoice output and the DATEV export, plus payout matching for PayPal and Klarna. Fixed price, live before the deadline if we start in November. Worth 20 minutes?
+</code></pre></div>
+<p><strong>Partner introduction (to a German law firm or Steuerberater)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: Implementation partner for BFSG, Widerrufsbutton and E-Rechnung
+
+Hello [name],
+
+Your clients get the legal advice from you, but someone still has to change the shop theme, the checkout and the invoice output. We are an implementation team for Shopify and Shopware with German-speaking review, and we work to your written requirements.
+
+We would refer legal questions to you and you would refer implementation to us. Could we talk for 20 minutes?
+
+Abhimanyu Sharma, Marginwise
+</code></pre></div>
+<h3 id="96-saudi-arabia-partners-first">9.6 Saudi Arabia (partners first)</h3>
+<p><strong>Agency partner email (to Riyadh or Dubai agencies)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Subject: White-label ZATCA and National Address work for your Shopify clients
+
+Hi [name],
+
+Your Shopify and WooCommerce clients over SAR 187.5K have until 1 February 2027 to integrate with ZATCA Phase 2, and carriers have rejected parcels without a National Address since January.
+
+We do this integration work white-label: Shopify orders to a certified e-invoicing provider, National Address capture at checkout, and monitoring. Your brand, your client relationship, our delivery. We also build Arabic and English WhatsApp agents for COD confirmation.
+
+Could we do a 20-minute call this week? Sunday to Thursday works for us.
+
+Abhimanyu Sharma, Marginwise
+</code></pre></div>
+<p><strong>LinkedIn note to a brand (English)</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Hi [first name], I help Saudi Shopify and WooCommerce brands with ZATCA Wave 25 and National Address at checkout before the February deadline. Would be good to connect.
+</code></pre></div>
+<p><strong>Message after they accept</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>Thanks for connecting. Two quick checks on [store]: does the checkout capture the National Address short code, and are B2B invoices going to ZATCA yet? If either is open, I can show you how we set it up in a 15-minute call.
+</code></pre></div>
+<p><strong>E-invoicing provider partner note</strong></p>
+<div class="cb"><button class="copy" type="button">Copy</button><pre><code>You certify the invoices; we connect the storefront. We integrate Shopify, WooCommerce and Magento stores with your platform for merchants who need a developer. Referral fee or reseller margin, whichever suits you.
+</code></pre></div>
+<hr />
+<h2 id="10-linkedin-content-plan-per-market">10. LinkedIn content plan per market</h2>
+<p><strong>Setup:</strong>
+- Post on the founder's personal profile; personal posts reach further than company pages.
+- Mirror the best posts to the Marginwise page.
+- Use LinkedIn's scheduler for posts that need to go out at night IST.
+- Spend 20 minutes a day commenting on posts by target-market founders, Shopify partners and bookkeepers. Comments drive more profile visits than posts in the first 60 days.</p>
+<p><strong>Weekly rhythm (4 posts plus daily comments):</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Slot</th>
+<th>Market</th>
+<th>Local time</th>
+<th>IST</th>
+<th>Starts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tue</td>
+<td>Australia / NZ</td>
+<td>08:30 AEDT</td>
+<td>03:00 (scheduled)</td>
+<td>Week 1</td>
+</tr>
+<tr>
+<td>Thu</td>
+<td>US / Canada</td>
+<td>08:30 ET</td>
+<td>18:00 until 31 Oct, 19:00 from 1 Nov</td>
+<td>Week 1</td>
+</tr>
+<tr>
+<td>Wed</td>
+<td>Germany</td>
+<td>08:30 CET</td>
+<td>13:00</td>
+<td>Week 4 (day 29), Berlin English-first</td>
+</tr>
+<tr>
+<td>Sun</td>
+<td>Saudi Arabia</td>
+<td>09:30 AST</td>
+<td>12:00</td>
+<td>Week 9 (wave 3)</td>
+</tr>
+<tr>
+<td>Sat</td>
+<td>All markets</td>
+<td>Flexible</td>
+<td>10:00</td>
+<td>Week 1: build-in-public post (demo store, AI build, lessons)</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Formats:</strong>
+- PDF carousels (6-8 slides; reuse the Canva Instagram designs at 1080x1350).
+- Text post with one screenshot.
+- 30-60 second screen-recording video.
+- One poll every two weeks.</p>
+<h3 id="101-australia-and-new-zealand-tuesday">10.1 Australia and New Zealand (Tuesday)</h3>
+<p><strong>Pillars:</strong>
+- Payments and margin after the surcharge ban.
+- Checkout and delivery transparency.
+- Shopify plus Xero, Cin7 and MYOB operations.
+- The July 2027 subscription rules.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Hook</th>
+<th>Format</th>
+<th>CTA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>The surcharge ban started on 1 October. Here is what it does to a A$10M store's margin.</td>
+<td>Carousel with worked example</td>
+<td>Comment PROFIT</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Sendle is gone. Three things to check in your Shopify shipping settings this week.</td>
+<td>Text + screenshot</td>
+<td>Comment AUDIT</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Your Afterpay payouts do not match Xero, and here is why.</td>
+<td>Carousel</td>
+<td>DM "Xero"</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Cin7 and Shopify disagree about stock again. What a sync exception agent does at 6am.</td>
+<td>45s screen recording</td>
+<td>Comment AUDIT</td>
+</tr>
+<tr>
+<td>5</td>
+<td>From 1 July 2027, subscription traps carry penalties of up to A$100M. What a compliant cancel flow looks like.</td>
+<td>Carousel</td>
+<td>Comment CHECKLIST</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Kiwi edition: one Shopify store, two currencies, two GST regimes. How to set up Markets without breaking reporting.</td>
+<td>Text post</td>
+<td>Comment AUDIT</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="102-us-thursday">10.2 US (Thursday)</h3>
+<p><strong>Pillars:</strong>
+- Tariffs and landed-cost margin.
+- Accessibility and privacy risk.
+- Month-end reconciliation with NetSuite and QuickBooks.
+- AI shopping visibility.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Hook</th>
+<th>Format</th>
+<th>CTA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Four tariff regimes in twelve months. Is your Shopify pricing still using last quarter's landed cost?</td>
+<td>Carousel</td>
+<td>Comment PROFIT</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Most of 2025's 5,000+ digital accessibility lawsuits targeted ecommerce. The five checkout issues we see most.</td>
+<td>Carousel</td>
+<td>Comment AUDIT</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Your IEEPA tariff refund is not profit until it is back in COGS.</td>
+<td>Text post</td>
+<td>DM "tariff"</td>
+</tr>
+<tr>
+<td>4</td>
+<td>What a 2-day month-end close looks like with Shopify and NetSuite.</td>
+<td>Screen recording</td>
+<td>Comment AUDIT</td>
+</tr>
+<tr>
+<td>5</td>
+<td>California's auto-renewal law is now the national standard. Audit your cancel flow in 10 minutes.</td>
+<td>Carousel</td>
+<td>Comment CHECKLIST</td>
+</tr>
+<tr>
+<td>6</td>
+<td>We asked ChatGPT and Perplexity to recommend products in [category]. Here is who got named.</td>
+<td>Video</td>
+<td>Comment GEO</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="103-canada-thursday-alternating-with-us-from-week-5">10.3 Canada (Thursday, alternating with US from week 5)</h3>
+<p><strong>Pillars:</strong> selling into the US after the tariffs, Quebec readiness, and carrier resilience.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Hook</th>
+<th>Format</th>
+<th>CTA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5</td>
+<td>Selling into the US from Canada now: duties-included pricing or a surprise at the door.</td>
+<td>Carousel</td>
+<td>Comment AUDIT</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Bill 96 grace periods end on 1 June 2027. What changes on your storefront and product data.</td>
+<td>Carousel</td>
+<td>DM "Quebec"</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Two Canada Post strikes in two years. How to add a second carrier without rebuilding checkout.</td>
+<td>Text post</td>
+<td>Comment AUDIT</td>
+</tr>
+<tr>
+<td>8</td>
+<td>HS codes for 2,000 SKUs in a week: AI first pass, human review.</td>
+<td>Screen recording</td>
+<td>Comment AI</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="104-germany-berlin-wednesday-from-week-4">10.4 Germany / Berlin (Wednesday, from week 4)</h3>
+<p><strong>Pillars:</strong>
+- Warning-letter-proof shops.
+- E-invoicing by 1 January.
+- Checkout payment mix (Kauf auf Rechnung, PayPal, Klarna).
+- Shopware 5 and Magento end of life.</p>
+<p>Write in English for Berlin startups. Add German versions, reviewed by a native speaker, from week 6.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Hook</th>
+<th>Format</th>
+<th>CTA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td>The withdrawal button has been law since 19 June. A two-minute check of whether your shop has it right.</td>
+<td>Carousel</td>
+<td>DM "Widerruf"</td>
+</tr>
+<tr>
+<td>5</td>
+<td>From 1 January 2027, a PDF from Shopify is no longer a valid B2B invoice in Germany.</td>
+<td>Carousel</td>
+<td>DM "E-Rechnung"</td>
+</tr>
+<tr>
+<td>6</td>
+<td>26% of German online revenue is paid by invoice. Is "Kauf auf Rechnung" on your checkout?</td>
+<td>Text + EHI chart</td>
+<td>Comment AUDIT</td>
+</tr>
+<tr>
+<td>7</td>
+<td>"Klimaneutral" is banned on most product pages since 27 September. What to write instead.</td>
+<td>Carousel</td>
+<td>DM "EmpCo"</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Still on Shopware 5? What a migration costs and what it saves.</td>
+<td>Text post</td>
+<td>Comment AUDIT</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Your AI chatbot must say it is an AI (EU AI Act, since August). How we build that in.</td>
+<td>Video</td>
+<td>Comment AI</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="105-saudi-arabia-sunday-from-week-9">10.5 Saudi Arabia (Sunday, from week 9)</h3>
+<p><strong>Pillars:</strong> ZATCA Wave 25, National Address and COD, and Arabic WhatsApp commerce. Write in English, with Arabic versions from week 11 once reviewed.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Hook</th>
+<th>Format</th>
+<th>CTA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9</td>
+<td>Wave 25: if your VAT revenue passed SAR 187.5K in any year since 2022, ZATCA integration is due by 1 February.</td>
+<td>Carousel</td>
+<td>DM "ZATCA"</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Carriers now reject parcels without a National Address. How to capture the short code at checkout.</td>
+<td>Screen recording</td>
+<td>DM "Address"</td>
+</tr>
+<tr>
+<td>11</td>
+<td>A WhatsApp agent that confirms COD orders in Gulf Arabic before they ship.</td>
+<td>Video</td>
+<td>DM "WhatsApp"</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Shopify, Salla or Zid for a Saudi brand selling across the GCC: a practical comparison.</td>
+<td>Carousel</td>
+<td>Comment AUDIT</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>LinkedIn KPIs:</strong>
+- Profile views per week.
+- Connection acceptance rate (target 30%+).
+- DMs started per week.
+- Calls booked from LinkedIn.</p>
+<p>Review every 2 weeks. Drop any pillar whose posts do not produce a DM within 4 weeks.</p>
+<hr />
+<h2 id="11-what-could-go-wrong">11. What could go wrong</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Likelihood</th>
+<th>Effect</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Founder time is too thin for 1,500 contacts plus delivery</td>
+<td>High</td>
+<td>Forecast slips to conservative</td>
+<td>Hire one SDR or VA for list building from week 2. Templates plus personalisation fields. Delivery pod from week 4</td>
+</tr>
+<tr>
+<td>"Offshore" trust objection</td>
+<td>High</td>
+<td>Low close rate</td>
+<td>Founder on every call in local hours. Fixed scope with acceptance criteria. 50% upfront, not 100%. Demo-store case study. Local entity later (US LLC first)</td>
+</tr>
+<tr>
+<td>Compliance work treated as legal advice</td>
+<td>Medium</td>
+<td>Liability</td>
+<td>"We implement, your counsel signs off" in every proposal. Law-firm partner in DE, AU, CA. Professional indemnity insurance before the first compliance project</td>
+</tr>
+<tr>
+<td>Cold email breaks local law (Germany, Canada)</td>
+<td>Medium in CA, high in DE</td>
+<td>Fines, reputation</td>
+<td>No cold email in Germany. CASL-compliant lists only in Canada. Separate sending domain</td>
+</tr>
+<tr>
+<td>A deadline moves or a rule is changed</td>
+<td>Medium</td>
+<td>Offer loses urgency</td>
+<td>Re-check each rule's status before a campaign; stats marked (unverified) stay out of client copy</td>
+</tr>
+<tr>
+<td>Too many markets at once</td>
+<td>High</td>
+<td>Nothing lands</td>
+<td>Wave gates (section 2). Do not start wave 2 until the gate is met</td>
+</tr>
+<tr>
+<td>AI agents misfire in production (wrong price, wrong invoice)</td>
+<td>Medium</td>
+<td>Client loss</td>
+<td>Human approval on any price or invoice action. Logs. EU AI Act disclosure on chatbots</td>
+</tr>
+<tr>
+<td>Currency and payment friction</td>
+<td>Low</td>
+<td>Slow cash</td>
+<td>Wise or Stripe in USD, AUD, EUR, CAD. Invoice in the client's currency</td>
+</tr>
+<tr>
+<td>HIRE Act (US offshore tax) passes</td>
+<td>Low (unverified)</td>
+<td>US price advantage shrinks</td>
+<td>Watch. Price on outcomes. Consider a US entity</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="12-sources-and-items-to-verify">12. Sources and items to verify</h2>
+<h3 id="key-sources-by-market">Key sources (by market)</h3>
+<p><strong>Australia</strong>
+- Australia Post eCommerce Report 2026: https://auspost.com.au/campaign-corner/unboxing-australias-ecommerce-boom
+- RBA surcharge decision: https://rba.gov.au/media-releases/2026/mr-26-10.html
+- Unfair trading practices law: https://www.ashurstperkinscoie.com/en/insights/australia-bans-unfair-trading-practices-strengthens-laws-against-drip-pricing-and-subscription-traps/
+- Privacy Act ADM rules: https://www.gtlaw.com.au/insights/automated-decision-making-transparency-under-the-privacy-act
+- Privacy tranche 2: https://www.hsfkramer.com/insights/2026-09/the-draft-tranche-2-privacy-act-reforms-whats-there-whats-new-and-whats-missing
+- Sendle shutdown: https://www.thenewdaily.com.au/finance/consumer/2026/01/12/sendle-shut-down-australia
+- Shopify Scripts sunset: https://shopify.dev/changelog/shopify-scripts-will-be-deprecated-on-june-30-2026
+- Fair Work 2026 wage review: https://www.squirepattonboggs.com/insights/publications/2026-annual-wage-review-decision-fwc-increases-the-national-minimum-wage-and-award-rates/
+- Unleashed app reviews: https://apps.shopify.com/unleashed-software/reviews
+- AU Shopify cost guide: https://whatsthedamage.com.au/shopify-cost/</p>
+<p><strong>New Zealand</strong>
+- NZ Post Q4 2024: https://www.nzpost.co.nz/about-us/media-centre/media-release/online-shoppers-spent-173-billion-october-to-december-2024
+- IPP3A: https://www.privacy.org.nz/resources-and-learning/a-z-topics/ipp3a/
+- Minimum wage 2026: https://www.mbie.govt.nz/about/news/minimum-wage-set-for-2026
+- Auckland Economic Monitor: https://www.pwc.co.nz/insights-and-publications/2025-publications/auckland-economic-monitor-2025.html</p>
+<p><strong>US</strong>
+- Shopify 10-Q Q2 2026: https://www.sec.gov/Archives/edgar/data/0001594805/000159480526000047/shop-20260630.htm
+- Salesforce FY26 annual report: https://s205.q4cdn.com/626266368/files/doc_financials/2026/ar/Salesforce-FY26-Annual-Report_Bookmarked.pdf
+- De minimis suspension: https://www.federalregister.gov/documents/2026/06/24/2026-12670/indefinite-suspension-of-the-de-minimis-exemption-for-merchandise-arriving-through-all-modes-other
+- IEEPA ruling: https://www.orrick.com/en/Insights/2026/02/Supreme-Court-Strikes-Down-IEEPA-Tariffs-What-Decision-Means-Tariff-Payers-and-Refund-Claim-Buyers
+- Section 301 replacement tariff: https://www.bakerdonelson.com/forced-labor-section-301-tariffs-imposed-to-replace-expiring-section-122-tariffs-what-importers-need-to-know
+- Click-to-cancel vacated: https://www.fenwick.com/insights/publications/eighth-circuit-vacates-ftcs-click-to-cancel-rule
+- California AB 2863: https://wsgr.com/en/insights/california-amends-automatic-renewal-law-again.html
+- CPPA fine: https://www.polsinelli.com/publications/1-35m-cppa-fine-signals-new-focus-on-privacy-disclosures
+- Accessibility lawsuits (secondary): https://www.newswire.com/news/digital-accessibility-lawsuits-surge-in-2025-22618502
+- NRF returns 2025: https://nrf.com/media-center/press-releases/consumers-expected-to-return-nearly-850-billion-in-merchandise-in-2025
+- CRM data accuracy (Validity): https://www.mediapost.com/publications/article/407342/crm-data-drag-systems-are-not-delivering-and-bra.html
+- Baymard cart abandonment: https://baymard.com/lists/cart-abandonment-rate
+- Salesforce consultant rates: https://www.getclientell.com/salesforce-consultant-cost</p>
+<p><strong>Canada</strong>
+- Section 338 tariffs: https://mcmillan.ca/insights/publications/us-announces-50-tariffs-on-canadian-goods-are-your-exports-affected/
+- Bill 96: https://www.mccarthy.ca/en/insights/blogs/consumer-markets-perspectives/french-language-requirements-bill-96-and-june-1-2025-common-misconceptions
+- CFIB Canada Post strike cost: https://cfib-fcei.ca/en/media/three-quarters-of-small-businesses-to-use-canada-post-less-in-future-as-the-strike-impact-grows-to-1.6-billion</p>
+<p><strong>Germany</strong>
+- HDE Online-Monitor 2026: https://einzelhandel.de/images/presse/Pressekonferenz/2026/onlinemonitor26/PM_HDE-OnlineMonitor.pdf
+- EHI top-1,000 platform share (via Shopware): https://www.shopware.com/en/press/press-releases/for-the-fourth-year-in-a-row-shopware-remains-germanys-market-leader-among/
+- BFSG warning letters: https://www.haendlerbund.de/de/news/aktuelles/abmahnwelle-bfsg
+- E-invoicing BMF letter (IHK summary): https://www.ihk.de/koeln/hauptnavigation/recht-steuern/steuern/bmf-schreiben-zur-e-rechnung-vom-15-10-2025-6774012
+- Withdrawal button law: https://www.noerr.com/de/insights/umsetzungsgesetz-zum-widerrufsbutton-veroeffentlicht
+- EmpCo (green claims): https://www.taylorwessing.com/de/insights-and-events/insights/2026/04/siegel-und-die-empco-richtlinie
+- Händlerbund Abmahnstudie 2025: https://www.haendlerbund.de/de/news/presse/pressemitteilungen/abmahnstudie-2025
+- EHI Online-Payment 2026: https://www.it-finanzmagazin.de/online-payment-rechnungskauf-und-paypal-weiter-dominierend-laut-ehi-studie-online-payment-2026-244098/
+- Bitkom IT skills study 2026: https://www.bitkom.org/sites/main/files/2026-09/bitkom-studienbericht-arbeitsmarkt-it-fachkraefte-2026.pdf
+- Berlin startup deals 2025: https://www.invest-in.berlin/n/berlin-startups-secure-218-deals-in-2025/
+- Shopware agency costs: https://qualimero.com/blog/shopware-agentur-kosten
+- IT freelancer rates: https://www.freelancermap.de/blog/stundensatz-it-freelancer/
+- Data transfers to India under GDPR: https://www.legiscope.com/blog/datenuebermittlung-indien-dsgvo.html</p>
+<p><strong>Saudi Arabia</strong>
+- ZATCA Wave 25: https://zatca.gov.sa/en/MediaCenter/News/Pages/Wave25-E-invoicing.aspx
+- PDPL draft amendments: https://www.clydeco.com/en/insights/2026/10/sdaia-publishes-draft-amendments-to-the-pdpl
+- National Address rule: https://www.quiqup.com/post/ksa-national-address-requirement-ecommerce-2026
+- Saudization of marketing and sales roles: https://www.hrsd.gov.sa/en/node/5580563
+- Salesforce Saudi investment: https://www.salesforce.com/news/press-releases/2025/02/10/saudi-arabia-investment/
+- Platform share (AfterShip): https://www.aftership.com/ecommerce/statistics/regions/sa
+- mada ecommerce record month: https://gulfbase.com/news/saudi-e-commerce-hits-record-monthly-sales-over-sar30-7-billion-in-october/213520
+- Google AI Mode in Arabic: https://blog.google/intl/en-mena/product-updates/explore-get-answers/introducing-ai-mode-in-arabic/
+- UAE e-invoicing: https://www.middleeastbriefing.com/news/uae-e-invoicing-pilot-voluntary-adoption-penalties/</p>
+<h3 id="verify-before-using-in-client-copy">Verify before using in client copy</h3>
+<ul>
+<li><strong>Australia and New Zealand:</strong></li>
+<li>Shopify store counts (secondary).</li>
+<li>Later Australia Post 19.5% fuel surcharge.</li>
+<li>NZ 2025 full-year online spend.</li>
+<li>NZ agency rates.</li>
+<li>Any 2026 change to NZ low-value import GST.</li>
+<li><strong>US and Canada:</strong></li>
+<li>US Census and StatCan figures (pulled via secondary sources).</li>
+<li>Shopify US GMV share.</li>
+<li>FTC review-rule settlements in 2026.</li>
+<li>Section 338 effective date and CUSMA review outcome.</li>
+<li>Bill C-15 royal assent.</li>
+<li>HIRE Act status.</li>
+<li>ChatGPT Instant Checkout status in 2026.</li>
+<li><strong>Germany:</strong></li>
+<li>Salesforce partner day rates.</li>
+<li>German cookie consent rates.</li>
+<li>BGH Kündigungsbutton ruling of 16 Jul 2026.</li>
+<li>Section 15b UWG transition.</li>
+<li>AI Act Digital Omnibus citation.</li>
+<li>Active Shopware 5 store count.</li>
+<li>Cost per return.</li>
+<li><strong>Saudi Arabia:</strong></li>
+<li>ZATCA penalty amounts.</li>
+<li>Whether the Saudi Business Center has replaced Maroof.</li>
+<li>COD share and return-to-origin rates.</li>
+<li>Whether Salla and Zid support ZATCA Phase 2 natively.</li>
+<li>KSA Hyperforce general availability.</li>
+<li>Shopify Payments availability in KSA.</li>
+<li><strong>All markets:</strong> every agency rate in this document comes from vendor or directory sources.</li>
+</ul>
+</main>
+<script>
+document.querySelectorAll('.copy').forEach(b => b.addEventListener('click', () => {
+  const t = b.nextElementSibling.innerText;
+  const done = () => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1500); };
+  try { navigator.clipboard.writeText(t).then(done, () => sel(b)); } catch (e) { sel(b); }
+}));
+function sel(b) { const r = document.createRange(); r.selectNodeContents(b.nextElementSibling); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected'; }
+</script>
