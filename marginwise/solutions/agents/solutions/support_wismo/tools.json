@@ -1,0 +1,102 @@
+{
+  "requires_approval": ["edit_order_address"],
+  "tools": [
+    {
+      "name": "lookup_order",
+      "description": "Find a Shopify order by order number AND the customer's email (identity check). Returns status, line items (with final_sale flag) and delivery date. Required before any other order tool.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "order_number": {"type": "string", "description": "e.g. #1042"},
+          "email": {"type": "string"}
+        },
+        "required": ["order_number", "email"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_tracking",
+      "description": "Get carrier tracking status and last event for a verified order.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"order_number": {"type": "string"}},
+        "required": ["order_number"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "start_return",
+      "description": "Create a return for delivered line items. Enforces return window and final-sale rules; returns label fee (free for damaged, wrong or defective items).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "order_number": {"type": "string"},
+          "line_item_ids": {"type": "array", "items": {"type": "string"}},
+          "reason": {"type": "string", "enum": ["damaged", "wrong_item", "defective", "too_small", "too_large", "changed_mind", "other"]}
+        },
+        "required": ["order_number", "line_item_ids", "reason"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "offer_exchange",
+      "description": "Check stock and create a like-for-like exchange (different size or colour of the same product) for one line item.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "order_number": {"type": "string"},
+          "line_item_id": {"type": "string"},
+          "new_sku": {"type": "string"}
+        },
+        "required": ["order_number", "line_item_id", "new_sku"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "edit_order_address",
+      "description": "Change the shipping address on an UNFULFILLED order (same country only). Requires human approval: the call is queued and returns pending_approval.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "order_number": {"type": "string"},
+          "address1": {"type": "string"},
+          "address2": {"type": "string"},
+          "city": {"type": "string"},
+          "province_code": {"type": "string"},
+          "zip": {"type": "string"},
+          "country_code": {"type": "string"}
+        },
+        "required": ["order_number", "address1", "city", "province_code", "zip", "country_code"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "add_ticket_note",
+      "description": "Add an internal note to the Gorgias or Zendesk ticket (not visible to the customer). Use to record what you did and why.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "ticket_id": {"type": "string"},
+          "note": {"type": "string"}
+        },
+        "required": ["ticket_id", "note"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "escalate",
+      "description": "Route the ticket to a human agent with a reason and a summary.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "ticket_id": {"type": "string"},
+          "reason": {"type": "string", "enum": ["identity_not_verified", "lost_package", "damaged_high_value", "chargeback_threat", "policy_exception", "angry_customer", "cancellation_request", "other"]},
+          "priority": {"type": "string", "enum": ["normal", "high", "urgent"]},
+          "summary": {"type": "string"}
+        },
+        "required": ["ticket_id", "reason"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

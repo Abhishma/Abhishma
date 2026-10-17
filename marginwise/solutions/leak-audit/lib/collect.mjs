@@ -20,11 +20,17 @@ const PLATFORM_HOSTS = /(^|\.)(cdn\.shopify\.com|shopifycdn\.net|shopify\.com|cd
 
 const FALLBACK_CHROME = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 
-/** Launch Chromium, honouring HTTPS_PROXY and falling back to the known binary path. */
-export async function launchBrowser() {
+const isLoopback = (u) => /^(localhost|127\.\d+\.\d+\.\d+|\[::1\])$/i.test(parseUrl(u)?.hostname || '');
+
+/**
+ * Launch Chromium, honouring HTTPS_PROXY and falling back to the known binary
+ * path. Loopback targets (the test fixtures) skip the proxy entirely, because
+ * Playwright forces loopback traffic through a configured proxy.
+ */
+export async function launchBrowser(targetUrl = '') {
   const opts = { headless: true };
   const proxy = process.env.HTTPS_PROXY || process.env.https_proxy;
-  if (proxy) opts.proxy = { server: proxy, bypass: 'localhost,127.0.0.1,::1' };
+  if (proxy && !isLoopback(targetUrl)) opts.proxy = { server: proxy, bypass: 'localhost,127.0.0.1,::1' };
   if (process.env.LEAK_AUDIT_CHROME) opts.executablePath = process.env.LEAK_AUDIT_CHROME;
   try {
     return await chromium.launch(opts);

@@ -24,7 +24,7 @@ export function detectPlatform(snap) {
   const hay = [snap.html || '', (snap.scripts || []).map((s) => s.src).join('\n'), headers].join('\n');
   const results = [];
   for (const sig of SIGNATURES) {
-    const hits = sig.re.filter((r) => r.test(hay)).map((r) => r.source);
+    const hits = sig.re.filter((r) => r.test(hay)).map((r) => r.source.replace(/\\/g, ''));
     const g = sig.global && snap.globals?.[sig.global];
     const score = hits.length + (g ? 2 : 0);
     if (score > 0) results.push({ name: sig.name, score, signals: [...(g ? [`window.${sig.global}`] : []), ...hits] });

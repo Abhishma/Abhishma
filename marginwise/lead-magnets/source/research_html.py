@@ -3,8 +3,11 @@ import re, sys, html
 from pathlib import Path
 import markdown
 
-SRC = Path(__file__).resolve().parents[2] / "market-research-boring-problems.md"
-OUT = Path(__file__).resolve().parents[2] / "market-research-boring-problems.html"
+ROOT = Path(__file__).resolve().parents[2]
+# usage: research_html.py [source.md] [output.html] [page title]
+SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "market-research-boring-problems.md"
+OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else SRC.with_suffix(".html")
+TITLE = sys.argv[3] if len(sys.argv) > 3 else "Marginwise Market Map"
 
 md = SRC.read_text()
 body = markdown.markdown(md, extensions=["tables", "fenced_code", "toc"])
@@ -22,7 +25,7 @@ nav = "".join(
     for i, t in re.findall(r'<h2 id="([^"]+)">(.*?)</h2>', body)
 )
 
-page = f"""<title>Marginwise Market Map</title>
+page = f"""<title>{TITLE}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400&display=swap">
