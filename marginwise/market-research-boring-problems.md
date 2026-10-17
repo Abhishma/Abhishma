@@ -1047,7 +1047,171 @@ Review every 2 weeks. Drop any pillar whose posts do not produce a DM within 4 w
 
 ---
 
-## 11. What could go wrong
+## 11. Instagram and Meta ads strategy
+
+**Purpose:** paid social to win clients for Marginwise, not to run ads for clients.
+
+**Sources:** Meta's own docs where reachable, plus third-party benchmarks. Cost-per-lead ranges are planning estimates.
+
+### 11.1 What changed on Meta (2025-2026) and what it means for us
+
+| Change | Fact | What we do |
+|---|---|---|
+| Andromeda ad retrieval (Dec 2024) | Meta says creative diversity has replaced niche targeting as the main lever. Near-duplicate ads are reportedly grouped together (unverified) | 6-10 genuinely different concepts per ad set: different hook, format and angle. Changing the colour does not count |
+| Advantage+ for leads (rolled out Q2 2025) | Audience, budget and placements automated by default. Meta claims 10% lower cost per qualified lead | Use it, with our warm audiences as suggestions |
+| Detailed targeting cut | Exclusions removed Jan 2025. Retired interests stopped delivering 15 Jan 2026. The rest work as "suggestions" | Let the creative do the targeting: name the trigger in frame one ("AU surcharge ban, 1 Oct 2026") |
+| Click-to-message ads | Ads can open IG Direct, Messenger or WhatsApp. **Some messaging ads are unavailable for Europe** | IG DM with ManyChat in English-speaking markets, WhatsApp in KSA, instant form in Germany |
+| ManyChat with ads | Ad destination is an IG message, with ManyChat as the partner app. The flow starts only after the user taps a quick reply | Opening message: "Send me the checklist" button |
+| Trial Reels | Organic only, not an ad product | Keep using them to find winning hooks for free, then put those hooks into ads |
+| Conversions API for CRM | Offline Conversions API retired May 2025. CRM stages (booked call, won) go back through the Conversions API | From week 1, send Lead, Schedule (booked call) and Purchase (paid audit) events, so Meta learns who buys, not who downloads |
+
+### 11.2 Benchmarks (USD)
+
+These are general or ecommerce figures, so treat them as a floor for B2B.
+
+| Market | CPM (Lebesgue 2026) | CPM (AdAmigo 2026, projected) | CPC (AdAmigo) |
+|---|---|---|---|
+| US | $16.08 | $23.00 | $2.69 |
+| Australia | $11.63 | $18.50 | $2.10 |
+| Canada | $11.47 | $13.40 | $1.75 |
+| New Zealand | $9.01 | $11.20 | $1.60 |
+| Germany | $9.05 | $10.05 | $1.45 |
+| Saudi Arabia | $12.01 (sources conflict, unverified) | not listed | not listed |
+
+**B2B cost per lead** (Metadata.io 2025, 153 advertisers):
+
+| Platform | Cost per lead |
+|---|---|
+| Facebook (overall) | $145 |
+| Facebook prospecting | $166 |
+| Facebook retargeting | $120 |
+| Instagram | $138 |
+| LinkedIn | $202 (CPM $63) |
+
+Use LinkedIn ads only later, for the ERP and AI offer aimed at finance and ops titles. Guidance on minimum budgets is about $2-6K a month (vendor estimates).
+
+### 11.3 Campaign structure
+
+One campaign per language cluster, with few ad sets and many ads.
+
+| Layer | Objective | Audience | Creative | Budget share |
+|---|---|---|---|---|
+| C1 Cold content | ThruPlay views, or Advantage+ leads with an IG DM destination | Broad: country plus age 25-60. Lookalike as a suggestion | 10-20s screen-recording reels on the local trigger | 50-60% |
+| C2 Lead offer | Leads: click-to-IG-DM through ManyChat. Germany: Higher-intent instant form | Broad plus warm suggestions | "DM AUDIT for the checklist", checklist carousel | 25-35% |
+| C3 Retargeting | Leads, then book the $1,500 audit | Engagers and 50% video viewers over 90 days, site visitors over 30 days. Exclude existing leads | Audit report walkthrough, anonymised teardown, FAQ static | 15-20% |
+
+**Audiences that still work:**
+- IG and FB engagers (30, 90 and 365 days).
+- Video viewers.
+- Website visitors, split by pricing and audit pages.
+- A lawfully collected prospect list.
+- 1-3% lookalikes seeded from booked calls.
+- Custom audience exclusions for clients and existing leads.
+
+### 11.4 Budget by market
+
+| Market | Phase 1 (days 1-30) | Phase 2 (month 2) | Angle and trigger | Keyword / magnet | Planning cost per lead |
+|---|---|---|---|---|---|
+| English cluster: AU, US, CA, NZ | $40/day combined (about $1,200) | Split once cost per booked call beats target: AU $20-25, US $25-30, CA $10-15, NZ $5-10 per day | AU surcharge ban, US tariffs and accessibility, CA cross-border duties, BFCM in Oct-Nov | AUDIT, PROFIT, BFCM, SPEED | Form: AU $90-120, US $120-166, CA $85-115, NZ $70-95. DM roughly 30-50% lower (unverified) |
+| Saudi Arabia | $10/day, click-to-WhatsApp, Arabic plus English | $15/day | "Is your Shopify stack ready for ZATCA Wave 25 by 1 February?" Frame it as readiness, never as a guarantee | New keyword: ZATCA (WhatsApp flow) | Form $95-125; no WhatsApp benchmark |
+| Germany | Hold | $15-20/day, German creative, Higher-intent instant form | Withdrawal button, e-invoicing from 1 January 2027 | New German PDF (Widerrufsbutton and E-Rechnung checklist) | Form $70-95 |
+
+**Total ad spend:** about $1,500 in month 1 and about $2,500-3,000 in month 2.
+
+**Payback rule:** one $1,500 audit should cover the month's ad cost for that market. If cost per booked call stays above $400 after 3 weeks, change the offer or creative before adding budget.
+
+**New lead magnets the ads need:**
+- AU surcharge margin one-pager (keyword PROFIT, or a new SURCHARGE keyword).
+- ZATCA readiness checklist (keyword ZATCA).
+- German Widerrufsbutton and E-Rechnung checklist (form-gated).
+
+Add the matching auto-DM flows in ManyChat for each.
+
+### 11.5 Testing and kill rules (our heuristics)
+
+- **Kill an ad** when either is true:
+  - it has spent 2x the target cost per lead with zero leads, or
+  - its 3-second hook rate is below 20% after 1,000 impressions.
+- **Kill a concept** after 7 days if its cost per DM keyword is more than 2x the account median.
+- **Scale a winner** by 20-30% every 3-4 days, and copy it into retargeting.
+- **Frequency:**
+  - Cold audiences: under 2.5 a week.
+  - Retargeting: 4-6 a week while the audience is small.
+  - Refresh creative when CTR falls 30% from its peak.
+- **Metrics, in order:**
+  1. Hook rate.
+  2. Cost per DM keyword.
+  3. DM-to-email capture.
+  4. Cost per lead.
+  5. **Cost per booked call.**
+  6. Show rate.
+  7. Audit close rate.
+  8. CAC per paid audit.
+
+### 11.6 30-day ads calendar
+
+The ads calendar runs alongside the action plan in section 8.
+
+| Days | Actions |
+|---|---|
+| 1-3 | Pixel, Conversions API and CRM events (Lead, Schedule, Purchase). ManyChat set as the IG partner app. Privacy policy live. Warm audiences built. Fill in the DSA beneficiary and payer fields, needed later for Germany |
+| 4-10 | C1 with 6-8 concepts (2 per trigger). C2 with 3 DM-keyword ads plus 1 form ad. No edits for 5 days |
+| 11-14 | Kill the bottom half. Make 4 new concepts from the winning angles (take hooks from the best Trial Reels) |
+| 15-21 | Start C3 retargeting once the warm audience passes about 1,000 people. Test DM against instant form on the same offer |
+| 22-26 | Send booked-call events back. After 5+ calls, test the Conversion Leads goal. Prepare German and Arabic creative |
+| 27-30 | Review cost per booked call and CAC by market. Reset month-2 budgets. Decide on the Germany launch |
+
+### 11.7 Ad compliance
+
+- **Germany and EU:**
+  - DSA beneficiary and payer fields (ads will not publish without them).
+  - Privacy policy on every form.
+  - Unticked consent box for marketing email.
+  - Data processing agreement with ManyChat.
+  - German privacy notice.
+  - Expect weaker signals because of Meta's "less personalised ads" option.
+- **Canada (CASL):** an inquiry gives implied consent for 6 months. Ask for express consent in the DM or form, and identify the sender and include an unsubscribe in every email.
+- **Australia (Spam Act):** consent required, sender identified, unsubscribe honoured within 5 working days.
+- **Saudi Arabia:** check with local advice whether the Mawthooq advertising licence applies to a foreign B2B advertiser (unverified). Run Arabic and English creative with conservative imagery.
+- **Meta "Unrealistic outcomes" policy:**
+  - No "add $200K profit" claims.
+  - No "guaranteed compliant".
+  - No personal-attribute phrasing ("Are you losing money?"). Write "Shopify brands lose..." instead.
+  - Say "readiness checklist", not legal advice.
+
+### 11.8 Five mistakes to avoid
+
+1. Many small interest or lookalike ad sets on $50 a day. Consolidate instead.
+2. Near-duplicate creatives. Andromeda treats them as one ad.
+3. Optimising for cheap DMs instead of booked calls. Send CRM events back.
+4. IG DM ads into Germany, missing DSA fields, or over-promising claims.
+5. Launching all six markets at once, so each gets $8 a day and none learns anything.
+
+**Verify before launch:**
+- Which detailed-targeting options still exist (search in Ads Manager).
+- Whether the Higher-intent form supports a GDPR consent box.
+- Whether Mawthooq applies.
+- KSA CPM.
+
+### 11.9 Ads sources
+
+- Meta Andromeda: https://engineering.fb.com/2024/12/02/production-engineering/meta-andromeda-advantage-automation-next-gen-personalized-ads-retrieval-engine/
+- Detailed targeting exclusions removed: https://developers.facebook.com/blog/post/2025/01/21/removal-of-detailed-targeting-exclusions/
+- Targeting consolidation (Jan 2026): https://www.socialmediatoday.com/news/meta-removes-more-detailed-ad-targeting-options-facebook-instagram/757856/
+- Advantage+ for leads: https://searchengineland.com/meta-advantage-campaign-setup-leads-campaigns-451713
+- Instant form types: https://www.facebook.com/business/help/252352181957512
+- Click to Instagram Direct (including Europe limits): https://www.facebook.com/business/help/198088077975174
+- Unrealistic outcomes policy: https://transparency.meta.com/policies/ad-standards/deceptive-content/unrealistic-outcomes
+- Metadata.io B2B benchmarks: https://metadata.io/b2b-advertising-benchmarks
+- CPM by country (Lebesgue): https://lebesgue.io/facebook-ads/facebook-cpm-by-country
+- CPM/CPC 2026 (AdAmigo): https://www.adamigo.ai/blog/meta-ads-cpm-cpc-benchmarks-by-country-2026
+- DSA beneficiary and payer: https://www.jonloomer.com/beneficiary-and-payer-requirements-for-meta-ads-in-the-european-union/
+- CASL: https://ised-isde.canada.ca/site/canada-anti-spam-legislation/en/node/7
+- ACMA spam obligations: https://www.acma.gov.au/theACMA/spam-industry-obligations
+
+---
+
+## 12. What could go wrong
 
 | Risk | Likelihood | Effect | Mitigation |
 |---|---|---|---|
@@ -1063,7 +1227,7 @@ Review every 2 weeks. Drop any pillar whose posts do not produce a DM within 4 w
 
 ---
 
-## 12. Sources and items to verify
+## 13. Sources and items to verify
 
 ### Key sources (by market)
 
