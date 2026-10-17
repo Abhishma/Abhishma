@@ -386,6 +386,201 @@ So we sit 40-60% below local agencies and well above commodity India rates.
 
 ---
 
+## 4B. Local boring businesses by city (Google Maps scan)
+
+This section moves past ecommerce to traditional local and B2B firms that show up on Google Maps: trades, clinics, accountants, property managers, workshops and traders.
+
+**Method:**
+- Business counts come from official registers: ABS 8165.0, Stats NZ business demography, US Census County Business Patterns 2023, StatCan Business Counts, Amt für Statistik Berlin-Brandenburg, and GASTAT and the Ministry of Commerce in Saudi Arabia.
+- Gaps were checked by hand in search results. Nothing was bulk-scraped from Google Maps.
+- Search query patterns are illustrative. No keyword volumes were measured, so check them in Google Keyword Planner before building pages.
+
+### 4B.1 Where the businesses are
+
+**Australia (ABS 8165.0, firms by state, June 2025; capital cities hold most of each state's firms)**
+
+| Category | AU total | NSW (Sydney) | VIC (Melbourne) | QLD (Brisbane) | WA (Perth) | Share with 5-199 staff |
+|---|---|---|---|---|---|---|
+| Electrical (incl. solar) | 48,279 | 16,313 | 11,908 | 10,248 | 4,839 | 11.3% |
+| Real estate / property management | 45,909 | 17,018 | 10,466 | 12,106 | 3,063 | 12.2% |
+| Cleaning | 45,217 | 13,187 | 14,323 | 8,095 | 4,515 | 7.5% |
+| Accounting | 37,000 | 13,204 | 10,187 | 6,832 | 3,698 | 11.1% |
+| Plumbing | 31,380 | 10,494 | 9,096 | 5,763 | 3,045 | 10.8% |
+| Dental | 20,296 | 6,488 | 5,549 | 4,207 | 2,088 | **20.5%** |
+| Panel beaters | 14,479 | 4,330 | 3,981 | 3,044 | 1,647 | 14.0% |
+| Air conditioning and heating | 7,481 | 2,791 | 1,583 | 1,549 | 810 | **17.0%** |
+| Roofing | 6,240 | 2,328 | 1,265 | 1,443 | 599 | n/a |
+
+Notes:
+- The workbook values were parsed automatically and spot-checked. Re-check them against the ABS workbook before external use.
+- Dental and air conditioning have the highest share of firms with 5 or more staff, so they have the most money per firm.
+
+**New Zealand (Stats NZ, Feb 2025):** 617,330 enterprises.
+- Auckland has 229,770 business locations, 35% of the national total.
+- Construction: 81,249 enterprises. 15.3% have turnover above NZ$1M.
+- 47% of NZ businesses have no website (InternetNZ 2025).
+- Canterbury (Christchurch) is growing (+1.5% locations). Wellington is shrinking (-2.2%).
+
+**US (Census CBP 2023, employer establishments, 8 metros)**
+
+| Category | 8-metro total | Payroll per establishment | Strongest metros |
+|---|---|---|---|
+| Law offices | 52,710 | $1.07M | NY 12,736, LA 11,330, Miami 8,554 |
+| Dentists | 39,294 | $366K | NY 9,582, LA 9,296 |
+| Insurance agencies | 31,073 | $730K | NY, LA, Miami |
+| Plumbing / HVAC | 24,992 | $813K (Phoenix $1.06M, DFW $1.00M, Houston $998K) | NY 7,640, LA 3,793 |
+| Landscaping | 22,044 | $405K | NY, Chicago |
+| Electrical | 18,760 | $1.02M | NY, LA |
+| Auto repair | 17,902 | $256K | NY, LA, Chicago |
+| Residential property management | 17,712 | $651K | NY, LA |
+| CPAs | 15,654 | $1.48M | NY 4,189, LA 3,496 |
+| Roofing | 4,969 | $612K | DFW 907 (most) |
+
+Payroll per establishment stands in for revenue. 63% of NY plumbing and HVAC establishments have fewer than 5 staff, so the owner usually answers the phone.
+
+**Canada (StatCan, employer locations, June 2025):**
+
+| City | Employer locations |
+|---|---|
+| Toronto | 266,013 |
+| Montreal | 141,126 |
+| Vancouver | 121,659 |
+| Calgary | 65,428 |
+
+Category-level counts still need the StatCan CSV.
+
+**Berlin (Amt für Statistik Berlin-Brandenburg)**
+- 196,449 establishments in total.
+- Skilled trades (Handwerk) 2024: 17,264 firms with EUR 20.1bn turnover.
+
+| Trade group | Firms | Turnover per firm |
+|---|---|---|
+| Finishing trades (Ausbau: electrical, plumbing and heating, painters) | 6,133 | ~EUR 1.04M |
+| Commercial trades (incl. building cleaning) | 3,092 | ~EUR 1.37M |
+| Main construction (incl. roofing) | 2,623 | ~EUR 1.48M |
+| Car workshops (Kfz) | 1,002 | ~EUR 3.28M |
+
+Other Berlin pools:
+- Dental practices: 2,013 at the end of 2025, and falling.
+- Tax advisers (Steuerberater): over 4,000.
+
+**Saudi Arabia (GASTAT 2024, Ministry of Commerce Q2 2026)**
+- 1.02M active enterprises.
+- Active commercial registrations by region: Riyadh 666,108, Makkah (Jeddah) 397,029, Eastern Province (Dammam/Khobar) 302,165.
+- Contracting businesses: 365,120 at the end of 2025, up from about 282K.
+- Licensed real estate brokers: 117,691.
+- Private-sector dentists: 20,236.
+
+### 4B.2 The digital gaps we can sell into
+
+| Signal | Evidence |
+|---|---|
+| Missed calls | Only 52% of inbound US home-services calls are answered by a person. Answered calls convert at 43% for HVAC and 55% for plumbing (Invoca 2026) |
+| Google now bills for missed calls | Since 1 Oct 2026, US Local Services Ads charge advertisers for missed calls in business hours when the caller holds past 20 seconds (PPC Land, Sep 2026). **This gives an AI receptionist a direct ROI case for every LSA advertiser** |
+| Reviews | 68% of consumers only use businesses rated 4 stars or higher. 74% want reviews from the last 3 months. 89% expect owners to reply (BrightLocal 2026, US sample) |
+| AI search for local businesses | 45% of US consumers used ChatGPT or other AI tools to find local businesses in 2026, up from 6% (BrightLocal 2026) |
+| German trades are under-digitised | 25% still use fax. Fewer than half offer online booking. 4% use AI (Bitkom, Aug 2025). 89% of trade businesses without websites have fewer than 10 Google reviews (agency study, directional) |
+| German patients | About 40% of people who book online do so because practices are hard to reach by phone (vzbv) |
+| Saudi channel | WhatsApp is used by 92.7% of internet users. Ranking pages push "call now" and phone-number titles. Independent workshops are invisible next to dealer networks |
+| Lead marketplaces are resented | AU: hipages leads reported at $25-200 each, about 1 in 5 won. US: Angi leads $56-64 shared between several contractors; Thumbtack instant-book leads went from $55 to $150 (Reddit, unverified individual cases) |
+| AU/NZ check | Search results for "air conditioning repair Brisbane" and "roof restoration Sydney" are dominated by Reddit, hipages and aggregators. A well-built local page can rank |
+
+### 4B.3 What customers search for
+
+| Category | High-intent searches | When demand peaks |
+|---|---|---|
+| Air con / HVAC | "air con repair [suburb]", "AC not cooling", "emergency AC repair Houston", "furnace repair Toronto same day", "صيانة مكيفات الرياض" | AU summer Nov-Feb. Phoenix and Houston May-Sep. Canada and US north: furnaces Nov-Feb. Riyadh May-Sep, cleaning wave Mar-Apr |
+| Plumbing | "emergency plumber near me", "blocked drain [suburb]", "hot water system replacement", "Rohrbruch Notdienst", "plombier urgence Montréal 24h" | All year. Frozen pipes Dec-Feb in Canada and Chicago |
+| Heat pumps (DE) | "Wärmepumpe Installateur Berlin", "BEG Förderung Wärmepumpe Antrag" | 299K heat pumps sold in Germany in 2025, up 55%. Planning in spring and summer |
+| Roofing | "roof leak repair", "storm damage roof", "roof restoration cost" | AU storm season Oct-Mar. US hurricanes Jun-Nov. DFW hail in spring |
+| Dental | "dentist open Saturday", "emergency dentist", "Zahnarzt Berlin Termin online", "عيادة اسنان الخبر" | AU Nov-Dec (health fund reset). US year end (insurance benefits) |
+| Accountants / CPAs | "small business accountant [suburb]", "IRS letter help", "Steuerberater Freiberufler Berlin" | AU Jul-Oct. NZ Mar-May. US Jan-Apr. Canada to 30 Apr |
+| Law | "car accident lawyer [city]", "abogado de inmigración Miami" | News-driven |
+| Car service | "mechanic near me", "مركز صيانة سيارات جدة" | Before Eid in KSA. Winter tyres in DE and CA |
+
+### 4B.4 Solutions we can build, with USD pricing
+
+We can price below funded AI-receptionist startups because we bundle the integration, the local SEO and a human service layer. One Australian startup (Sophiie) charges about A$300/month plus A$400-800 setup (unverified).
+
+| Solution | Best-fit categories | Setup + monthly (USD) | Promise to measure | Buying trigger |
+|---|---|---|---|---|
+| AI phone receptionist + missed-call text-back, booking into ServiceM8, simPRO, Tradify, Jobber, Housecall Pro or ServiceTitan | Trades (HVAC, plumbing, electrical, roofing), clinics, property managers | $1,500-2,500 + $300-900 | Answer rate above 95%, booked jobs from after-hours calls | Summer or winter peak. Google's missed-call billing. Lead marketplace costs |
+| German AI phone assistant (says it is an AI at the start of the call, EU-hosted) | Plumbing and heating, electrical, property managers, dental (Berlin) | $1,500-3,000 + $300-600 | Missed-call rate, appointments per week | Heating season, staff shortage |
+| Arabic WhatsApp booking agent (Gulf dialect) | AC maintenance, dental and skin clinics, car service, salons (KSA) | $2,000-4,000 + $300-700 | Response time, booking conversion | Summer peak, Saudization of front-desk roles |
+| Instant quote calculator | Roofing, AC install, cleaning, removals, landscaping, pool | $2,000-3,500 + $150 | Quote-to-booking rate | Losing jobs to aggregators, quoting at night |
+| German quote generator (Angebots-Generator): call or form to priced quote draft to approval | Heat pumps, plumbing and heating, painters, roofing | $2,500-5,000 + $200-400 | Hours to quote, win rate | Quote backlog |
+| Review engine (SMS after the job, AI-drafted replies) | All, especially dental and auto | $500-600 + $150-250 | Reviews per month, rating 4.5+, 100% replies | Under 30 reviews, or a bad review |
+| Google Business Profile + suburb pages + AI search visibility | Trades, dental, law, accountants | $2,500-4,000 + $800-1,500 | Map pack rank, AI answer mentions | Weak local search results, a new competitor |
+| Google Local Services Ads management + call QA (US, Canada outside Quebec) | Trades, law | $500 + 10-15% of spend | Cost per booked job | Rising LSA costs, missed-call billing |
+| Invoice and collections agent (Xero, MYOB, QuickBooks) | Trades, builders, cleaning, CPAs, property managers | $1,200-2,000 + $200-400 | Debtor days, share of invoices over 60 days | Cash squeeze (18% of AU SMEs under "extreme pressure", MYOB) |
+| E-Rechnung setup for trades (XRechnung/ZUGFeRD, DATEV export) | Trade firms over EUR 800K, building cleaners (DE) | $1,500-4,000 + $100-250 | Compliant invoices, days to get paid | 1 Jan 2027 deadline |
+| ZATCA Phase 2 + ERP connection | Building materials traders, contractors, logistics (KSA) | $3,000-8,000 + $200-500 | Compliant by deadline | Wave 25, 1 Feb 2027 |
+| Client intake and document-chase agent | Accountants, conveyancers, law (personal injury, immigration), med spas | $2,000-5,000 + $300-1,500 | Speed to signed client, hours saved | Tax season, EOFY, after-hours leads |
+| Maintenance request triage bot | Property managers | $2,000 + $300-500 | Tenant response time | Rent rolls growing faster than staff |
+| NDIS intake + plan-manager invoice processing (AU) | NDIS providers (26,282 registered) | $3,000 + $500 | Processing time | Growth plus compliance load |
+| French versions of everything (Quebec) | All Montreal clients | +30-40% of build | Compliance, French rankings | Bill 96 |
+
+### 4B.5 Top targets: category x city
+
+| Rank | Target | Why |
+|---|---|---|
+| 1 | HVAC / plumbing, **Phoenix, Houston, Dallas-Fort Worth** | Highest payroll per firm (about $1M). Extreme summer emergencies. Google missed-call billing since 1 Oct 2026. Sell: receptionist + LSA |
+| 2 | Air conditioning, **Brisbane** | 17% of firms have 5+ staff. Aggregators beat operators in search. Summer starts now. Sell: receptionist + quote calculator |
+| 3 | Plumbing and heating / heat pumps, **Berlin** | 6,133 finishing-trade firms at ~EUR 1M each. Heat pump sales up 55%. E-Rechnung due 1 Jan 2027. Sell: German phone assistant + quote generator + E-Rechnung |
+| 4 | Plumbers and roofers, **Sydney** | Largest pools in AU. Heavy hipages dependence. Storm season Oct-Mar |
+| 5 | AC maintenance, **Riyadh** | 666K registrations. Phone and WhatsApp-only market with weak brand sites. Build before the March 2027 pre-summer wave |
+| 6 | Building materials traders and contractors, **Riyadh, Dammam** | 365K contractors. ZATCA deadline 1 Feb 2027 comes with budget |
+| 7 | Dentists, **Melbourne, LA, NY, Jeddah/Khobar** | Highest money per firm in AU. About 9,500 offices each in LA and NY. 55% Saudization for dental. Sell: booking, recall, reviews |
+| 8 | Roofing, **DFW and Miami** | Most roofing firms (DFW 907). Hail and hurricane seasons. Storm quote calculators. Miami needs Spanish pages |
+| 9 | Car workshops (Kfz), **Berlin**; car service, **Jeddah** | Berlin workshops average ~EUR 3.3M turnover. Independents in Jeddah are invisible next to dealers |
+| 10 | Electricians / solar batteries, **Perth** | WA has the fastest business growth (+4.6%). Battery rebate demand. Thin local search results |
+| 11 | Personal injury and immigration law, **Miami** | 8,554 law offices, high value per lead. Intake automation in Spanish |
+| 12 | Trades, **Auckland**; furnaces, **Toronto**; plumbing, **Montreal** | Auckland: tradies frustrated by Builderscrack fees, 47% have no website. Toronto: winter peak. Montreal: French-only search results and Bill 96 favour a bilingual agency |
+
+### 4B.6 How to build the lead list legally
+
+- **Google Maps / Places API:**
+  - Do not scrape or store Maps data in a CRM.
+  - You may store only the place_id. Latitude and longitude may be cached for up to 30 days.
+  - Use the API only for live checks.
+- **Use official registers instead:**
+
+  | Market | Registers |
+  |---|---|
+  | AU | ABN Lookup and bulk extract, NSW Fair Trading, QBCC, VBA, WA Building and Energy, AHPRA, Tax Practitioners Board, NDIS register |
+  | NZ | NZBN API (has industry codes), PGDB, EWRB |
+  | US | State licence boards (Texas TDLR, Arizona ROC, Florida DBPR, California CSLB), state bar and dental boards |
+  | Canada | RBQ, CMMTQ, TSSA, Technical Safety BC |
+  | Germany | Handwerkskammer Berlin database, trade guild lists (Innungen), installer locators, KZV dentist search, StBK directory. Collect in small volumes and record your lawful basis |
+  | KSA | Saudi Business Center CR lookup, REGA broker register, Contractors Authority register, Yellow Pages KSA |
+
+- **Qualifying signals to score each lead on:**
+  - Fewer than 30 reviews, a rating under 4.5, or unanswered reviews.
+  - No website, a slow one, or a broken one.
+  - No online booking and no prices shown.
+  - Voicemail on an after-hours test call.
+  - Advertising on hipages, Angi, Thumbtack, Builderscrack or LSA (they already pay for leads).
+  - Hiring a receptionist or admin.
+  - 5 or more staff.
+  - No WhatsApp button (KSA).
+  - Likely above the EUR 800K turnover line (E-Rechnung) or SAR 187.5K (ZATCA).
+- **Outreach law:**
+  - US: SMS needs A2P 10DLC registration and TCPA consent for marketing texts.
+  - Canada: CASL applies. Scraped lists do not count as consent.
+  - Germany: no cold email or cold calls to businesses without consent.
+  - Australia and NZ: Spam Act and UEMA rules, plus the Do Not Call Register for calls.
+  - KSA: PDPL consent rules apply.
+
+**Still to verify:**
+- ABS class counts and the capital-city split.
+- StatCan counts by industry.
+- Search volumes.
+- Australian LSA costs.
+- MyHammer, Check24 and Builderscrack pricing.
+- The status of Germany's GEG (heating law) reform.
+
+---
+
 ## 5. Competitor agencies and their methodology
 
 Sources:
@@ -1294,6 +1489,36 @@ The ads calendar runs alongside the action plan in section 8.
 - mada ecommerce record month: https://gulfbase.com/news/saudi-e-commerce-hits-record-monthly-sales-over-sar30-7-billion-in-october/213520
 - Google AI Mode in Arabic: https://blog.google/intl/en-mena/product-updates/explore-get-answers/introducing-ai-mode-in-arabic/
 - UAE e-invoicing: https://www.middleeastbriefing.com/news/uae-e-invoicing-pilot-voluntary-adoption-penalties/
+
+### Local business sources (section 4B)
+
+**Australia and New Zealand**
+- ABS Counts of Australian Businesses, Jun 2026 release: https://www.abs.gov.au/statistics/economy/business-indicators/counts-australian-businesses-including-entries-and-exits/jul2022-jun2026
+- ABS data cube 2, industry class by state, Jun 2025: https://www.abs.gov.au/statistics/economy/business-indicators/counts-australian-businesses-including-entries-and-exits/jul2021-jun2025/8165DC02.xlsx
+- Stats NZ business demography, Feb 2025: https://www.stats.govt.nz/information-releases/new-zealand-business-demography-statistics-at-february-2025/
+- InternetNZ 2025 business research: https://internetnz.nz/dotnz-research/2025-nz-consumers-and-businesses-research/
+- hipages lead costs (review site): https://whatsthedamage.com.au/tradies/is-hipages-worth-it/
+
+**US and Canada**
+- US Census CBP 2023: https://data.census.gov/table/CBP2023.CB2300CBP
+- StatCan Canadian Business Counts, Jun 2025: https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3310101601
+- Invoca home services benchmarks 2026: https://invoca.com/reports/the-invoca-home-services-lead-conversion-benchmarks-report-2026
+- Google LSA missed-call billing: https://ppc.land/google-lsa-advertisers-face-missed-call-charges-from-october-1/
+- BrightLocal Local Consumer Review Survey 2026: https://www.brightlocal.com/research/local-consumer-review-survey/
+
+**Berlin and Germany**
+- Berlin business register: https://www.statistik-berlin-brandenburg.de/wirtschaft/volkswirtschaft/unternehmen/
+- Berlin Handwerk count 2024: https://www.statistik-berlin-brandenburg.de/e-v-1-j/
+- Bitkom Handwerk survey (via Tagesschau): https://www.tagesschau.de/wirtschaft/handwerk-fax-betriebe-100.html
+- Heat pump sales 2025: https://www.solarserver.de/2026/01/27/bwp-waermepumpen-absatz-um-55-prozent-in-2025-gestiegen/
+
+**Saudi Arabia**
+- GASTAT business demography 2024: https://www.stats.gov.sa/documents/20117/2435267/Business+Demography+2024+EN.pdf
+- Saudi commercial registrations, Q2 2026: https://www.zawya.com/en/business/travel-and-tourism/saudi-commercial-registrations-reach-19mln-as-ai-tourism-sectors-drive-growth-busxv3l6
+- Saudization quotas 2026: https://www.middleeastbriefing.com/news/saudi-arabias-nitaqat-2026-update-latest-quotas-by-sector-and-what-foreign-employers-need-to-comply-now/
+
+**Google Maps rules**
+- Google Maps Platform terms: https://cloud.google.com/maps-platform/terms/maps-service-terms
 
 ### Verify before using in client copy
 
