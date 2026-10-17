@@ -22,8 +22,9 @@ DEFAULT_MAX_TOKENS = int(os.getenv("MARGINWISE_MAX_TOKENS", "8000"))
 # Server-side refusal fallback (Claude API only). When enabled, real requests go
 # through client.beta.messages.create with the fallback beta so a safety
 # refusal on the primary model is retried server-side on a suitable model.
-# Set MARGINWISE_SERVER_FALLBACKS=0 to disable (for example on Bedrock/Vertex).
-SERVER_FALLBACKS = os.getenv("MARGINWISE_SERVER_FALLBACKS", "1") not in ("0", "false", "False")
+# Off by default: confirm the beta name in the current Anthropic docs, then set
+# MARGINWISE_SERVER_FALLBACKS=1 to enable. Leave off on Bedrock/Vertex.
+SERVER_FALLBACKS = os.getenv("MARGINWISE_SERVER_FALLBACKS", "0") not in ("0", "false", "False")
 SERVER_FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
 # Where JSON transcripts are written when a run does not pass transcript_dir.

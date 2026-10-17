@@ -1,0 +1,42 @@
+{
+  "DE-PDP-001": {
+    "asset_id": "DE-PDP-001",
+    "type": "product_page",
+    "markets": ["DE"],
+    "channel": "web",
+    "language": "de",
+    "text": "Unsere Bambus-Zahnbuerste ist klimaneutral und 100% umweltfreundlich. Ausgezeichnet mit unserem eigenen Oeko-Siegel. Jetzt nur 3,99 EUR statt 5,99 EUR!"
+  },
+  "DE-PDP-002": {
+    "asset_id": "DE-PDP-002",
+    "type": "product_page",
+    "markets": ["DE"],
+    "channel": "web",
+    "language": "de",
+    "text": "Trinkflasche aus Edelstahl, 750 ml. Jetzt 24,99 EUR statt 29,99 EUR. Niedrigster Preis der letzten 30 Tage: 29,99 EUR. Verpackung aus 80 % Recyclingkarton."
+  },
+  "META-AD-014": {
+    "asset_id": "META-AD-014",
+    "type": "ad",
+    "markets": ["US", "CA", "AU"],
+    "channel": "meta_ad",
+    "language": "en",
+    "text": "Are you overweight? Lose 10kg in 2 weeks with our detox tea. Guaranteed results or your money back!"
+  },
+  "AU-LP-007": {
+    "asset_id": "AU-LP-007",
+    "type": "landing_page",
+    "markets": ["AU"],
+    "channel": "web",
+    "language": "en",
+    "text": "End of lease clean from $299* + booking fee. Card and service fees apply at checkout. Our eco-friendly products are safe for kids and pets."
+  },
+  "US-EMAIL-003": {
+    "asset_id": "US-EMAIL-003",
+    "type": "email",
+    "markets": ["US"],
+    "channel": "email",
+    "language": "en",
+    "text": "New trail runners are here. Lightweight mesh upper, 8mm drop, available in 6 colours. Free returns within 30 days."
+  }
+}

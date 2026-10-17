@@ -1,0 +1,15 @@
+{
+  "routing": {
+    "AU": "owner_priya", "NZ": "owner_priya",
+    "US": "owner_daniel", "CA": "owner_daniel",
+    "DE": "owner_lena",
+    "SA": "owner_omar"
+  },
+  "owners": {
+    "owner_priya": {"name": "Priya Sharma", "region": "APAC", "calendar_link": "https://cal.example.com/priya"},
+    "owner_daniel": {"name": "Daniel Ortiz", "region": "North America", "calendar_link": "https://cal.example.com/daniel"},
+    "owner_lena": {"name": "Lena Fischer", "region": "DACH", "calendar_link": "https://cal.example.com/lena"},
+    "owner_omar": {"name": "Omar Al-Harbi", "region": "GCC", "calendar_link": "https://cal.example.com/omar"},
+    "nurture_queue": {"name": "Nurture queue", "region": "all", "calendar_link": null}
+  }
+}
