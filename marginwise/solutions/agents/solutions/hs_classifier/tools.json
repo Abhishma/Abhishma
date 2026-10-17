@@ -1,0 +1,78 @@
+{
+  "requires_approval": [],
+  "tools": [
+    {
+      "name": "get_product",
+      "description": "Fetch product data for classification: title, description, material composition, country of origin, unit value and currency.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"sku": {"type": "string"}},
+        "required": ["sku"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_hs_nomenclature",
+      "description": "Search HS six-digit subheadings by keywords (material, function, form). Returns candidate codes with official descriptions. Search several phrasings for ambiguous products.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {"type": "string"},
+          "limit": {"type": "integer"}
+        },
+        "required": ["query"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "calculate_landed_cost",
+      "description": "Deterministic landed-cost estimate for US or Canada (or OTHER with CIF basis). All rates are inputs supplied by the user or reviewer: duty rate %, tariff surcharge %, import tax % (CA GST/HST). Returns duty, surcharge, US MPF/HMF, import tax, total and per-unit cost in the import currency.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "goods_value": {"type": "number", "description": "Total goods value in goods currency"},
+          "fx_rate": {"type": "number", "description": "Import currency per 1 unit of goods currency"},
+          "duty_rate_pct": {"type": "number"},
+          "destination": {"type": "string", "enum": ["US", "CA", "OTHER"]},
+          "tariff_surcharge_pct": {"type": "number"},
+          "freight": {"type": "number", "description": "International freight in goods currency"},
+          "insurance": {"type": "number"},
+          "quantity": {"type": "integer"},
+          "mode": {"type": "string", "enum": ["air", "ocean", "courier", "road"]},
+          "import_tax_pct": {"type": "number"},
+          "broker_fee": {"type": "number", "description": "In import currency"}
+        },
+        "required": ["goods_value", "fx_rate", "duty_rate_pct", "destination"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "submit_for_review",
+      "description": "Send HS suggestions to the human customs reviewer. Mandatory for every product: no code is ever applied without review.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "sku": {"type": "string"},
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "hs6": {"type": "string", "description": "e.g. 6109.10"},
+                "confidence": {"type": "number", "description": "0-1"},
+                "description": {"type": "string"},
+                "national_extension_note": {"type": "string", "description": "What decides the US HTSUS 8/10-digit and Canadian 8/10-digit line"}
+              },
+              "required": ["hs6", "confidence"]
+            }
+          },
+          "rationale": {"type": "string"},
+          "destination_markets": {"type": "array", "items": {"type": "string"}},
+          "open_questions": {"type": "array", "items": {"type": "string"}}
+        },
+        "required": ["sku", "suggestions", "rationale", "destination_markets"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

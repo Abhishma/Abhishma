@@ -1,0 +1,79 @@
+{
+  "requires_approval": ["draft_email"],
+  "tools": [
+    {
+      "name": "get_lead",
+      "description": "Fetch an inbound lead from HubSpot or Salesforce: contact, market, source, form type, message, and consent flags (marketing_opt_in, double_opt_in_confirmed, inquiry_date).",
+      "input_schema": {
+        "type": "object",
+        "properties": {"lead_id": {"type": "string"}},
+        "required": ["lead_id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "enrich_company",
+      "description": "Enrich a company by web domain: name, industry, employees, revenue band, tech stack, HQ country, risk flags.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"domain": {"type": "string"}},
+        "required": ["domain"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "score_lead",
+      "description": "Deterministic ICP score (0-100) from revenue band, stack, market, intent and industry, with tier A (>=70), B (>=45), C, or DQ (vendor pitch, competitor, student). Returns reasons.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"lead_id": {"type": "string"}},
+        "required": ["lead_id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "assign_owner",
+      "description": "Route the lead: tier A/B to the regional owner for its market (APAC, North America, DACH, GCC), tier C to the nurture queue. DQ leads are not routed.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "lead_id": {"type": "string"},
+          "tier": {"type": "string", "enum": ["A", "B", "C", "DQ"]},
+          "owner_id": {"type": "string", "description": "Optional explicit override"}
+        },
+        "required": ["lead_id", "tier"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "draft_email",
+      "description": "Save a first-reply email draft for the owner to review and send. Requires human approval. The handler re-checks consent (Spam Act AU, CASL CA, UWG DE, CAN-SPAM US) and blocks marketing without consent or without an unsubscribe line.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "lead_id": {"type": "string"},
+          "email_type": {"type": "string", "enum": ["inquiry_response", "marketing_followup"]},
+          "subject": {"type": "string"},
+          "body": {"type": "string"},
+          "language": {"type": "string", "enum": ["en", "de", "ar"]}
+        },
+        "required": ["lead_id", "email_type", "subject", "body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "log_activity",
+      "description": "Log a CRM activity/note on the lead (triage result, score, routing, consent decision).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "lead_id": {"type": "string"},
+          "activity_type": {"type": "string", "enum": ["triage", "disqualified", "note"]},
+          "summary": {"type": "string"}
+        },
+        "required": ["lead_id", "activity_type", "summary"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

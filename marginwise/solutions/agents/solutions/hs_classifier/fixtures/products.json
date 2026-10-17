@@ -1,0 +1,7 @@
+{
+  "SKU-TEE-ORG": {"sku": "SKU-TEE-ORG", "title": "Organic Cotton Crew Tee", "description": "Unisex crew neck t-shirt, 100% organic cotton single jersey knit, 180gsm.", "material": "100% cotton, knitted", "origin_country": "IN", "unit_value": 9.50, "currency": "USD"},
+  "SKU-BAG-LTH": {"sku": "SKU-BAG-LTH", "title": "Leather Tote Bag", "description": "Full-grain cowhide leather tote handbag with cotton lining.", "material": "outer: leather; lining: cotton", "origin_country": "AU", "unit_value": 85.00, "currency": "AUD"},
+  "SKU-TOOTH-BAM": {"sku": "SKU-TOOTH-BAM", "title": "Bamboo Toothbrush 4-pack", "description": "Toothbrushes with bamboo handle and nylon bristles.", "material": "bamboo, nylon", "origin_country": "CN", "unit_value": 1.20, "currency": "USD"},
+  "SKU-DIFF-300": {"sku": "SKU-DIFF-300", "title": "Ceramic Aroma Diffuser AD-300", "description": "Ultrasonic essential oil diffuser with ceramic cover, USB-C powered, LED light.", "material": "ceramic, plastic, electronics", "origin_country": "CN", "unit_value": 14.00, "currency": "USD"},
+  "SKU-TEA-GRN": {"sku": "SKU-TEA-GRN", "title": "Sencha Green Tea 100g", "description": "Loose leaf Japanese green tea in a 100g resealable pouch.", "material": "green tea leaves", "origin_country": "JP", "unit_value": 6.00, "currency": "USD"}
+}

@@ -1,0 +1,62 @@
+{
+  "coolbreeze_ac": {
+    "name": "CoolBreeze Air Conditioning",
+    "market": "AU",
+    "language": "en",
+    "timezone": "Australia/Brisbane",
+    "field_service_platform": "ServiceM8",
+    "phone_display": "07 3000 1234",
+    "on_call_number": "+61730001299",
+    "hours": "Mon-Fri 07:00-17:00, Sat 08:00-12:00",
+    "service_area_postcodes": ["4000", "4005", "4006", "4051", "4059", "4064", "4101", "4102", "4120", "4151", "4169", "4170"],
+    "emergency_keywords": ["smoke", "burning smell", "sparks", "electric shock", "gas", "water through ceiling", "flooding"],
+    "price_guide": {
+      "aircon_service": {"label": "Split system service and clean", "from": 149, "to": 199, "unit": "per unit", "includes_gst": true},
+      "aircon_repair_callout": {"label": "Repair call-out and first 30 minutes", "from": 129, "to": 129, "unit": "flat", "includes_gst": true},
+      "aircon_install_split_2_5kw": {"label": "Back-to-back split system install (2.5kW)", "from": 1490, "to": 1890, "unit": "supply and install", "includes_gst": true}
+    },
+    "slots": [
+      {"slot_id": "cb-2026-10-19-0800", "start": "2026-10-19T08:00:00+10:00", "end": "2026-10-19T10:00:00+10:00", "services": ["aircon_service", "aircon_repair_callout"]},
+      {"slot_id": "cb-2026-10-19-1300", "start": "2026-10-19T13:00:00+10:00", "end": "2026-10-19T15:00:00+10:00", "services": ["aircon_service", "aircon_repair_callout", "aircon_install_split_2_5kw"]},
+      {"slot_id": "cb-2026-10-20-0800", "start": "2026-10-20T08:00:00+10:00", "end": "2026-10-20T10:00:00+10:00", "services": ["aircon_repair_callout"]}
+    ]
+  },
+  "kiez_elektro": {
+    "name": "Kiez Elektro GmbH",
+    "market": "DE",
+    "language": "de",
+    "timezone": "Europe/Berlin",
+    "field_service_platform": "Doctolib-style booking calendar",
+    "phone_display": "030 1234567",
+    "on_call_number": "+49301234500",
+    "hours": "Mo-Fr 07:30-16:30",
+    "service_area_postcodes": ["10115", "10117", "10119", "10178", "10243", "10245", "10247", "10405", "10435", "10437"],
+    "emergency_keywords": ["Rauch", "Brandgeruch", "Funken", "Stromschlag", "smoke", "sparks", "Wasser in der Steckdose"],
+    "price_guide": {
+      "elektro_anfahrt": {"label": "Anfahrt und erste 30 Minuten", "from": 89, "to": 89, "unit": "pauschal", "includes_gst": true},
+      "steckdose_tauschen": {"label": "Steckdose tauschen (je Stueck, ohne Material)", "from": 45, "to": 65, "unit": "je Stueck", "includes_gst": true}
+    },
+    "slots": [
+      {"slot_id": "ke-2026-10-20-0900", "start": "2026-10-20T09:00:00+02:00", "end": "2026-10-20T11:00:00+02:00", "services": ["elektro_anfahrt", "steckdose_tauschen"]},
+      {"slot_id": "ke-2026-10-21-1300", "start": "2026-10-21T13:00:00+02:00", "end": "2026-10-21T15:00:00+02:00", "services": ["elektro_anfahrt"]}
+    ]
+  },
+  "maple_dental": {
+    "name": "Maple Family Dental",
+    "market": "CA",
+    "language": "en",
+    "timezone": "America/Toronto",
+    "field_service_platform": "Clinic practice management system (Dentrix-style)",
+    "phone_display": "(416) 555-0142",
+    "on_call_number": "+14165550199",
+    "hours": "Mon-Thu 08:00-18:00, Fri 08:00-14:00",
+    "service_area_postcodes": ["M5V", "M5J", "M6J", "M6K", "M4M"],
+    "emergency_keywords": ["swelling", "can't breathe", "bleeding won't stop", "knocked out tooth", "trauma"],
+    "price_guide": {
+      "new_patient_exam": {"label": "New patient exam and x-rays", "from": 180, "to": 260, "unit": "per visit", "includes_gst": false}
+    },
+    "slots": [
+      {"slot_id": "md-2026-10-19-0930", "start": "2026-10-19T09:30:00-04:00", "end": "2026-10-19T10:30:00-04:00", "services": ["new_patient_exam"]}
+    ]
+  }
+}

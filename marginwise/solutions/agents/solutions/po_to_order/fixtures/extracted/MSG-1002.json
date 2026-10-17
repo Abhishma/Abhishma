@@ -1,0 +1,16 @@
+{
+  "po_number": "2026-118",
+  "po_date": "2026-10-16",
+  "customer_name": "Bergcafe GmbH",
+  "customer_email": "einkauf@bergcafe-gmbh.de",
+  "ship_to_address": "Torstrasse 101, 10119 Berlin, Deutschland",
+  "required_by": null,
+  "payment_terms": "14 Tage netto",
+  "currency": "EUR",
+  "stated_subtotal": null,
+  "notes": null,
+  "lines": [
+    {"line_no": 1, "sku": "GL-OAT-1L", "description": "Hafermilch Barista 1L", "quantity": 30, "uom": "each", "unit_price": 2.60},
+    {"line_no": 2, "sku": "GL-MATCHA-500", "description": "Matcha Pulver 500g", "quantity": 4, "uom": "each", "unit_price": 41.00}
+  ]
+}

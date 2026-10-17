@@ -1,0 +1,100 @@
+{
+  "requires_approval": [],
+  "tools": [
+    {
+      "name": "get_price_book",
+      "description": "Get the business's price book (optionally for one trade: aircon, roofing, electrical): items with unit, low/high price ex tax, required questions, minimum charge and whether a site visit is required.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "trade": {"type": "string", "enum": ["aircon", "roofing", "electrical"]}
+        },
+        "required": ["business_id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "calculate_quote",
+      "description": "Deterministically price selected items: per-line low/high, minimum charges, subtotal, tax (GST/USt) and total ranges. Reports unanswered questions and whether a site visit is required. Returns quote_id.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "item_id": {"type": "string"},
+                "quantity": {"type": "number"},
+                "answers": {"type": "object", "description": "Answers to the item's required questions"}
+              },
+              "required": ["item_id", "quantity"]
+            }
+          }
+        },
+        "required": ["business_id", "items"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_quote_document",
+      "description": "Create a PDF-ready JSON quote document. doc_type estimate (any market, price ranges) or angebot (Germany: binding offer, fixed prices only, mandatory fields validated: Angebotsnummer, Datum, Gueltig bis, Anbieter with Steuernummer/USt-IdNr, Kunde, Positionen, Netto, USt, Brutto, Zahlungsbedingungen).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "quote_id": {"type": "string"},
+          "customer_name": {"type": "string"},
+          "customer_address": {"type": "string"},
+          "doc_type": {"type": "string", "enum": ["estimate", "angebot"]},
+          "payment_terms": {"type": "string"}
+        },
+        "required": ["business_id", "quote_id", "customer_name", "customer_address"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "check_site_visit_slots",
+      "description": "List open site-visit / measure-and-quote slots.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"business_id": {"type": "string"}},
+        "required": ["business_id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "book_site_visit",
+      "description": "Book a site visit for a confirmed slot, linked to the quote.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "slot_id": {"type": "string"},
+          "customer_name": {"type": "string"},
+          "phone": {"type": "string"},
+          "address": {"type": "string"},
+          "quote_id": {"type": "string"}
+        },
+        "required": ["business_id", "slot_id", "customer_name", "phone", "address"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transfer_to_human",
+      "description": "Hand the conversation to the business owner or estimator (complex job, commercial work, safety issue, customer request).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "reason": {"type": "string", "enum": ["complex_job", "commercial", "safety", "customer_requested_human", "out_of_price_book", "other"]},
+          "summary": {"type": "string"}
+        },
+        "required": ["business_id", "reason"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

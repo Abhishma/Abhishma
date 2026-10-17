@@ -1,0 +1,4 @@
+payout_date,payment_reference,type,order_id,amount,currency
+2026-09-19,KL-5501,SALE,#1007,400.00,AUD
+2026-09-19,KL-5501,FEE,#1007,-16.30,AUD
+2026-09-19,KL-5501,RETURN,#0999,-60.00,AUD

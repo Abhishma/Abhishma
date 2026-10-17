@@ -1,0 +1,313 @@
+{
+  "requires_approval": [
+    "create_draft_order"
+  ],
+  "tools": [
+    {
+      "name": "get_po_document",
+      "description": "Fetch an inbound purchase-order email (body text plus any PDF text attachments) and the JSON schema the extracted order must follow.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "message_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_customer",
+      "description": "Find the wholesale customer account by sender email (domain match) or company name. Returns terms, currency, price list, ship-to addresses and available credit.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_price_list",
+      "description": "Get the customer's contracted price list (unit price, unit of measure, pack size, MOQ), optionally for specific SKUs.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string"
+          },
+          "skus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "customer_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate_order",
+      "description": "Deterministically validate the extracted order: schema check, then unknown SKUs, price differences, MOQ, pack multiples, unit of measure, terms, ship-to, the PO's own subtotal arithmetic, and credit limit. Returns priced lines at list price, discrepancies with severity (block/review/info) and totals.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string"
+          },
+          "order": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "po_number",
+              "po_date",
+              "customer_name",
+              "currency",
+              "lines"
+            ],
+            "properties": {
+              "po_number": {
+                "type": "string"
+              },
+              "po_date": {
+                "type": "string",
+                "description": "ISO date YYYY-MM-DD"
+              },
+              "customer_name": {
+                "type": "string"
+              },
+              "customer_email": {
+                "type": "string"
+              },
+              "ship_to_address": {
+                "type": "string"
+              },
+              "required_by": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ISO date or null"
+              },
+              "payment_terms": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "currency": {
+                "type": "string",
+                "description": "ISO 4217"
+              },
+              "stated_subtotal": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Subtotal as written on the PO, ex tax"
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lines": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "sku",
+                    "description",
+                    "quantity",
+                    "unit_price"
+                  ],
+                  "properties": {
+                    "line_no": {
+                      "type": "integer"
+                    },
+                    "sku": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "number"
+                    },
+                    "uom": {
+                      "type": "string"
+                    },
+                    "unit_price": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Extracted sales order matching fixtures/order_schema.json"
+          }
+        },
+        "required": [
+          "customer_id",
+          "order"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "flag_discrepancy",
+      "description": "Send the PO and its discrepancies to the sales-ops review queue with a short summary. Use whenever validate_order returns any review or block item.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "message_id": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "discrepancies": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "message_id",
+          "summary",
+          "discrepancies"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_draft_order",
+      "description": "Create a DRAFT sales order in the ERP at list prices. Requires human approval; returns pending_approval. Never creates a confirmed order.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string"
+          },
+          "order": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "po_number",
+              "po_date",
+              "customer_name",
+              "currency",
+              "lines"
+            ],
+            "properties": {
+              "po_number": {
+                "type": "string"
+              },
+              "po_date": {
+                "type": "string",
+                "description": "ISO date YYYY-MM-DD"
+              },
+              "customer_name": {
+                "type": "string"
+              },
+              "customer_email": {
+                "type": "string"
+              },
+              "ship_to_address": {
+                "type": "string"
+              },
+              "required_by": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ISO date or null"
+              },
+              "payment_terms": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "currency": {
+                "type": "string",
+                "description": "ISO 4217"
+              },
+              "stated_subtotal": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Subtotal as written on the PO, ex tax"
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lines": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "sku",
+                    "description",
+                    "quantity",
+                    "unit_price"
+                  ],
+                  "properties": {
+                    "line_no": {
+                      "type": "integer"
+                    },
+                    "sku": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "number"
+                    },
+                    "uom": {
+                      "type": "string"
+                    },
+                    "unit_price": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Extracted sales order matching fixtures/order_schema.json"
+          },
+          "discrepancy_notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "customer_id",
+          "order"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}
