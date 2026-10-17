@@ -1,12 +1,12 @@
 # Marginwise Instagram Playbook
 
 Working plan for the Marginwise Instagram account. Lead magnets referenced here live in `lead-magnets/`.
-Last updated: 12 Oct 2026. Content calendar: `instagram-content-calendar.xlsx`.
+Last updated: 17 Oct 2026. Content calendar: `instagram-content-calendar.xlsx` (14 Oct to 13 Dec, 36 posts).
 
 ## 1. Positioning
 
 - Job of the account: discovery and trust for D2C and Shopify founders, ending in a 30-minute call.
-- Markets (from 17 Oct 2026): Australia, the US and the UK. India content is retired; Saudi Arabia and New Zealand are out of scope.
+- Markets (from 17 Oct 2026): Australia, the US and the UK. From 17 Nov the calendar adds Germany (Berlin startups, in English) and Canada, following the market research waves. Saudi Arabia starts in the next calendar (from 18 Dec). New Zealand is reached through the Australian content. India content is retired.
 - Services shown: performance marketing, CRO, website development, SEO/AEO/GEO, and AI solutions (AI we build for brands, and AI in our own delivery).
 - Angle: margin, not ROAS. Every competitor sells revenue and ROAS; Marginwise shows what the business keeps.
 - Language: English only. Indian context (rupee figures, Indian brands, COD and RTO) carries India topics.

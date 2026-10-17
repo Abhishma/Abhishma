@@ -28,6 +28,7 @@ for w, rs in weeks.items():
         fmt = E(r[ix["Format"]])
         kind = "carousel" if "Carousel" in fmt else "reel"
         flags = []
+        if r[ix["Status"]] == "Posted": flags.append("<span class='chip'>Posted</span>")
         if r[ix["Pin?"]] == "Yes": flags.append("<span class='chip pin'>Pin</span>")
         if r[ix["Trial Reel first?"]] == "Yes": flags.append("<span class='chip trial'>Trial Reel first</span>")
         cards.append(f"""
@@ -60,6 +61,7 @@ def table(ws, cols=None):
         out += "<tr>" + "".join(cells) + "</tr>"
     return out + "</tbody></table></div>"
 
+weeknav = "".join(f'<a href="#week{w}">Wk {w}</a>' for w in weeks)
 sop = table(wb["How to make (no face)"])
 batches = table(wb["Recording batches"])
 stories = table(wb["Stories"])
@@ -132,12 +134,12 @@ ul.checks label {{ display:grid; gap:2px; min-width:0 }} ul.checks span {{ color
 </style>
 
 <nav aria-label="Sections"><div class="in">
-  <a href="#calendar">Calendar</a><a href="#week1">Wk 1</a><a href="#week2">Wk 2</a><a href="#week3">Wk 3</a><a href="#week4">Wk 4</a><a href="#week5">Wk 5</a>
+  <a href="#calendar">Calendar</a>{weeknav}
   <a href="#how">How to make</a><a href="#batches">Recording</a><a href="#stories">Stories</a><a href="#setup">Setup</a>
 </div></nav>
 <main class="wrap">
   <h1>@marginwise.in content calendar</h1>
-  <p class="lede">14 Oct to 15 Nov 2026. Australia, US and UK. No face on camera: every post shows the work, with your voiceover.</p>
+  <p class="lede">14 Oct to 13 Dec 2026. Australia, US and UK, adding Germany and Canada from 17 Nov. No face on camera: every post shows the work, with your voiceover.</p>
   <p class="rule">From 18 Oct: Australia posts at 13:30 IST; US/UK and all-market posts at 19:30 IST. Reply to every comment in the first hour. Don't publish a keyword until its auto-DM works.</p>
   <h2 id="calendar">Calendar</h2>
   {''.join(cards)}

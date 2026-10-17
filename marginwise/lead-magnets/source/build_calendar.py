@@ -1,4 +1,4 @@
-"""Builds the Marginwise Instagram content calendar (5 weeks from 14 Oct 2026)."""
+"""Builds the Marginwise Instagram content calendar (9 weeks, 14 Oct to 13 Dec 2026)."""
 import sys
 from datetime import date, datetime, timedelta, timezone
 from openpyxl import Workbook
@@ -82,7 +82,7 @@ post(D(10, 17), "Carousel (7 slides)", "Margin math", "All",
      "Sources on every slide.\n\nSave this for your next growth review. Comment AUDIT if you want us to check "
      "your store against them.\n\n#ecommerce #cro #d2cbrands",
      "AUDIT", "marginwise-store-leak-audit.pdf + free 2-min teardown", "No", "No", "Design")
-from posts_v3 import POSTS, REC, BATCHES
+from posts_v4 import POSTS, REC, BATCHES
 for (m, dd, fmt_, pillar_, market_, hook_, outline_, caption_, cta_, magnet_, trial_, pin_, batch_) in POSTS:
     post(D(m, dd), fmt_, pillar_, market_, hook_, outline_, caption_, cta_, magnet_, trial_, pin_, batch_)
 
@@ -224,9 +224,11 @@ rm.title = "Read me"
 rm.column_dimensions["A"].width = 110
 rm.sheet_view.showGridLines = False
 lines = [
-    ("h", "Marginwise Instagram content calendar: 14 Oct to 15 Nov 2026"),
-    ("t", "Five weeks, 20 posts: 3 reels and 1 carousel a week, plus Stories on 4 days. Built from "
-          "marginwise/instagram-playbook.md."),
+    ("h", "Marginwise Instagram content calendar: 14 Oct to 13 Dec 2026"),
+    ("t", "Nine weeks, 36 posts: about 3 reels and 1 carousel a week, plus Stories on 4 days. Built from "
+          "marginwise/instagram-playbook.md and the market research of 17 Oct 2026. Weeks 1-5: Australia, US and UK. "
+          "Weeks 6-9 add Germany (Berlin, English) and Canada. Saudi Arabia starts in the next calendar. "
+          "Germany posts go out at 19:30 IST, which is London time plus one hour in Berlin; Canada follows New York."),
     ("h", "Tabs"),
     ("t", "Calendar: every post with hook, outline, step-by-step production (faceless), caption, CTA keyword and lead magnet. Fill the yellow "
           "columns after posting."),
@@ -273,7 +275,7 @@ for i, (d, fmt, pillar, market, hook, outline, caption, cta, magnet, trial, pin,
     week = (d - start).days // 7 + 1
     ist, syd, lon, nyc = local_times(d, market)
     vals = [week, d, d.strftime("%a"), ist, syd, lon, nyc, fmt, pillar, market, hook, outline, STEPS[d], caption, cta, magnet,
-            trial, pin, batch, "Planned"]
+            trial, pin, batch, "Posted" if d < date(2026, 10, 18) else "Planned"]
     for col, v in enumerate(vals, 1):
         c = cal.cell(row=i, column=col, value=v)
         c.font = f(bold=(col == 11))
@@ -339,7 +341,7 @@ header(wr, 1, ["Week", "Week starting", "Posts planned", "Posts posted", "Reach"
                "DMs", "Calls booked", "Shares per 1,000 reach", "What to change next week"],
        [7, 14, 10, 10, 10, 9, 9, 10, 8, 10, 12, 50])
 rng = lambda col: f"Calendar!${col}$2:${col}${last}"
-for w in range(1, 6):
+for w in range(1, 10):
     r = w + 1
     wr.cell(row=r, column=1, value=w)
     wr.cell(row=r, column=2, value=start + timedelta(days=7 * (w - 1))).number_format = "dd mmm yyyy"
@@ -355,17 +357,17 @@ for w in range(1, 6):
         c = wr.cell(row=r, column=col)
         c.font = f(color=BLUE) if col == 12 else f()
         c.border = BOX
-tr = 7
+tr = 11
 wr.cell(row=tr, column=1, value="Total").font = f(True)
 for col in "CDEFGHIJ":
-    wr[f"{col}{tr}"] = f"=SUM({col}2:{col}6)"
+    wr[f"{col}{tr}"] = f"=SUM({col}2:{col}10)"
     wr[f"{col}{tr}"].font = f(True)
     wr[f"{col}{tr}"].number_format = "#,##0"
 wr[f"K{tr}"] = f"=IFERROR(G{tr}/E{tr}*1000,0)"
 wr[f"K{tr}"].number_format = "0.0"
 wr[f"K{tr}"].font = f(True)
-wr["A9"] = "Judge the account on calls booked and DMs, not reach. Shares per 1,000 reach is the best early signal of what Instagram will push."
-wr["A9"].font = f(False, "555555", 9, True)
+wr["A13"] = "Judge the account on calls booked and DMs, not reach. Shares per 1,000 reach is the best early signal of what Instagram will push."
+wr["A13"].font = f(False, "555555", 9, True)
 
 su = wb.create_sheet("Setup before 14 Oct")
 header(su, 1, ["Done?", "Task", "Why"], [8, 70, 55])
@@ -375,7 +377,7 @@ tasks = [
     ("Two-factor authentication on, backup codes saved", "A hacked brand account is hard to recover"),
     ("All lead magnets (1 sheet, 8 PDFs) uploaded to Drive or the website with share links", "Every CTA keyword depends on these"),
     ("Auto-DM tool connected and the 8 keywords tested from a second account", "Broken DMs waste the first reels"),
-    ("Highlight covers made: Teardowns, How we work, US/UK clients, COD/RTO, Book a call", "Profile looks complete from day one"),
+    ("Highlight covers made: Teardowns, How we work, Tools we built, Book a call", "Profile looks complete from day one"),
     ("GA4 check that utm_source=instagram shows up", "So calls can be traced to reels"),
     ("Employment-contract check done", "Before posting anything publicly"),
     ("Website updated for Australia, US and UK (hours, currency, services)", "Bio and website must match"),
