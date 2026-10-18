@@ -2,7 +2,7 @@
 
 Project: Marginwise Landing Page (https://lovable.dev/projects/fb7d5643-7f43-4b8c-ba4a-67b233b640e2)
 
-Status, 18 Oct 2026: this prompt has not been sent. The Lovable workspace is out of credits.
+Status, 18 Oct 2026: not sent yet. After credits were added, Lovable still answered "out of credits" on three tries. Items 16 and 17 add Google Meet and confirm the team names.
 To apply it, either:
 - add credits at https://lovable.dev/settings/billing and ask Claude to send it again, or
 - paste everything below the line into the Lovable editor chat.
@@ -106,3 +106,16 @@ Content and booking update for Marginwise. Marginwise no longer targets India. M
 - Keep the calendar template test (ctz can stay Asia/Kolkata).
 - Run the full test suite and a type check, fix anything that fails, and confirm the home page, /pricing, /case-studies, booking submission and team pages still render on desktop and mobile in light and dark mode.
 - At the end, list every file you changed and the test results.
+
+16. Google Meet on every booking
+- In submitBooking, create the Google Calendar event with a Google Meet link: conferenceData.createRequest must include conferenceSolutionKey { type: "hangoutsMeet" } plus the existing requestId, and keep conferenceDataVersion=1 and sendUpdates=all.
+- Read the created event's response and take the Meet link (hangoutLink, or the video entry point in conferenceData.entryPoints). Store it on the booking_requests row (add a nullable meet_link text column with a migration) and return it from submitBooking.
+- Put the Meet link in the new-booking-lead email to the team inboxes.
+- Send the lead a short confirmation email ("Your Marginwise call request": slot in their market's time zone and in IST, the Meet link, and "We confirm the time by email within one working day"). Use the existing email system and an idempotency key.
+- On the booking success screen, show "Your Google Meet link is in the calendar invite we just sent" with the link itself when available. Keep the existing Google Calendar template link and email-copy fallback for when calendar creation fails, and say the meeting link follows by email in that case.
+- If the calendar connector key is missing or the API call fails, the booking must still save and the team email must still send (current behaviour); log the error.
+- Hero chip "Google Meet or Zoom" becomes "Google Meet".
+- In the team leads view, show the Meet link for each booking that has one.
+- Add a test for the Meet link extraction from a sample Calendar API response (hangoutLink present, entryPoints only, and neither).
+
+17. Team names: keep "Velmurgan" as the display name everywhere; the inbox velmoorthy65@gmail.com and the admin setup are correct, do not change them.
