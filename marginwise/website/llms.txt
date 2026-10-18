@@ -1,0 +1,18 @@
+# Marginwise
+
+> Marginwise runs performance marketing, CRO, website development, SEO and AI search, and AI solutions for ecommerce brands in Australia, the US and the UK. Led by Abhimanyu Sharma, who has ten years of experience building D2C, omnichannel and loyalty products on Shopify, Salesforce and ERP systems.
+
+## How we work: Find, Fix, Grow
+- Find: Revenue Leak Audit, USD 1,500 fixed fee. A two-week review of store, tracking and checkout with a written plan ranked by revenue. A free 2-minute video teardown is available first.
+- Fix: fixed-price sprints from USD 3,900, with fixed scope and acceptance criteria. Examples: Australian card surcharge ban fixes, tracking and consent, accessibility, Shopify and ERP sync repairs, tariff and landed-cost margin models.
+- Grow: monthly retainers from USD 1,500 a month for performance marketing, CRO, AI search visibility and AI agent monitoring.
+
+## Services
+- Performance marketing on Meta, Google and TikTok, reported on contribution margin.
+- Conversion rate optimisation for product pages, cart and checkout.
+- Shopify and Shopify Plus builds, migrations from Magento, WooCommerce and Salesforce Commerce Cloud, ERP and accounting integrations (Cin7, Unleashed, MYOB, Xero, NetSuite, QuickBooks).
+- SEO, AEO and GEO: technical SEO, schema, and monthly tracking of which brands AI assistants name.
+- AI solutions: support agents, ERP sync exception agents, payout reconciliation, lead triage and AI phone receptionists, with human approval for anything touching money, prices or orders.
+
+## Contact
+- Book a 30-minute call on Google Meet: https://marginwise.in/#book

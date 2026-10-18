@@ -30,7 +30,7 @@ Content and booking update for Marginwise. Marginwise no longer targets India. M
 - Market type becomes "au" | "us" | "uk".
 - Time-zone buttons: Sydney (Australia/Sydney), London (Europe/London), US Eastern (America/New_York), Your time (local). Add these to tzName.
 - SLOTS_IST becomes [[7,0],[13,30],[16,30],[19,30],[21,30]] (12:30/19:00 Sydney, 08:00/11:00/14:00/16:00 London in winter, 09:00/11:00 US Eastern).
-- Only show slots that fall between 07:00 and 22:00 in the time zone currently shown; if the selected slot becomes hidden, select the first visible one. If none are visible, show all.
+- Only show slots that fall between 08:00 and 20:00 in the time zone currently shown (so US Eastern shows 10:00 and 12:00, Sydney 12:30 and 19:00, London four daytime slots); if the selected slot becomes hidden, select the first visible one. If none are visible, show all.
 - Each slot's second line shows the IST time labelled "IST (our time)".
 - slotText: "Mon 19 Oct · 19:00 Sydney / 08:00 London / 03:00 ET / 13:30 IST" format (Sydney, London, ET, IST).
 - Default market and time zone from the visitor's time zone: America/* -> US + US Eastern; Europe/* -> UK + London; everything else -> Australia + Sydney. Default slot: AU -> 13:30 IST slot, UK -> 16:30 IST slot, US -> 21:30 IST slot.
@@ -102,7 +102,7 @@ Content and booking update for Marginwise. Marginwise no longer targets India. M
 14. AI call prep and emails: in prep.functions, followup.functions and the email templates, remove India/INR/COD/RTO assumptions. Prep should consider the lead's market (Australia, New Zealand, US, UK, Canada, Other) and our services list above. Follow-up email currency follows the market (AUD for Australia and New Zealand, GBP for UK, USD otherwise).
 
 15. Tests and checks
-- Update src/test/marginwise.test.ts for the new slots: the 5 IST slots convert to the right UTC times, the daytime filter hides the 01:00 and 03:00 Sydney slots, and slotText uses the new format.
+- Update src/test/marginwise.test.ts for the new slots: the 5 IST slots convert to the right UTC times, the daytime filter hides the late-night Sydney slots and the previous-evening 21:30 US Eastern slot, and slotText uses the new format.
 - Keep the calendar template test (ctz can stay Asia/Kolkata).
 - Run the full test suite and a type check, fix anything that fails, and confirm the home page, /pricing, /case-studies, booking submission and team pages still render on desktop and mobile in light and dark mode.
 - At the end, list every file you changed and the test results.
@@ -119,3 +119,11 @@ Content and booking update for Marginwise. Marginwise no longer targets India. M
 - Add a test for the Meet link extraction from a sample Calendar API response (hangoutLink present, entryPoints only, and neither).
 
 17. Team names: keep "Velmurgan" as the display name everywhere; the inbox velmoorthy65@gmail.com and the admin setup are correct, do not change them.
+
+18. Quality bar (we audited the HTML version with our own crawler and fixed these; do the same in the app)
+- Accessibility: day buttons and the logo link must not carry an aria-label that differs from their visible text (axe rule label-content-name-mismatch). Run an axe check on home, /pricing and /case-studies: zero serious or critical violations.
+- Structured data on the home page: JSON-LD with "@type": ["Organization", "ProfessionalService"] (name, url https://marginwise.in/, description, founder Abhimanyu Sharma, areaServed AU/US/GB, offers: Revenue Leak Audit USD 1500, Fixed-price sprint from USD 3900, Monthly retainer from USD 1500 per month) and a FAQPage built from the FAQ items on the page.
+- public/robots.txt: allow all, and explicitly allow GPTBot, OAI-SearchBot, ClaudeBot, PerplexityBot and Google-Extended; point to the sitemap.
+- public/llms.txt: a plain summary of Marginwise, the Find, Fix, Grow offers with prices, the five services, and the booking link (https://marginwise.in/#book).
+- Canonical and og:url should use https://marginwise.in/ if that custom domain is connected to this project; otherwise keep the lovable.app URL.
+- No horizontal scroll at 375px width; Lighthouse mobile performance 90+ and accessibility 95+ on the home page.

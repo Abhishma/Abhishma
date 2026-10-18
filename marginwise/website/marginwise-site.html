@@ -2,12 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<link rel="canonical" href="https://marginwise.in/">
+<meta property="og:title" content="Marginwise | Ecommerce growth for Australia, the US and the UK">
+<meta property="og:description" content="Find what is costing your store margin. Fix it in a fixed-price sprint. Revenue Leak Audit $1,500, sprints from $3,900.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://marginwise.in/">
+<meta name="twitter:card" content="summary">
 <title>Marginwise | Ecommerce growth for Australia, the US and the UK</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Marginwise: performance marketing, CRO, website development, SEO and AI search, and AI solutions for ecommerce brands in Australia, the US and the UK.">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
 </head>
 <body>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": ["Organization", "ProfessionalService"], "name": "Marginwise", "url": "https://marginwise.in/", "description": "Performance marketing, CRO, website development, SEO and AI search, and AI solutions for ecommerce brands in Australia, the US and the UK.", "founder": {"@type": "Person", "name": "Abhimanyu Sharma"}, "areaServed": ["AU", "US", "GB"], "knowsAbout": ["Performance marketing", "Conversion rate optimisation", "Shopify development", "SEO", "Answer engine optimisation", "AI agents for ecommerce"], "makesOffer": [{"@type": "Offer", "name": "Revenue Leak Audit", "price": "1500", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Fixed-price sprint", "priceSpecification": {"@type": "PriceSpecification", "minPrice": "3900", "priceCurrency": "USD"}}, {"@type": "Offer", "name": "Monthly retainer", "priceSpecification": {"@type": "UnitPriceSpecification", "minPrice": "1500", "priceCurrency": "USD", "unitText": "MONTH"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is the call free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It is a 30-minute conversation. If there is a fit, you get a written scope and quote afterwards, in USD, AUD or GBP."}}, {"@type": "Question", "name": "How do I get the meeting invite?", "acceptedAnswer": {"@type": "Answer", "text": "Pick a time and save the Google Calendar invite. We usually confirm within the hour and send a meeting link by email."}}, {"@type": "Question", "name": "Who will I actually speak to?", "acceptedAnswer": {"@type": "Answer", "text": "Abhimanyu leads the first call. If paid media is part of the brief, Velmurgan joins too. If you go ahead, you meet the specialists on your account, and Abhimanyu stays your point of contact."}}, {"@type": "Question", "name": "How much does it cost?", "acceptedAnswer": {"@type": "Answer", "text": "The 2-minute video teardown is free. The Revenue Leak Audit is $1,500. Fixed-price sprints start at $3,900 and monthly retainers at $1,500. Larger builds and AI agents are quoted after the first call, with a written proposal."}}, {"@type": "Question", "name": "Can we speak to a past client?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. After the first call, we can connect you with a client from a similar category or market, with their permission."}}, {"@type": "Question", "name": "Will you sign an NDA?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, if you need one before sharing details. Mention it in the brief and send it with the confirmation."}}, {"@type": "Question", "name": "Do you work with Australian, UK and US brands from India?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Sydney afternoons, the London working day and US mornings all overlap with our hours, so calls happen in your daytime and work moves on overnight. The picker shows each slot in your time zone and ours."}}, {"@type": "Question", "name": "Do you use AI on client work?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, for first-pass audits, drafts and the agents we build. A person reviews every finding and approves anything that touches money, prices or orders. Client data only goes into tools covered by a data processing agreement."}}, {"@type": "Question", "name": "Can you help with rules like the surcharge ban or accessibility?", "acceptedAnswer": {"@type": "Answer", "text": "We implement the changes: checkout, theme, tracking and invoices. Your lawyer or adviser confirms what applies to you. We do not give legal advice."}}, {"@type": "Question", "name": "Can we hire you for one service only?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Many brands start with a CRO audit or an ads account review, then add design or development once the first results are in."}}, {"@type": "Question", "name": "What should I prepare?", "acceptedAnswer": {"@type": "Answer", "text": "Your store URL, rough monthly traffic and ad spend, and the problem in a sentence. Read-only access to GA4 or your ads account helps."}}]}</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -294,7 +303,7 @@ footer{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);display
 <div class="wrap">
   <header class="top">
     <div class="who">
-      <span class="brand" aria-label="Marginwise">
+      <span class="brand">
         <svg viewBox="0 0 40 40" aria-hidden="true">
           <rect x="1" y="1" width="38" height="38" rx="9" fill="var(--ink)"/>
           <rect x="9" y="11" width="22" height="5" rx="1.5" fill="var(--bg)"/>
@@ -753,7 +762,6 @@ footer{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);display
       var w=weekdays[i], b=document.createElement("button");
       b.type="button"; b.className="day"; b.setAttribute("aria-pressed", String(state.day===i));
       b.innerHTML='<span class="dw">'+WD[w.wd]+'</span><span class="dn">'+w.d+'</span><span class="dm">'+MO[w.m]+'</span>';
-      b.setAttribute("aria-label", WD[w.wd]+" "+w.d+" "+MO[w.m]);
       (function(idx){ b.onclick=function(){ state.day=idx; state.slot=null; render(); }; })(i);
       daysEl.appendChild(b);
     }
@@ -765,11 +773,11 @@ footer{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);display
     slotsEl.innerHTML="";
     var w=weekdays[state.day];
     $("slotLabel").textContent = "Times on "+WD[w.wd]+" "+w.d+" "+MO[w.m]+" ("+tzName(state.tz)+")";
-    // Only offer slots between 07:00 and 22:00 in the time zone being shown
+    // Only offer slots between 08:00 and 20:00 in the time zone being shown, so every slot is a working-day time
     var zone = state.tz==="local" ? localTz : state.tz;
     function hourIn(dt){ return parseInt(dt.toLocaleTimeString("en-GB",{hour:"2-digit",hour12:false,timeZone:zone}),10)%24; }
     var visible = [];
-    SLOTS_IST.forEach(function(s,si){ var h=hourIn(istToDate(w.y,w.m,w.d,s[0],s[1])); if(h>=7 && h<22) visible.push(si); });
+    SLOTS_IST.forEach(function(s,si){ var h=hourIn(istToDate(w.y,w.m,w.d,s[0],s[1])); if(h>=8 && h<20) visible.push(si); });
     if(!visible.length) visible = SLOTS_IST.map(function(_,i){ return i; });
     if(state.slot!==null && visible.indexOf(state.slot)<0) state.slot = visible[0];
     SLOTS_IST.forEach(function(s,si){
