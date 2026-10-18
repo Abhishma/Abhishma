@@ -56,14 +56,9 @@ Open decisions:
 ## 3. Profile
 
 - Handle: **@marginwise.in**. @marginwise is taken by another account (checked 12 Oct 2026); @marginwise.in matches the domain and reinforces the URL. Register it now. Unclaimed backups as of 12 Oct 2026: @marginwisehq, @marginwise.co, @marginwise_in.
-- Name field: `Marginwise | D2C CRO & Growth`
-- Bio, until client proof exists:
-  > Performance marketing, CRO, web, SEO/AEO/GEO and AI for ecommerce. Australia, US, UK.
-  > 10 years building D2C and commerce products.
-  > Free 30-min store review below.
+- Name field, bio, links, highlights and pinned posts: see `instagram-profile.md` (updated 18 Oct 2026 to match the website).
+- Bio: "Find what costs your store margin. Fix it in fixed-price sprints. / Performance, CRO, web, SEO/AEO, AI / AU · US · UK / Comment AUDIT for a free teardown".
 - Bio, once proof exists: replace line 2 with one verifiable number, for example "Margin up X% for [named client]", with permission.
-- Highlights: Store teardowns, Results (when available), How we work, Working with us (US/UK), COD/RTO, Book a call.
-- Pinned: (1) audit walkthrough, (2) best teardown, (3) first client testimonial once recorded.
 
 ## 4. Proof plan (new priority)
 

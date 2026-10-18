@@ -49,11 +49,13 @@ market_md = section("market-research-boring-problems.md")
 decision_md = section("market-research-boring-problems.md", "## 0. The decision", "## 1. Where the money")
 kit_md = section("solutions/build-kit.md")
 playbook_md = section("instagram-playbook.md")
+profile_md = section("instagram-profile.md")
 dms_md = section("auto-dm-messages.md")
 
 market = render(market_md, "mk")
 kit = render(kit_md, "kit")
 playbook = render(playbook_md, "ig")
+profile = render("## Instagram profile, updated 18 Oct\n\n" + profile_md.replace("## ", "### "), "igp")
 dms = render(dms_md, "dm")
 decision = render(decision_md.replace("## 0. The decision in ten lines", "## The decision in ten lines"), "st")
 
@@ -112,7 +114,7 @@ ASSETS = [
     ("Auto-DM messages", "ManyChat replies for 8 keywords plus fallbacks", "dms", "Live"),
     ("Lead magnets", "8 PDFs and the USD profit calculator", "magnets", "Live; 3 new ones needed"),
     ("Tools and code", "Store audit crawler and 12 AI agents", "tools", "Built and tested offline"),
-    ("Booking website", "Earlier landing page with slot picker", "tools", "Out of date: still India and US"),
+    ("Booking website", "Landing page with prices and a Sydney, London and US slot picker", "tools", "Live, updated 18 Oct"),
 ]
 asset_rows = "".join(
     f'<tr><td><a href="#{tab}" data-tab="{tab}">{n}</a></td><td>{d}</td><td><span class="pill {"warn" if "Out" in s or "needed" in s else "ok"}">{s}</span></td></tr>'
@@ -130,7 +132,7 @@ start = f"""
 <li>Add an Anthropic API key and run the receptionist and payout reconciliation agents on the demo data. Record those two demo videos from the Solution kit.</li>
 <li>Start wave 1 outreach from day 1 of the 30-day plan (Mon 19 Oct): Australia surcharge offer and US tariff offer.</li>
 <li>Build the 3 missing lead magnets and their ManyChat flows before launching Meta ads.</li>
-<li>Update the booking website: markets are now Australia, US, UK (and Germany, Canada, Saudi Arabia in later waves); remove India, COD and RTO content.</li>
+<li>Paste the new Instagram profile (Instagram tab) and make sure marginwise.in shows the updated website.</li>
 </ol>
 """
 
@@ -167,9 +169,9 @@ export ANTHROPIC_API_KEY=...   # then run an agent for real</code></pre></div>
 <p>Limits: all integrations are mock adapters until connected with client access; OpenAI and Perplexity adapters for the AI search tracker are stubs; German and Arabic wording needs native review; compliance rules are a first screen, not legal advice. The optional server-side refusal fallback is off by default.</p>
 
 <h2 id="tl-site">Booking website</h2>
-<p>The earlier Marginwise landing page with a call slot picker: <a href="https://claude.ai/artifact/VMnKegZXec8AFS6SZd3krg" target="_blank" rel="noopener">open it</a>. It is shared with anyone who has the link.</p>
-<p><span class="pill warn">Out of date</span> It still targets India and the US, shows the COD/RTO stat, says pricing is "on discussion", and lists India hours and INR billing. Update it to the current markets, the Find, Fix, Grow method and the published starting prices ($1,500 audit, sprints from $3,900) before sending traffic to it.</p>
-
+<p>The Marginwise landing page with the booking desk: <a href="https://claude.ai/artifact/VMnKegZXec8AFS6SZd3krg" target="_blank" rel="noopener">open it</a>. Anyone with the link can open it.</p>
+<p><span class="pill ok">Updated 18 Oct</span> Australia, US and UK; five services; Find, Fix, Grow; published prices ($1,500 audit, sprints from $3,900, retainers from $1,500 a month); slot picker in Sydney, London and US Eastern time that only offers daytime slots; calculator in AUD, USD or GBP; the AU surcharge ban replaces the India COD stat.</p>
+<p>To host it on marginwise.in, upload <code>marginwise/website/marginwise-site.html</code> as the home page. Bookings still go to abhimanyu.btti@gmail.com; change <code>HOST_EMAIL</code> in the script if you want them at your marginwise.in address.</p>
 <h2 id="tl-repo">Where the source files are</h2>
 <div class="tw"><table><thead><tr><th>File</th><th>What</th></tr></thead><tbody>
 <tr><td><code>marginwise/market-research-boring-problems.md</code></td><td>Market map source</td></tr>
@@ -183,7 +185,8 @@ export ANTHROPIC_API_KEY=...   # then run an agent for real</code></pre></div>
 """
 
 instagram = f"""
-<h2 id="ig-calendar">Content calendar, 14 Oct to 15 Nov</h2>
+{profile}
+<h2 id="ig-calendar">Content calendar, 14 Oct to 13 Dec</h2>
 <p>The summary is below. The <a href="calendar.html">full calendar</a> has the step-by-step recording instructions, captions with copy buttons, and the tracking columns.</p>
 {cal_table}
 {playbook}

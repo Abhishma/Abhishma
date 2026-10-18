@@ -1,0 +1,918 @@
+<title>Marginwise</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: two-column split. Left = the case for the call, right = a sticky booking desk with a Sydney/London/US slot picker. Stacks on phone. */
+:root{
+  --bg:#F5F6F8; --surface:#FFFFFF; --ink:#16203A; --muted:#5A6378; --line:#DDE1E8;
+  --accent:#1E4FD8; --accent-ink:#FFFFFF; --mark:#F2B632; --soft:#E9EEFB; --ok:#1C7C54; --warn:#B4380B;
+  --f-display:"Young Serif", Georgia, "Times New Roman", serif;
+  --f-body:"Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1220; --surface:#161C2E; --ink:#E7EAF2; --muted:#9AA3B8; --line:#2A3247;
+  --accent:#7C9BFF; --accent-ink:#0E1220; --mark:#F2B632; --soft:#1C2540; --ok:#4CC08C; --warn:#FF9466; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1220; --surface:#161C2E; --ink:#E7EAF2; --muted:#9AA3B8; --line:#2A3247;
+  --accent:#7C9BFF; --accent-ink:#0E1220; --mark:#F2B632; --soft:#1C2540; --ok:#4CC08C; --warn:#FF9466; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--f-body);padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));-webkit-font-smoothing:antialiased}
+.wrap{max-width:1160px;margin:0 auto;padding-block:28px 72px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;line-height:1.12;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.label{font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* top bar */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.who{display:flex;align-items:center;gap:12px}
+.mono{width:40px;height:40px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font:18px var(--f-display)}
+.who b{display:block;font-weight:600;line-height:1.2}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.brand svg{width:40px;height:40px;flex:none}
+.word{font:26px/1 var(--f-display);letter-spacing:-.01em}
+.word i{font-style:normal;color:var(--accent)}
+.who .by{display:block;font-size:13px;color:var(--muted);margin-top:4px}
+.who span{font-size:14px;color:var(--muted)}
+.avail{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 20%,transparent)}
+
+/* grid */
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);grid-template-areas:"hero desk" "rest desk";column-gap:56px;row-gap:0;padding-top:48px;align-items:start}
+.hero{grid-area:hero}.desk{grid-area:desk}.rest{grid-area:rest;min-width:0}
+@media (max-width:900px){.grid{grid-template-columns:1fr;grid-template-areas:"hero" "desk" "rest";row-gap:40px}}
+
+.hero h1{font-size:clamp(36px,5.2vw,60px);letter-spacing:-.01em}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,color-mix(in srgb,var(--mark) 55%,transparent) 62%)}
+.hero .lede{font-size:19px;color:var(--muted);max-width:56ch;margin-top:20px}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.fact{font:500 13px/1 var(--f-mono);padding:9px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px;align-items:center}
+.hero-cta a{text-decoration:none;display:inline-flex;align-items:center}
+.assure{list-style:none;margin:20px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--muted)}
+.assure li{display:flex;gap:8px;align-items:center}
+.assure li::before{content:"";width:14px;height:8px;border-left:2px solid var(--ok);border-bottom:2px solid var(--ok);transform:rotate(-45deg) translateY(-3px)}
+.leave{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.leave{grid-template-columns:1fr}}
+.leave div{display:grid;gap:6px;padding-top:16px;border-top:2px solid var(--ink)}
+.leave b{font-weight:600}
+.leave p{font-size:15px;color:var(--muted)}
+.models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.models{grid-template-columns:1fr}}
+.models div{border:1px solid var(--line);border-radius:var(--r);padding:20px;background:var(--surface);display:grid;gap:8px;align-content:start}
+.models h3{font:600 17px/1.3 var(--f-body)}
+.models p{font-size:15px;color:var(--muted)}
+.models .label{color:var(--accent)}
+.band{margin-top:72px;background:var(--ink);color:var(--bg);border-radius:14px;padding:40px clamp(20px,4vw,48px);display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.band h2{font-size:clamp(26px,3.4vw,36px);max-width:22ch}
+.band p{color:color-mix(in srgb,var(--bg) 75%,transparent);margin-top:8px}
+.band .cta{background:var(--mark);color:#16203A;text-decoration:none}
+.mbar{position:fixed;left:0;right:0;bottom:0;z-index:5;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);display:none;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 -10px 30px -20px color-mix(in srgb,var(--ink) 40%,transparent)}
+.mbar span{font-size:14px;color:var(--muted)}
+.mbar .cta{text-decoration:none;padding:12px 16px;font-size:15px}
+@media (max-width:900px){.mbar.show{display:flex}}
+
+/* numbers */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:32px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+@media (max-width:560px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stats div{padding:16px 12px 16px 0;display:grid;gap:4px}
+.stats b{font:400 34px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.stats span{font-size:13px;color:var(--muted);line-height:1.35}
+.calc{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.calc-in{align-items:end;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:20px;border-bottom:1px solid var(--line)}
+@media (max-width:640px){.calc-in{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.calc-in .field input{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.calc-out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:640px){.calc-out{grid-template-columns:1fr}}
+.calc-out div{padding:20px;display:grid;gap:6px;align-content:start}
+.calc-out div+div{border-left:1px solid var(--line)}
+@media (max-width:640px){.calc-out div+div{border-left:0;border-top:1px solid var(--line)}}
+.calc-out b{font:400 30px/1.05 var(--f-display);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.calc-out .hl{background:var(--soft)}
+.calc-out .hl b{color:var(--accent)}
+.calc-out small{font-size:13px;color:var(--muted)}
+.calc-note{padding:12px 20px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.calc-note .pill{font:500 11px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:999px;background:var(--soft);color:var(--accent)}
+.lifts{display:flex;gap:4px;padding:4px;background:var(--soft);border-radius:8px}
+.lifts button{font:500 12px/1 var(--f-mono);border:0;background:transparent;color:var(--muted);padding:8px 10px;border-radius:6px;cursor:pointer}
+.lifts button[aria-pressed="true"]{background:var(--surface);color:var(--ink)}
+
+/* evidence */
+.evid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.evid{grid-template-columns:1fr}}
+.evid article{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:20px;display:grid;gap:10px;align-content:start}
+.evid .fig{font:400 40px/1 var(--f-display);font-variant-numeric:tabular-nums;color:var(--ink)}
+.evid .fig small{font:500 13px/1 var(--f-mono);color:var(--muted);margin-left:6px}
+.evid p{font-size:15px}
+.evid .do{font-size:14px;color:var(--muted);padding-top:10px;border-top:1px dashed var(--line)}
+.evid .do b{color:var(--ink);font-weight:600}
+.evid cite{font:normal 12px/1.4 var(--f-mono);color:var(--muted)}
+.evid cite a{color:var(--accent)}
+.intro{color:var(--muted);max-width:62ch;margin:-8px 0 20px}
+/* method */
+.formula{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:18px 20px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);font:500 15px/1.3 var(--f-mono);margin-bottom:20px}
+.formula span{padding:8px 12px;border-radius:6px;background:var(--soft)}
+.formula em{font-style:normal;color:var(--muted)}
+.formula .res{background:var(--ink);color:var(--bg)}
+
+.plans{display:grid;gap:16px}
+.plans article{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"lab ul" "h ul" "p ul" "price cta";grid-template-rows:auto auto 1fr auto;column-gap:28px;row-gap:8px;align-items:start}
+@media (max-width:640px){.plans article{grid-template-columns:1fr;grid-template-rows:none;grid-template-areas:"lab" "h" "p" "ul" "price" "cta"}}
+.plans article>.label{grid-area:lab}.plans h3{grid-area:h;font-size:22px}.plans article>p:not(.label){grid-area:p;font-size:15px;color:var(--muted)}
+.plans ul{grid-area:ul;margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:14px}
+.plans li{padding-left:16px;position:relative}
+.plans li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--mark)}
+.price{grid-area:price;padding-top:12px;border-top:1px dashed var(--line);display:grid;gap:2px;margin-top:6px}
+.price b{font:400 22px/1.2 var(--f-display)}
+.price span{font-size:13px;color:var(--muted)}
+.plans a{grid-area:cta;align-self:end;padding:13px 16px;font-size:15px;line-height:1;text-decoration:none;justify-content:center;text-align:center}
+.plans article.feat{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.plans article.feat>.label{color:var(--accent)}
+section{margin-top:56px}
+.leads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.leads{grid-template-columns:1fr}}
+.lead-card{display:flex;gap:20px;align-items:flex-start;padding:22px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.lead-copy{display:grid;gap:6px;min-width:0}
+.lead-copy h3{font-size:24px}
+.lead-copy p:last-child{color:var(--muted);font-size:15px;max-width:60ch}
+.mono.big{width:56px;height:56px;font-size:26px;flex:none}
+.crew{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:20px}
+@media (max-width:760px){.crew{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.crew div{display:grid;gap:4px;padding-top:14px;border-top:2px solid var(--ink)}
+.crew b{font-weight:600;font-size:15px}
+.crew p{font-size:14px;color:var(--muted)}
+#book,[id^="h-"]{scroll-margin-top:20px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media (max-width:900px){.wrap{padding-block-end:110px}}
+section>h2{font-size:28px;margin-bottom:20px}
+
+/* topics */
+.topics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+@media (max-width:560px){.topics{grid-template-columns:1fr}}
+.topic{background:var(--surface);padding:22px;display:grid;gap:8px;align-content:start}
+.topic h3{font:600 17px/1.3 var(--f-body)}
+.topic p{font-size:15px;color:var(--muted)}
+.topic .stack{font:12px/1.5 var(--f-mono);color:var(--accent)}
+
+/* market toggle + services */
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.sec-head h2{font-size:28px}
+.seg{display:flex;gap:4px;padding:4px;background:var(--soft);border-radius:8px;max-width:100%}
+.seg button{font:600 13px/1 var(--f-body);border:0;background:transparent;color:var(--muted);padding:9px 14px;border-radius:6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px color-mix(in srgb,var(--ink) 15%,transparent)}
+.svc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+@media (max-width:560px){.svc{grid-template-columns:1fr}}
+.svc article{background:var(--surface);padding:22px;display:grid;gap:10px;align-content:start}
+.svc .tag{font:500 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.svc h3{font:600 18px/1.3 var(--f-body)}
+.svc p{font-size:15px;color:var(--muted)}
+.svc ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:14px}
+.svc li{padding-left:16px;position:relative}
+.svc li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--mark)}
+.svc .stack{font:12px/1.5 var(--f-mono);color:var(--ink);padding-top:10px;border-top:1px dashed var(--line)}
+.svc .stack span{color:var(--muted)}
+.svc article:last-child:nth-child(odd){grid-column:1/-1}
+.mk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.mk{grid-template-columns:1fr}}
+.mk>div{border:1px solid var(--line);border-radius:var(--r);padding:20px;background:var(--surface);display:grid;gap:10px;align-content:start}
+.mk h3{font-size:22px}
+.mk dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;font-size:14px}
+.mk dt{font:500 12px/1.6 var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.mk dd{margin:0}
+
+/* steps (a real sequence) */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.steps li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:16px;padding:18px 0;border-top:1px solid var(--line)}
+.steps li:last-child{border-bottom:1px solid var(--line)}
+.steps .t{font:500 13px/1.6 var(--f-mono);color:var(--muted)}
+.steps b{display:block;font-weight:600}
+.steps p{color:var(--muted);font-size:15px}
+
+/* fit */
+.fit{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+@media (max-width:560px){.fit{grid-template-columns:1fr}}
+.fit ul{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.fit li{padding-left:22px;position:relative;font-size:15px}
+.fit li::before{content:"";position:absolute;left:0;top:.62em;width:10px;height:2px;background:var(--ok)}
+.fit .no li::before{background:var(--muted)}
+.fit .no li{color:var(--muted)}
+
+/* faq */
+details{border-top:1px solid var(--line);padding:16px 0}
+details:last-of-type{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:400 20px/1 var(--f-mono);color:var(--muted);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--muted);margin-top:10px;max-width:62ch;font-size:15px}
+
+/* booking desk */
+.desk{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 0 var(--line),0 24px 48px -28px color-mix(in srgb,var(--ink) 35%,transparent);overflow:hidden}
+@media (max-width:900px){.desk{position:static}}
+.desk-head{padding:22px 24px 18px;border-bottom:1px solid var(--line);display:grid;gap:6px}
+.desk-head h2{font-size:24px}
+.desk-head p{font-size:14px;color:var(--muted)}
+.desk-body{padding:20px 24px 24px;display:grid;gap:22px}
+
+.tz{display:flex;gap:4px;padding:4px;background:var(--soft);border-radius:8px;width:max-content;max-width:100%}
+.tz button{font:500 12px/1 var(--f-mono);border:0;background:transparent;color:var(--muted);padding:8px 10px;border-radius:6px;cursor:pointer}
+.tz button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px color-mix(in srgb,var(--ink) 15%,transparent)}
+
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.day{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:10px 4px;cursor:pointer;display:grid;gap:2px;text-align:center;font:inherit}
+.day .dw{font:500 11px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.day .dn{font:20px/1.1 var(--f-display)}
+.day .dm{font-size:11px;color:var(--muted)}
+.day:hover{border-color:var(--accent)}
+.day[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.day[aria-pressed="true"] .dw,.day[aria-pressed="true"] .dm{color:color-mix(in srgb,var(--bg) 70%,transparent)}
+.weeknav{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.weeknav button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;width:32px;height:32px;cursor:pointer;font:16px var(--f-mono)}
+.weeknav button:disabled{opacity:.35;cursor:not-allowed}
+
+.slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+
+.slot{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:11px 12px;cursor:pointer;text-align:left;font:inherit;display:grid;gap:2px}
+.slot .main{font:500 15px/1.2 var(--f-mono);font-variant-numeric:tabular-nums}
+.slot .alt{font:12px/1.2 var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.slot:hover{border-color:var(--accent)}
+.slot[aria-pressed="true"]{border-color:var(--accent);background:var(--soft);box-shadow:inset 0 0 0 1px var(--accent)}
+
+form{display:grid;gap:14px}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:480px){.row2{grid-template-columns:1fr}}
+.field{display:grid;gap:6px;min-width:0}
+.field label{font-size:13px;font-weight:600}
+.field input,.field select,.field textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+.field textarea{resize:vertical;min-height:84px}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.err{font-size:13px;color:var(--warn)}
+.err:empty{display:none}
+.opt{font-weight:400;color:var(--muted)}
+.picked{font:13px/1.4 var(--f-mono);color:var(--muted);padding:10px 12px;border:1px dashed var(--line);border-radius:8px}
+.picked.on{color:var(--ink);border-style:solid;border-color:var(--accent);background:var(--soft)}
+.cta{font:600 16px/1 var(--f-body);background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:15px 18px;cursor:pointer;transition:transform .15s,filter .15s}
+.cta:hover{filter:brightness(1.08)}
+.cta:active{transform:translateY(1px)}
+.fine{font-size:12px;color:var(--muted);text-align:center}
+
+.done{display:grid;gap:14px}
+.done h3{font-size:24px}
+.done pre{margin:0;white-space:pre-wrap;font:13px/1.55 var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;max-height:260px;overflow:auto}
+.addr{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font:14px var(--f-mono)}
+.ghost{font:600 14px/1 var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:11px 14px;cursor:pointer}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.alt-send{border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.alt-send summary{font-size:14px}
+.alt-send:last-of-type{border-bottom:1px solid var(--line)}
+
+footer{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+
+@media (prefers-reduced-motion:no-preference){
+  .hero>*{animation:rise .6s cubic-bezier(.2,.7,.2,1) both}
+  .hero>*:nth-child(2){animation-delay:.06s}.hero>*:nth-child(3){animation-delay:.12s}.hero>*:nth-child(4){animation-delay:.18s}
+  @keyframes rise{from{transform:translateY(8px)}to{transform:none}}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="who">
+      <span class="brand" aria-label="Marginwise">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <rect x="1" y="1" width="38" height="38" rx="9" fill="var(--ink)"/>
+          <rect x="9" y="11" width="22" height="5" rx="1.5" fill="var(--bg)"/>
+          <rect x="9" y="19" width="15" height="5" rx="1.5" fill="var(--bg)"/>
+          <rect x="25" y="19" width="6" height="5" rx="1.5" fill="var(--mark)"/>
+          <rect x="9" y="27" width="22" height="2" rx="1" fill="var(--bg)" opacity=".45"/>
+        </svg>
+        <span><span class="word">Margin<i>wise</i></span><span class="by">Ecommerce growth, built with AI</span></span>
+      </span>
+    </div>
+    <div class="avail"><span class="dot" aria-hidden="true"></span>Working with brands in Australia, the US and the UK</div>
+  </header>
+
+  <main class="grid">
+      <div class="hero">
+        <p class="label">Ecommerce growth · 30-minute call</p>
+        <h1 style="margin-top:14px">Find what is costing your store <em>margin</em>. Fix it in a fixed-price sprint.</h1>
+        <p class="lede">Marginwise runs performance marketing, CRO, website development, SEO and AI search, and AI solutions for ecommerce brands in Australia, the US and the UK. Every engagement is led by Abhimanyu Sharma, who has ten years of experience building D2C, omnichannel and loyalty products on Shopify, Salesforce and ERP systems. On the call we look at your store, your funnel and your numbers, and agree where to start.</p>
+        <div class="facts">
+          <span class="fact">30 min</span>
+          <span class="fact">Google Meet or Zoom</span>
+          <span class="fact">Sydney, London and US hours</span>
+          <span class="fact">No sales pitch</span>
+        </div>
+        <div class="hero-cta">
+          <a class="cta" href="#book" data-cta="hero_primary">Pick a time</a>
+          <a class="ghost" href="#h-svc" data-cta="hero_services">See services</a>
+        </div>
+        <ul class="assure">
+          <li>Reply within one working day</li>
+          <li>NDA on request</li>
+          <li>No obligation to hire</li>
+        </ul>
+        <div class="stats" aria-label="Marginwise in numbers">
+          <div><b>10</b><span>years building D2C and commerce products</span></div>
+          <div><b>5</b><span>services under one team</span></div>
+          <div><b>3</b><span>markets: Australia, the US and the UK</span></div>
+          <div><b>1</b><span>working day to reply to every request</span></div>
+        </div>
+      </div>
+
+    <aside class="desk" id="book" aria-labelledby="h-book">
+      <div class="desk-head">
+        <p class="label">Request a time</p>
+        <h2 id="h-book">Pick a slot that works</h2>
+        <p>Times are proposals. We confirm by email with an invite.</p>
+      </div>
+      <div class="desk-body" id="bookView">
+        <div class="tz" role="group" aria-label="Show times in">
+          <button type="button" data-tz="Australia/Sydney" aria-pressed="true">Sydney</button>
+          <button type="button" data-tz="Europe/London" aria-pressed="false">London</button>
+          <button type="button" data-tz="America/New_York" aria-pressed="false">US Eastern</button>
+          <button type="button" data-tz="local" aria-pressed="false" id="tzLocal">Your time</button>
+        </div>
+
+        <div style="display:grid;gap:10px">
+          <div class="weeknav">
+            <span class="label" id="weekLabel">This week</span>
+            <div style="display:flex;gap:6px">
+              <button type="button" id="prevWk" aria-label="Previous week">&lsaquo;</button>
+              <button type="button" id="nextWk" aria-label="Next week">&rsaquo;</button>
+            </div>
+          </div>
+          <div class="days" id="days" role="group" aria-label="Choose a day"></div>
+        </div>
+
+        <div style="display:grid;gap:10px">
+          <span class="label" id="slotLabel">Available times</span>
+          <div class="slots" id="slots" role="group" aria-label="Choose a time"></div>
+        </div>
+
+        <form id="form" novalidate>
+          <div class="picked" id="picked">No time selected yet</div>
+          <div class="row2">
+            <div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" required></div>
+            <div class="field"><label for="f-email">Work email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="f-market">Market</label>
+              <select id="f-market" name="market"><option>Australia</option><option>New Zealand</option><option>United States</option><option>United Kingdom</option><option>Canada</option><option>Other</option></select>
+            </div>
+            <div class="field"><label for="f-url">Store URL <span class="opt">(optional)</span></label><input id="f-url" name="url" inputmode="url" placeholder="yourbrand.com"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="f-co">Company <span class="opt">(optional)</span></label><input id="f-co" name="company" autocomplete="organization"></div>
+            <div class="field"><label for="f-topic">Topic</label>
+              <select id="f-topic" name="topic">
+                <option>Store leak audit</option>
+                <option>Performance marketing</option>
+                <option>Conversion rate optimisation</option>
+                <option>Website development</option>
+                <option>SEO and AI search</option>
+                <option>AI solutions and automation</option>
+                <option>More than one of these</option>
+                <option>Not sure yet</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label for="f-brief">The problem in two or three lines <span class="opt">(optional)</span></label><textarea id="f-brief" name="brief" placeholder="Example: Our checkout still adds a card surcharge and Meta CAC is up. We sell skincare on Shopify in Australia."></textarea></div>
+          <p class="err" id="err" role="alert"></p>
+          <button class="cta" type="submit" data-cta="form_submit">Continue to calendar invite</button>
+          <p class="fine">Your details are only used to arrange the call. Times shown in your chosen time zone.</p>
+        </form>
+      </div>
+
+      <div class="desk-body done" id="doneView" hidden>
+        <p class="label" style="color:var(--ok)">One step left</p>
+        <h3>Send the calendar invite</h3>
+        <p style="color:var(--muted);font-size:15px">Google Calendar opens with the call filled in: time, agenda and your brief. Press Save to book. Your slot is usually confirmed within the hour, and the meeting link follows by email.</p>
+        <a class="cta" id="gcal" href="#" target="_blank" rel="noopener" data-cta="gcal_invite" style="text-decoration:none;text-align:center">Send invite with Google Calendar</a>
+        <a class="ghost" id="liveCal" href="#" target="_blank" rel="noopener" data-cta="live_calendar" style="text-decoration:none;text-align:center" hidden>See live availability instead</a>
+        <details class="alt-send">
+          <summary>Not on Google Calendar? Email the request instead</summary>
+          <div style="display:grid;gap:12px;margin-top:12px">
+            <div class="addr"><span id="addr">abhimanyu.btti@gmail.com</span><button type="button" class="ghost" id="copyAddr">Copy address</button></div>
+            <pre id="summary"></pre>
+            <button type="button" class="ghost" id="copySum">Copy request</button>
+          </div>
+        </details>
+        <button type="button" class="ghost" id="back">Change time</button>
+        <p class="fine" id="copyNote" aria-live="polite"></p>
+      </div>
+    </aside>
+
+      <div class="rest">
+      <section aria-labelledby="h-leave">
+        <h2 id="h-leave">What you leave the call with</h2>
+        <div class="leave">
+          <div><b>Your top three leaks</b><p>Where traffic, carts or ad spend are being lost, ranked by likely revenue impact.</p></div>
+          <div><b>One fix to start this week</b><p>A change your team can ship without waiting on a redesign or new budget.</p></div>
+          <div><b>A written summary</b><p>The findings and next steps by email, so you can share them with your team.</p></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-calc">
+        <div class="sec-head">
+          <h2 id="h-calc">What a small conversion lift is worth</h2>
+          <div class="lifts" role="group" aria-label="Conversion lift">
+            <button type="button" data-lift="0.1" aria-pressed="false">+10%</button>
+            <button type="button" data-lift="0.2" aria-pressed="true">+20%</button>
+            <button type="button" data-lift="0.3" aria-pressed="false">+30%</button>
+          </div>
+        </div>
+        <div class="calc">
+          <div class="calc-in">
+            <div class="field"><label for="c-sess">Sessions a month</label><input id="c-sess" type="number" min="0" step="1000" inputmode="numeric"></div>
+            <div class="field"><label for="c-cr">Conversion %</label><input id="c-cr" type="number" min="0" max="100" step="0.1" inputmode="decimal"></div>
+            <div class="field"><label for="c-aov">Avg order <span class="opt" id="c-cur">(AUD)</span></label><input id="c-aov" type="number" min="0" step="5" inputmode="numeric"></div>
+            <div class="field"><label for="c-gm">Margin %</label><input id="c-gm" type="number" min="0" max="100" step="1" inputmode="numeric"></div>
+          </div>
+          <div class="calc-out" aria-live="polite">
+            <div><small>Revenue today, per month</small><b id="o-rev">–</b><small id="o-orders">–</small></div>
+            <div><small id="o-liftlabel">Extra revenue at +20% conversion</small><b id="o-extra">–</b><small id="o-cr">–</small></div>
+            <div class="hl"><small>Extra gross margin per year</small><b id="o-gm">–</b><small>Same traffic, no extra ad spend</small></div>
+          </div>
+          <div class="calc-note"><span><span class="pill" id="c-pill">Example store</span> Replace the figures with your own. Lifts are scenarios to plan with, not a promise of results.</span></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-evid">
+        <h2 id="h-evid">Where ecommerce revenue leaks</h2>
+        <p class="intro">Most stores lose revenue in the same places. These are the published benchmarks we audit against, and what we do about each one.</p>
+        <div class="evid">
+          <article>
+            <div class="fig">70.22%<small>of carts</small></div>
+            <p>are abandoned on average, across 50 studies of online shopping behaviour.</p>
+            <p class="do"><b>What we do:</b> map every step from cart to payment and remove the reasons shoppers leave, starting with surprise costs and forced account creation.</p>
+            <cite>Source: <a href="https://baymard.com/lists/cart-abandonment-rate" target="_blank" rel="noopener">Baymard Institute, cart abandonment rate</a></cite>
+          </article>
+          <article>
+            <div class="fig">35%<small>higher conversion</small></div>
+            <p>is what the average large ecommerce site can gain through better checkout design alone.</p>
+            <p class="do"><b>What we do:</b> score your checkout against usability guidelines, then test the highest-impact fixes first.</p>
+            <cite>Source: <a href="https://baymard.com/research/checkout-usability" target="_blank" rel="noopener">Baymard Institute, checkout usability research</a></cite>
+          </article>
+          <article>
+            <div class="fig">8.4%<small>more conversions</small></div>
+            <p>for retail sites from a 0.1-second improvement in mobile site speed, in a study of 37 brands.</p>
+            <p class="do"><b>What we do:</b> find the apps, scripts and images slowing your store, and fix speed before spending more on traffic.</p>
+            <cite>Source: <a href="https://www.thedrum.com/opinion/milliseconds-make-millions-report-finds-faster-site-speed-increases-revenue-brands" target="_blank" rel="noopener">Deloitte Digital and Google, Milliseconds Make Millions (2020), via The Drum</a></cite>
+          </article>
+          <article>
+            <div class="fig">1 Oct<small>2026</small></div>
+            <p>is when Australian merchants had to stop surcharging Visa, Mastercard and eftpos card payments.</p>
+            <p class="do"><b>What we do:</b> remove surcharge logic from the theme, apps and checkout, then show your margin by product after card fees so you can absorb, reprice or steer customers to cheaper ways to pay.</p>
+            <cite>Source: <a href="https://rba.gov.au/media-releases/2026/mr-26-10.html" target="_blank" rel="noopener">Reserve Bank of Australia, media release 2026-10</a></cite>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-svc">
+        <div class="sec-head">
+          <h2 id="h-svc">Services</h2>
+          <div class="seg" role="group" aria-label="Show stack for">
+            <button type="button" data-mk="au" aria-pressed="true">Australia</button>
+            <button type="button" data-mk="us" aria-pressed="false">US</button>
+            <button type="button" data-mk="uk" aria-pressed="false">UK</button>
+          </div>
+        </div>
+        <div class="svc">
+          <article>
+            <span class="tag">Performance marketing</span>
+            <h3>Paid acquisition that pays back</h3>
+            <p>Campaigns planned around contribution margin and repeat purchase, not just ROAS on the dashboard.</p>
+            <ul><li>Account and tracking audit, including server-side tracking</li><li>Creative testing plan and campaign structure</li><li>Weekly reporting tied to CAC and margin</li></ul>
+            <div class="stack" data-au="Meta · Google Ads · Performance Max · profit-based reporting" data-us="Meta · Google Ads · TikTok · Conversions API" data-uk="Meta · Google Ads · TikTok · Consent Mode v2"></div>
+          </article>
+          <article>
+            <span class="tag">CRO</span>
+            <h3>Conversion rate optimisation</h3>
+            <p>Find where shoppers drop off between landing page and payment, then fix it with tested changes.</p>
+            <ul><li>Funnel, session-recording and accessibility audit</li><li>Prioritised test backlog with expected impact</li><li>A/B tests on product pages, cart and checkout</li></ul>
+            <div class="stack" data-au="GA4 · Clarity · Afterpay and Zip in checkout · Shopify Plus" data-us="GA4 · Hotjar · Shop Pay, Apple Pay and Affirm · WCAG 2.2 fixes" data-uk="GA4 · Clarity · Klarna and Clearpay · Shopify Plus"></div>
+          </article>
+          <article>
+            <span class="tag">Website development</span>
+            <h3>Shopify and custom builds</h3>
+            <p>New stores, migrations and the integrations behind them, scoped as fixed releases.</p>
+            <ul><li>Shopify and Shopify Plus builds, B2B and wholesale</li><li>Migrations from Magento, WooCommerce and Salesforce Commerce Cloud</li><li>ERP, accounting, CRM and carrier integrations</li></ul>
+            <div class="stack" data-au="Shopify Plus · Cin7, Unleashed, MYOB and Xero · Shippit and Starshipit" data-us="Shopify Plus · NetSuite and QuickBooks · Salesforce" data-uk="Shopify Plus · Xero · Royal Mail, DPD and Evri"></div>
+          </article>
+          <article>
+            <span class="tag">SEO, AEO and GEO</span>
+            <h3>Found on Google and in AI answers</h3>
+            <p>Shoppers now ask ChatGPT, Perplexity and Google's AI what to buy. We work on both the search results and the answers.</p>
+            <ul><li>Technical SEO and product page content</li><li>Product, Offer, Review and FAQ schema</li><li>Monthly test of which brands AI assistants name</li></ul>
+            <div class="stack" data-au="Google Search Console · schema · AI answer tracking" data-us="Google Search Console · schema · AI answer tracking" data-uk="Google Search Console · schema · AI answer tracking"></div>
+          </article>
+          <article>
+            <span class="tag">AI solutions</span>
+            <h3>AI that takes boring work off your team</h3>
+            <p>Agents we build and connect to your stack, with a person approving anything that touches money, prices or orders.</p>
+            <ul><li>Support agent for order status, returns and exchanges</li><li>ERP sync exception agent and payout reconciliation</li><li>Lead triage and AI phone receptionist</li></ul>
+            <div class="stack" data-au="Shopify · Gorgias · Xero · Cin7" data-us="Shopify · Gorgias · NetSuite · Salesforce" data-uk="Shopify · Gorgias · Xero · Klaviyo"></div>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-method">
+        <h2 id="h-method">How we work: Find, Fix, Grow</h2>
+        <div class="formula" aria-label="Revenue equals sessions times conversion rate times average order value, measured on contribution margin">
+          <span>Sessions</span><em>×</em><span>Conversion</span><em>×</em><span>Order value</span><em>=</em><span class="res">Revenue, measured on margin</span>
+        </div>
+        <ol class="steps">
+          <li><span class="t">Week 1–2</span><div><b>Find</b><p>A paid audit. Our audit tool checks speed, accessibility, tracking, checkout, local rules and AI search readiness; a person reviews every finding and ranks the fixes by revenue.</p></div></li>
+          <li><span class="t">Week 2–6</span><div><b>Fix</b><p>A fixed-scope sprint with written acceptance criteria and a daily video update. You know the price before we start.</p></div></li>
+          <li><span class="t">Monthly</span><div><b>Grow</b><p>An optional retainer for CRO, performance marketing, AI search and agent monitoring, reported on profit, not ROAS.</p></div></li>
+        </ol>
+      </section>
+
+      <section aria-labelledby="h-models">
+        <div class="sec-head">
+          <h2 id="h-models">Plans</h2>
+          <span class="label">Prices in USD · billed in USD, AUD or GBP</span>
+        </div>
+        <div class="plans">
+          <article>
+            <p class="label">Find</p>
+            <h3>Revenue Leak Audit</h3>
+            <p>A two-week review of your store, tracking and checkout, with a written plan ranked by revenue. Start with a free 2-minute video teardown if you want to test the fit first.</p>
+            <ul><li>30-point store audit and tracking check</li><li>Checkout, speed and accessibility review</li><li>AI search visibility test</li><li>Written plan and walkthrough call</li></ul>
+            <div class="price"><b>$1,500</b><span>Fixed fee, credited against a sprint within 60 days</span></div>
+            <a class="ghost" href="#book" data-cta="plan_audit">Discuss this plan</a>
+          </article>
+          <article class="feat">
+            <p class="label">Fix · most popular</p>
+            <h3>Fixed-price sprint</h3>
+            <p>One problem, solved end to end with a fixed scope, price and acceptance criteria.</p>
+            <ul><li>Checkout and payment fixes, including the Australian surcharge ban</li><li>Tracking, consent and accessibility fixes</li><li>Shopify and ERP sync repairs with an AI exception agent</li><li>Tariff and landed-cost margin model</li></ul>
+            <div class="price"><b>From $3,900</b><span>Fixed fee, 50% upfront and 50% on acceptance</span></div>
+            <a class="cta" href="#book" data-cta="plan_sprint">Discuss this plan</a>
+          </article>
+          <article>
+            <p class="label">Grow</p>
+            <h3>Monthly retainer</h3>
+            <p>Ongoing growth work from one team, reviewed against profit every month. Builds and migrations are quoted per project.</p>
+            <ul><li>Performance marketing on Meta, Google and TikTok</li><li>CRO testing roadmap</li><li>AI search visibility work</li><li>AI agent monitoring and tuning</li></ul>
+            <div class="price"><b>From $1,500 a month</b><span>3-month minimum, then 30 days' notice</span></div>
+            <a class="ghost" href="#book" data-cta="plan_retainer">Discuss this plan</a>
+          </article>
+        </div>
+        <p class="intro" style="margin:16px 0 0">Larger builds, migrations and AI agents are quoted after the first call, once we have seen your store and numbers. Compliance work is implementation only: your lawyer or adviser confirms the requirements.</p>
+      </section>
+
+      <section aria-labelledby="h-mk">
+        <h2 id="h-mk">Where we work</h2>
+        <div class="mk">
+          <div>
+            <p class="label">Australia</p>
+            <h3>Shopify brands protecting margin</h3>
+            <dl>
+              <dt>Hours</dt><dd>Sydney midday to evening</dd>
+              <dt>Focus</dt><dd>Surcharge ban, Afterpay and shipping costs, Cin7, MYOB and Xero sync</dd>
+              <dt>Billing</dt><dd>AUD</dd>
+            </dl>
+          </div>
+          <div>
+            <p class="label">United States</p>
+            <h3>Brands growing through tariffs</h3>
+            <dl>
+              <dt>Hours</dt><dd>US mornings, Eastern and Pacific</dd>
+              <dt>Focus</dt><dd>Landed cost and pricing, accessibility, NetSuite and QuickBooks sync</dd>
+              <dt>Billing</dt><dd>USD</dd>
+            </dl>
+          </div>
+          <div>
+            <p class="label">United Kingdom</p>
+            <h3>Stores fixing checkout and tracking</h3>
+            <dl>
+              <dt>Hours</dt><dd>The London working day</dd>
+              <dt>Focus</dt><dd>Checkout conversion, consent and tracking, Klarna and Clearpay</dd>
+              <dt>Billing</dt><dd>GBP</dd>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-team">
+        <h2 id="h-team">Who you work with</h2>
+        <div class="leads">
+          <div class="lead-card">
+            <div class="mono big" aria-hidden="true">A</div>
+            <div class="lead-copy">
+              <p class="label">Founder and team lead</p>
+              <h3>Abhimanyu Sharma</h3>
+              <p>Ten years building D2C ecommerce, B2B SaaS, omnichannel and loyalty products for multi-brand retailers. Abhimanyu joins your first call, sets the plan and reviews the work before it reaches you.</p>
+            </div>
+          </div>
+          <div class="lead-card">
+            <div class="mono big" aria-hidden="true">V</div>
+            <div class="lead-copy">
+              <p class="label">Performance marketing lead</p>
+              <h3>Velmurgan</h3>
+              <p>Leads paid acquisition across Meta, Google and TikTok: account structure, creative testing, budgets and the weekly reporting tied to CAC and margin.</p>
+            </div>
+          </div>
+        </div>
+        <div class="crew">
+          <div><b>CRO and analytics</b><p>Funnel audits, tracking and A/B tests</p></div>
+          <div><b>Performance marketing</b><p>Led by Velmurgan. Meta, Google and TikTok campaigns</p></div>
+          <div><b>Web development</b><p>Shopify, custom builds and integrations</p></div>
+          <div><b>AI and automation</b><p>Agents, sync and reconciliation</p></div>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-flow">
+        <h2 id="h-flow">How the call runs</h2>
+        <ol class="steps">
+          <li><span class="t">Before</span><div><b>You send a short brief</b><p>Two or three lines in the form on this page. We read it and come prepared with questions.</p></div></li>
+          <li><span class="t">0–5 min</span><div><b>Context</b><p>Your business, your stack and the decision that is stuck.</p></div></li>
+          <li><span class="t">5–25 min</span><div><b>Working session</b><p>We break the problem down, test assumptions and look at options with their trade-offs.</p></div></li>
+          <li><span class="t">25–30 min</span><div><b>Next step</b><p>One recommended move, what it depends on and what could go wrong.</p></div></li>
+          <li><span class="t">After</span><div><b>Written summary</b><p>A short email with the recommendation and any resources we discussed.</p></div></li>
+        </ol>
+      </section>
+
+      <section aria-labelledby="h-fit">
+        <h2 id="h-fit">Is this call for you?</h2>
+        <div class="fit">
+          <div>
+            <p class="label">A good fit</p>
+            <ul>
+              <li>Ecommerce founders and growth leads in Australia, the US and the UK</li>
+              <li>Brands with traffic that is not converting</li>
+              <li>Teams spending on ads without clear payback</li>
+              <li>Brands whose Shopify, ERP and accounting tools do not agree</li>
+              <li>Brands planning a redesign or replatform</li>
+            </ul>
+          </div>
+          <div class="no">
+            <p class="label">Not a fit</p>
+            <ul>
+              <li>Pre-launch ideas with no product or store yet</li>
+              <li>Single small fixes, such as one theme tweak</li>
+              <li>Guaranteed-results or pay-per-lead deals</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-faq">
+        <h2 id="h-faq">Questions</h2>
+        <details><summary>Is the call free?</summary><p>Yes. It is a 30-minute conversation. If there is a fit, you get a written scope and quote afterwards, in USD, AUD or GBP.</p></details>
+        <details><summary>How do I get the meeting invite?</summary><p>Pick a time and save the Google Calendar invite. We usually confirm within the hour and send a meeting link by email.</p></details>
+        <details><summary>Who will I actually speak to?</summary><p>Abhimanyu leads the first call. If paid media is part of the brief, Velmurgan joins too. If you go ahead, you meet the specialists on your account, and Abhimanyu stays your point of contact.</p></details>
+        <details><summary>How much does it cost?</summary><p>The 2-minute video teardown is free. The Revenue Leak Audit is $1,500. Fixed-price sprints start at $3,900 and monthly retainers at $1,500. Larger builds and AI agents are quoted after the first call, with a written proposal.</p></details>
+        <details><summary>Can we speak to a past client?</summary><p>Yes. After the first call, we can connect you with a client from a similar category or market, with their permission.</p></details>
+        <details><summary>Will you sign an NDA?</summary><p>Yes, if you need one before sharing details. Mention it in the brief and send it with the confirmation.</p></details>
+        <details><summary>Do you work with Australian, UK and US brands from India?</summary><p>Yes. Sydney afternoons, the London working day and US mornings all overlap with our hours, so calls happen in your daytime and work moves on overnight. The picker shows each slot in your time zone and ours.</p></details>
+        <details><summary>Do you use AI on client work?</summary><p>Yes, for first-pass audits, drafts and the agents we build. A person reviews every finding and approves anything that touches money, prices or orders. Client data only goes into tools covered by a data processing agreement.</p></details>
+        <details><summary>Can you help with rules like the surcharge ban or accessibility?</summary><p>We implement the changes: checkout, theme, tracking and invoices. Your lawyer or adviser confirms what applies to you. We do not give legal advice.</p></details>
+        <details><summary>Can we hire you for one service only?</summary><p>Yes. Many brands start with a CRO audit or an ads account review, then add design or development once the first results are in.</p></details>
+        <details><summary>What should I prepare?</summary><p>Your store URL, rough monthly traffic and ad spend, and the problem in a sentence. Read-only access to GA4 or your ads account helps.</p></details>
+      </section>
+      </div>
+    </main>
+
+
+  </div>
+
+  <div class="band">
+    <div>
+      <h2>Find out where your store is losing revenue</h2>
+      <p>30 minutes, a written summary afterwards, and no obligation to hire.</p>
+    </div>
+    <a class="cta" href="#book" data-cta="band_primary">Pick a time</a>
+  </div>
+
+  <footer>
+    <span>Marginwise · Led by Abhimanyu Sharma · Performance marketing, CRO, web, SEO and AI search, AI solutions</span>
+    <span>Based in India · Working with brands in Australia, the US and the UK</span>
+  </footer>
+</div>
+
+<div class="mbar" id="mbar"><span>Free 30-minute call</span><a class="cta" href="#book" data-cta="mobile_bar">Pick a time</a></div>
+
+<script>
+(function(){
+  // Calendar settings. HOST_EMAIL receives the invite in Gmail.
+  // LIVE_CALENDAR_URL: paste a Google Calendar appointment schedule link to also offer live availability.
+  var HOST_EMAIL = "abhimanyu.btti@gmail.com";
+  var LIVE_CALENDAR_URL = "";
+  var CALL_MINUTES = 30;
+
+  // Slots are defined in IST: Sydney afternoon and evening, London morning and afternoon, US morning.
+  var SLOTS_IST = [[7,0],[13,30],[16,30],[19,30],[21,30]];
+  var DAYS_PER_PAGE = 5, PAGES = 3;
+  var localTz = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  var state = { tz:"Australia/Sydney", page:0, day:null, slot:null };
+
+  function istToDate(y,m,d,h,mi){ return new Date(Date.UTC(y,m,d,h,mi) - 330*60000); }
+  function fmtTime(dt,tz){ return dt.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:tz==="local"?localTz:tz}); }
+  function tzName(tz){ return {"Asia/Kolkata":"IST","Australia/Sydney":"Sydney","Europe/London":"London","America/New_York":"US Eastern","America/Los_Angeles":"US Pacific"}[tz]||"your time"; }
+
+  // Next weekdays (IST calendar), starting tomorrow
+  var weekdays = [];
+  (function(){
+    var now = new Date(), ist = new Date(now.getTime()+330*60000);
+    var y=ist.getUTCFullYear(), m=ist.getUTCMonth(), d=ist.getUTCDate()+1;
+    while(weekdays.length < DAYS_PER_PAGE*PAGES){
+      var c = new Date(Date.UTC(y,m,d)); var wd=c.getUTCDay();
+      if(wd!==0 && wd!==6) weekdays.push({y:c.getUTCFullYear(),m:c.getUTCMonth(),d:c.getUTCDate(),wd:wd});
+      d++;
+    }
+  })();
+  var WD=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+
+  var $ = function(id){ return document.getElementById(id); };
+  var daysEl=$("days"), slotsEl=$("slots");
+
+  function renderDays(){
+    daysEl.innerHTML="";
+    var start=state.page*DAYS_PER_PAGE;
+    for(var i=start;i<start+DAYS_PER_PAGE;i++){
+      var w=weekdays[i], b=document.createElement("button");
+      b.type="button"; b.className="day"; b.setAttribute("aria-pressed", String(state.day===i));
+      b.innerHTML='<span class="dw">'+WD[w.wd]+'</span><span class="dn">'+w.d+'</span><span class="dm">'+MO[w.m]+'</span>';
+      b.setAttribute("aria-label", WD[w.wd]+" "+w.d+" "+MO[w.m]);
+      (function(idx){ b.onclick=function(){ state.day=idx; state.slot=null; render(); }; })(i);
+      daysEl.appendChild(b);
+    }
+    $("weekLabel").textContent = state.page===0?"Next 5 working days":state.page===1?"The week after":"Two weeks out";
+    $("prevWk").disabled = state.page===0; $("nextWk").disabled = state.page===PAGES-1;
+  }
+
+  function renderSlots(){
+    slotsEl.innerHTML="";
+    var w=weekdays[state.day];
+    $("slotLabel").textContent = "Times on "+WD[w.wd]+" "+w.d+" "+MO[w.m]+" ("+tzName(state.tz)+")";
+    // Only offer slots between 07:00 and 22:00 in the time zone being shown
+    var zone = state.tz==="local" ? localTz : state.tz;
+    function hourIn(dt){ return parseInt(dt.toLocaleTimeString("en-GB",{hour:"2-digit",hour12:false,timeZone:zone}),10)%24; }
+    var visible = [];
+    SLOTS_IST.forEach(function(s,si){ var h=hourIn(istToDate(w.y,w.m,w.d,s[0],s[1])); if(h>=7 && h<22) visible.push(si); });
+    if(!visible.length) visible = SLOTS_IST.map(function(_,i){ return i; });
+    if(state.slot!==null && visible.indexOf(state.slot)<0) state.slot = visible[0];
+    SLOTS_IST.forEach(function(s,si){
+      if(visible.indexOf(si)<0) return;
+      var dt=istToDate(w.y,w.m,w.d,s[0],s[1]);
+      var alt = fmtTime(dt,"Asia/Kolkata")+" IST (our time)";
+      var b=document.createElement("button"); b.type="button"; b.className="slot";
+      b.setAttribute("aria-pressed", String(state.slot===si));
+      b.innerHTML='<span class="main">'+fmtTime(dt,state.tz)+'</span><span class="alt">'+alt+'</span>';
+      b.onclick=function(){ state.slot=si; render(); };
+      slotsEl.appendChild(b);
+    });
+  }
+
+  function selected(){
+    if(state.day===null||state.slot===null) return null;
+    var w=weekdays[state.day], s=SLOTS_IST[state.slot];
+    return { w:w, dt:istToDate(w.y,w.m,w.d,s[0],s[1]) };
+  }
+  function slotText(sel){
+    var w=sel.w;
+    return WD[w.wd]+" "+w.d+" "+MO[w.m]+" · "+fmtTime(sel.dt,"Australia/Sydney")+" Sydney / "+fmtTime(sel.dt,"Europe/London")+" London / "+fmtTime(sel.dt,"America/New_York")+" ET / "+fmtTime(sel.dt,"Asia/Kolkata")+" IST";
+  }
+
+  function render(){
+    renderDays(); renderSlots();
+    var sel=selected(), p=$("picked");
+    p.textContent = sel ? slotText(sel) : "No time selected yet";
+    p.classList.toggle("on", !!sel);
+  }
+
+  document.querySelectorAll(".tz button").forEach(function(b){
+    b.onclick=function(){
+      state.tz=b.dataset.tz;
+      document.querySelectorAll(".tz button").forEach(function(x){ x.setAttribute("aria-pressed", String(x===b)); });
+      render();
+    };
+  });
+  $("prevWk").onclick=function(){ if(state.page>0){ state.page--; state.day=state.page*DAYS_PER_PAGE; state.slot=null; render(); } };
+  $("nextWk").onclick=function(){ if(state.page<PAGES-1){ state.page++; state.day=state.page*DAYS_PER_PAGE; state.slot=null; render(); } };
+
+  // Conversion lift calculator
+  // Example stores per market, in local currency
+  var CALC_DEFAULTS = { au:{sess:40000,cr:1.8,aov:110,gm:60}, us:{sess:40000,cr:2.0,aov:75,gm:60}, uk:{sess:40000,cr:1.9,aov:60,gm:60} };
+  var CUR = { au:["en-AU","AUD","A$"], us:["en-US","USD","$"], uk:["en-GB","GBP","£"] };
+  var calc = { mk:"au", lift:0.2, touched:false };
+  function money(v){
+    var c = CUR[calc.mk];
+    try{ return new Intl.NumberFormat(c[0],{style:"currency",currency:c[1],maximumFractionDigits:0}).format(v); }
+    catch(_){ return c[2]+Math.round(v).toLocaleString(); }
+  }
+  function num(id){ var v=parseFloat($(id).value); return isFinite(v)&&v>=0?v:0; }
+  function runCalc(){
+    var sess=num("c-sess"), cr=Math.min(num("c-cr"),100)/100, aov=num("c-aov"), gm=Math.min(num("c-gm"),100)/100;
+    var orders=sess*cr, rev=orders*aov, extra=rev*calc.lift, newCr=cr*(1+calc.lift)*100;
+    $("o-rev").textContent=money(rev);
+    $("o-orders").textContent=Math.round(orders).toLocaleString(CUR[calc.mk][0])+" orders a month";
+    $("o-liftlabel").textContent="Extra revenue per month at +"+Math.round(calc.lift*100)+"% conversion";
+    $("o-extra").textContent=money(extra);
+    $("o-cr").textContent="Conversion "+(cr*100).toFixed(2)+"% to "+newCr.toFixed(2)+"%";
+    $("o-gm").textContent=money(extra*gm*12);
+    $("c-pill").textContent = calc.touched ? "Your figures" : "Example store";
+  }
+  ["c-sess","c-cr","c-aov","c-gm"].forEach(function(id){ $(id).addEventListener("input",function(){ calc.touched=true; runCalc(); }); });
+  document.querySelectorAll(".lifts button").forEach(function(b){
+    b.onclick=function(){ calc.lift=parseFloat(b.dataset.lift); document.querySelectorAll(".lifts button").forEach(function(x){ x.setAttribute("aria-pressed",String(x===b)); }); runCalc(); };
+  });
+
+  // Market toggle swaps the stack line on each service
+  function setMarket(mk){
+    document.querySelectorAll(".seg button").forEach(function(x){ x.setAttribute("aria-pressed", String(x.dataset.mk===mk)); });
+    document.querySelectorAll(".svc .stack").forEach(function(el){ el.innerHTML='<span>Stack · </span>'+el.dataset[mk]; });
+    var m=$("f-market"); if(m) m.value = {au:"Australia",us:"United States",uk:"United Kingdom"}[mk];
+    if(!calc.touched){ var d=CALC_DEFAULTS[mk]; $("c-sess").value=d.sess; $("c-cr").value=d.cr; $("c-aov").value=d.aov; $("c-gm").value=d.gm; }
+    calc.mk=mk; $("c-cur").textContent = "("+CUR[mk][1]+")"; runCalc();
+  }
+  document.querySelectorAll(".seg button").forEach(function(b){ b.onclick=function(){ setMarket(b.dataset.mk); }; });
+  var guess = /^America\//.test(localTz) ? "us" : /^Europe\//.test(localTz) ? "uk" : "au";
+  setMarket(guess);
+
+  // Open in a realistic state: first day, first free slot
+  state.day=0;
+  state.tz = {au:"Australia/Sydney",us:"America/New_York",uk:"Europe/London"}[guess];
+  document.querySelectorAll(".tz button").forEach(function(x){ x.setAttribute("aria-pressed", String(x.dataset.tz===state.tz)); });
+  var order = guess==="us" ? [4,3] : guess==="uk" ? [2,3] : [1,0];
+  state.slot=order[0];
+  render();
+
+  // Mobile bar: show once the booking panel is off screen
+  try{
+    var bar=$("mbar"), desk=$("book"), band=document.querySelector(".band"), vis={desk:true,band:false};
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ vis[e.target===desk?"desk":"band"]=e.isIntersecting; });
+      bar.classList.toggle("show", !vis.desk && !vis.band);
+    });
+    io.observe(desk); io.observe(band);
+  }catch(_){}
+
+  $("form").addEventListener("submit",function(e){
+    e.preventDefault();
+    var err=$("err"), name=$("f-name").value.trim(), email=$("f-email").value.trim(), sel=selected();
+    if(!sel){ err.textContent="Choose a day and time above."; return; }
+    if(!name){ err.textContent="Add your name so we know who to expect."; $("f-name").focus(); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent="Enter an email address like name@company.com so we can send the invite."; $("f-email").focus(); return; }
+    err.textContent="";
+    var lines=[
+      "Subject: Marginwise call request – "+$("f-topic").value,
+      "",
+      "Preferred slot: "+slotText(sel),
+      "Name: "+name,
+      "Email: "+email,
+      "Company: "+($("f-co").value.trim()||"–"),
+      "Market: "+$("f-market").value,
+      "Store: "+($("f-url").value.trim()||"–"),
+      "Topic: "+$("f-topic").value,
+      "",
+      "Brief:",
+      $("f-brief").value.trim()||"–"
+    ];
+    $("summary").textContent=lines.join("\n");
+    var start=sel.dt, end=new Date(start.getTime()+CALL_MINUTES*60000);
+    function g(d){ return d.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,""); }
+    var details=[
+      "30-minute Marginwise growth call.",
+      "",
+      "Topic: "+$("f-topic").value,
+      "Market: "+$("f-market").value,
+      "Company: "+($("f-co").value.trim()||"–"),
+      "Store: "+($("f-url").value.trim()||"–"),
+      "Booked by: "+name+" <"+email+">",
+      "",
+      "Brief: "+($("f-brief").value.trim()||"–"),
+      "",
+      "Agenda: context (5 min), working session (20 min), next step (5 min). Marginwise confirms the slot and sends the meeting link by email."
+    ].join("\n");
+    var q=new URLSearchParams({action:"TEMPLATE",text:"Marginwise growth call – "+($("f-co").value.trim()||name),dates:g(start)+"/"+g(end),details:details,add:HOST_EMAIL,ctz:"Asia/Kolkata"});
+    $("gcal").href="https://calendar.google.com/calendar/render?"+q.toString();
+    if(LIVE_CALENDAR_URL){ $("liveCal").href=LIVE_CALENDAR_URL; $("liveCal").hidden=false; }
+    $("addr").textContent=HOST_EMAIL;
+    $("bookView").hidden=true; $("doneView").hidden=false; $("copyNote").textContent="";
+  });
+
+  function copy(text,note){
+    var n=$("copyNote");
+    try{
+      navigator.clipboard.writeText(text).then(function(){ n.textContent=note; },function(){ n.textContent="Copy is blocked here. Select the text and copy it manually."; });
+    }catch(_){ n.textContent="Copy is blocked here. Select the text and copy it manually."; }
+  }
+  $("copySum").onclick=function(){ copy($("summary").textContent,"Request copied"); };
+  $("copyAddr").onclick=function(){ copy($("addr").textContent,"Address copied"); };
+  $("back").onclick=function(){ $("doneView").hidden=true; $("bookView").hidden=false; };
+})();
+</script>
+
