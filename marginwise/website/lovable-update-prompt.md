@@ -127,3 +127,5 @@ Content and booking update for Marginwise. Marginwise no longer targets India. M
 - public/llms.txt: a plain summary of Marginwise, the Find, Fix, Grow offers with prices, the five services, and the booking link (https://marginwise.in/#book).
 - Canonical and og:url should use https://marginwise.in/ if that custom domain is connected to this project; otherwise keep the lovable.app URL.
 - No horizontal scroll at 375px width; Lighthouse mobile performance 90+ and accessibility 95+ on the home page.
+
+19. India added back (sent to Lovable as a follow-up message on 18 Oct): India as a fourth market with an IST time-zone button, INR calculator, India service stacks, the Shipway COD card as a fifth evidence card, an India "Where we work" card (2x2 layout), INR billing, and IST default for visitors in India.

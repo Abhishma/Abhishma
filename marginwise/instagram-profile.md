@@ -16,8 +16,8 @@ Marginwise | Shopify growth and AI
 
 ```
 Find what costs your store margin. Fix it in fixed-price sprints.
-Performance, CRO, web, SEO/AEO, AI
-AU · US · UK
+Ads, CRO, web, SEO/AEO, AI
+AU · US · UK · India
 Comment AUDIT for a free teardown
 ```
 

@@ -57,7 +57,7 @@ Open decisions:
 
 - Handle: **@marginwise.in**. @marginwise is taken by another account (checked 12 Oct 2026); @marginwise.in matches the domain and reinforces the URL. Register it now. Unclaimed backups as of 12 Oct 2026: @marginwisehq, @marginwise.co, @marginwise_in.
 - Name field, bio, links, highlights and pinned posts: see `instagram-profile.md` (updated 18 Oct 2026 to match the website).
-- Bio: "Find what costs your store margin. Fix it in fixed-price sprints. / Performance, CRO, web, SEO/AEO, AI / AU · US · UK / Comment AUDIT for a free teardown".
+- Bio: "Find what costs your store margin. Fix it in fixed-price sprints. / Ads, CRO, web, SEO/AEO, AI / AU · US · UK · India / Comment AUDIT for a free teardown".
 - Bio, once proof exists: replace line 2 with one verifiable number, for example "Margin up X% for [named client]", with permission.
 
 ## 4. Proof plan (new priority)
