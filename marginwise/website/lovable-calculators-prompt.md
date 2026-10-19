@@ -33,3 +33,18 @@ Next update after the India one: add a Calculators page with one calculator per 
 4. Link each home-page service card to its calculator: Performance marketing -> #profit, CRO -> #lift, Website development -> #speed, SEO -> #search, AI solutions -> #support (link text: "Profit after ads calculator", "Conversion, surcharge and COD calculators", "Site speed and landed cost calculators", "Search and AI traffic value calculator", "AI support, receptionist and ops calculators"). Keep the existing home-page conversion calculator and the plan calculator working; reuse the shared conversionLift function there.
 
 5. Checks: unit tests above pass; type check clean; /calculators has no serious axe violations, no horizontal scroll at 375px, works in dark mode; editing any input updates results immediately. List files changed and test results.
+
+---
+
+## Follow-up to send once credits are added (19 Oct)
+
+Lovable built the calculators (commit 8f172be, 27 tests pass) but stopped with a type-check error and a failed input-update check. Send this:
+
+```
+Please finish the calculators update:
+
+1. Fix the type-check error in src/test/booking-timezone.test.tsx and any other preview build errors, so the type check is clean and the preview builds.
+2. The input-update check failed. Find which calculator and which input did not change the results. If it is a real bug (the input is not wired to the formula), fix it. If the change is real but hidden by rounding, change the test to use a bigger step for that input. Do not change the formulas or the test values in src/test/calculators.test.ts.
+3. Run the mobile checks at 375px: /calculators and the home page have no horizontal scroll and no serious axe violations, in light and dark mode.
+4. Report the full test count, the type-check result, and which input had failed and why. Do not publish.
+```
