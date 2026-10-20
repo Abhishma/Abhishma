@@ -46,3 +46,15 @@ Two features: prices by visitor location, and a lead form for free teardowns. Ke
 
 3. Checks: all tests pass, type check clean, no serious axe violations on /, /pricing and /calculators, no horizontal scroll at 375px, dark mode works. Submit one test lead with the email test+lead@marginwise.in, confirm the row and the emails, then delete the row. List files changed and test results. Do not publish.
 ```
+
+---
+
+## Follow-up to send once credits are added (20 Oct)
+
+Lovable started (commit 5dd1947: src/lib/pricing.ts and pricing tests, checked and correct) and paused to ask about the rate limit. Send this:
+
+```
+Yes, use a storage-enforced limit of 5 teardown requests per email per day (count rows in the leads table for that lowercased email in the last 24 hours, checked server-side before insert). pricing.ts looks right; keep it as is.
+
+Please continue and finish everything from the previous request: wire pricing.ts into every price on the site with the market switcher and URL override, A$ everywhere including the calculators, the teardown form on the home page and /calculators with consent and privacy note, the leads table with RLS, both emails, the team Leads tab with filters, status, booking prefill and CSV export, the tests, and the checks (desktop and 375px, light and dark, axe, one test lead submitted and then deleted). Report files changed and test results. Do not publish.
+```
