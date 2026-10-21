@@ -58,3 +58,18 @@ Yes, use a storage-enforced limit of 5 teardown requests per email per day (coun
 
 Please continue and finish everything from the previous request: wire pricing.ts into every price on the site with the market switcher and URL override, A$ everywhere including the calculators, the teardown form on the home page and /calculators with consent and privacy note, the leads table with RLS, both emails, the team Leads tab with filters, status, booking prefill and CSV export, the tests, and the checks (desktop and 375px, light and dark, axe, one test lead submitted and then deleted). Report files changed and test results. Do not publish.
 ```
+
+---
+
+## Follow-up to send once credits are added (21 Oct)
+
+Lovable built most of it (commit dd40566, 47 tests pass) but stopped with type errors in teardown-form.tsx. Leads migration reviewed: RLS insert-only for visitors, team-only read/update, trigger enforces 5 per email per 24 h and currency matches market. Send this:
+
+```
+Yes, please finish:
+1. Fix the type errors in src/components/marginwise/teardown-form.tsx and any other build errors so the type check is clean and the preview builds.
+2. Run the full test suite.
+3. Checks on /, /pricing, /calculators and /team: desktop 1280px and mobile 375px, light and dark mode, no horizontal scroll, no serious or critical axe violations. Confirm the market switcher changes every price on the page and that ?market=in shows the INR prices.
+4. Submit one real test lead through the home page form with the email test+lead@marginwise.in, confirm the row is stored with the UTMs and that both emails were queued, confirm an anonymous client cannot read the leads table, then delete the test row.
+5. Report the test count, type-check result, and the result of each check. Do not publish.
+```
