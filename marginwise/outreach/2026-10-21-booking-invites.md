@@ -16,7 +16,7 @@ We help online stores turn more of those visitors into orders, by fixing the pro
 
 Would a 30-minute call be useful? We'll look at the store together and I'll show you the one or two changes I'd make first. No cost, and no obligation.
 
-You can pick a time that suits you here (it shows times in Sydney and Hobart time):
+You can pick a time that suits you here (times show in Sydney time, which is the same as Hobart):
 https://marginwise.in/?utm_source=email&utm_medium=outreach&utm_campaign=cro_au#book
 
 Kind regards,
