@@ -73,3 +73,9 @@ Yes, please finish:
 4. Submit one real test lead through the home page form with the email test+lead@marginwise.in, confirm the row is stored with the UTMs and that both emails were queued, confirm an anonymous client cannot read the leads table, then delete the test row.
 5. Report the test count, type-check result, and the result of each check. Do not publish.
 ```
+
+---
+
+## Result (22 Oct)
+
+Finished in commit 6cffd58 and published. 55 tests pass, type check clean, all page checks pass at 1280px and 375px in light and dark mode. The test lead was stored with its UTMs, both emails were sent, an anonymous visitor could read no leads, and the test row was deleted. The confirmation email to test+lead@marginwise.in bounced.
