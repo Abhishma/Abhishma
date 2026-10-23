@@ -1,0 +1,185 @@
+{
+  "requires_approval": [
+    "write_metafields"
+  ],
+  "tools": [
+    {
+      "name": "get_product",
+      "description": "Fetch the Shopify product (title, vendor, linked supplier document id, EU markets it is sold in).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "product_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_supplier_document",
+      "description": "Fetch the supplier's product safety document as text (PDF text or email), plus a rule-based first-pass extraction of labelled GPSR fields.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "doc_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "doc_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate_gpsr_fields",
+      "description": "Deterministically check GPSR completeness: manufacturer name/postal address/email, EU responsible person when the manufacturer is outside the EU (address must be in the EU/EEA), product identifier, warnings (German text for DE).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "object",
+            "properties": {
+              "manufacturer_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "manufacturer_address": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "manufacturer_email": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "eu_rp_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "eu_rp_address": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "eu_rp_email": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "product_identifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "warnings": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "description": "GPSR fields; null when not found in the source document"
+          },
+          "markets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "fields"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "write_metafields",
+      "description": "Write the GPSR fields to Shopify product metafields (namespace gpsr). Requires human approval; returns pending_approval.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "object",
+            "properties": {
+              "manufacturer_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "manufacturer_address": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "manufacturer_email": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "eu_rp_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "eu_rp_address": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "eu_rp_email": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "product_identifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "warnings": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "description": "GPSR fields; null when not found in the source document"
+          }
+        },
+        "required": [
+          "product_id",
+          "fields"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

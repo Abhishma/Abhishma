@@ -1,0 +1,17 @@
+{
+  "anthropic": {
+    "ls_best": "Here are some well-regarded air conditioning installers in Brisbane:\n\n1. **Polar Air Services** - known for fast installs and strong Google reviews.\n2. **CoolBreeze Air Conditioning** - family-run, good after-sales service.\n3. **Brisbane Climate Co** - larger team, handles commercial jobs.\n\nAlways get two or three quotes and check the installer holds an ARCtick licence.",
+    "ls_recommend": "CoolBreeze Air Conditioning is a popular choice in Brisbane's inner suburbs and is often recommended for split systems. Polar Air is another option if you need a ducted system.",
+    "ls_emergency": "For same-day help, try Arctic Breeze Services, which advertises emergency call-outs. Polar Air Services also offers after-hours repairs."
+  },
+  "openai": {
+    "ls_best": "Top-rated options include:\n- Brisbane Climate Co: wide service area\n- Polar Air: competitive pricing\n- Arctic Breeze: emergency repairs\n\nI could not find reliable information on smaller local installers.",
+    "ls_recommend": "Many Brisbane residents recommend Polar Air Services. Some reviews mention long wait times for Brisbane Climate Company, so book early.",
+    "ls_emergency": "Arctic Breeze Services and CoolBreeze both list emergency repairs. Avoid unlicensed operators."
+  },
+  "perplexity": {
+    "ls_best": "Based on reviews [1][2], the best installers in Brisbane are:\n1. CoolBreeze Air Conditioning (4.9 stars, 300+ reviews)\n2. Polar Air Services (4.7 stars)\n\nSources: Google Maps, hipages.",
+    "ls_recommend": "I recommend contacting Brisbane Climate Co or Polar Air for a quote.",
+    "ls_emergency": "I don't have live availability data. Check Google Maps for emergency air conditioning repairs open now."
+  }
+}

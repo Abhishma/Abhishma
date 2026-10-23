@@ -1,0 +1,26 @@
+{
+  "_note": "Buying-intent question templates. Placeholders: {category}, {city}, {country}, {product}, {use_case}, {budget}. German templates require native review.",
+  "local_service": {
+    "en": [
+      {"id": "ls_best", "template": "Who is the best {category} in {city}?"},
+      {"id": "ls_recommend", "template": "Can you recommend a reliable {category} near {city}, {country}?"},
+      {"id": "ls_emergency", "template": "I need an emergency {category} in {city} today. Who should I call?"},
+      {"id": "ls_reviews", "template": "Which {category} in {city} has the best reviews and fair prices?"}
+    ],
+    "de": [
+      {"id": "ls_best_de", "template": "Wer ist der beste {category} in {city}?"},
+      {"id": "ls_recommend_de", "template": "Kannst du mir einen zuverlaessigen {category} in {city} empfehlen?"}
+    ]
+  },
+  "ecommerce_product": {
+    "en": [
+      {"id": "ec_best", "template": "What are the best {product} brands to buy in {country}?"},
+      {"id": "ec_use_case", "template": "Which {product} is best for {use_case}?"},
+      {"id": "ec_budget", "template": "What is a good {product} under {budget} in {country}?"},
+      {"id": "ec_alternative", "template": "What are good alternatives to the big brands for {product}?"}
+    ],
+    "ar": [
+      {"id": "ec_best_ar", "template": "ما هي أفضل ماركات {product} في {country}؟"}
+    ]
+  }
+}

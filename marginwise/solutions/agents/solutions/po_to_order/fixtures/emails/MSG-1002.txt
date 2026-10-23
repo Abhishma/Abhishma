@@ -1,0 +1,20 @@
+From: einkauf@bergcafe-gmbh.de
+To: orders@greenleafwholesale.com.au
+Date: Fri, 16 Oct 2026 10:05:00 +0200
+Subject: Bestellung 2026-118
+
+Guten Tag,
+
+anbei unsere Bestellung.
+
+Bestellnummer: 2026-118
+Datum: 16.10.2026
+Lieferadresse: Bergcafe GmbH, Torstrasse 101, 10119 Berlin, Deutschland
+Zahlungsziel: 14 Tage netto
+
+Pos  Artikel        Bezeichnung               Menge  Preis/Stk EUR
+1    GL-OAT-1L      Hafermilch Barista 1L     30     2,60
+2    GL-MATCHA-500  Matcha Pulver 500g        4      41,00
+
+Mit freundlichen Gruessen
+Jonas Weber

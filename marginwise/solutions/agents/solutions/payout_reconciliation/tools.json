@@ -1,0 +1,28 @@
+{
+  "requires_approval": [],
+  "tools": [
+    {
+      "name": "get_reconciliation_report",
+      "description": "Return the deterministic reconciliation result for a month: totals per provider (gross sales, refunds, chargebacks, fees, net, FX variance), payout-to-bank and payout-to-ledger matches, unmatched items and the exception count. All figures are final; do not recompute them.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"period": {"type": "string", "description": "YYYY-MM"}},
+        "required": ["period"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_exceptions",
+      "description": "List reconciliation exceptions for a month, optionally filtered by severity (high, medium, low).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "period": {"type": "string"},
+          "severity": {"type": "string", "enum": ["high", "medium", "low"]}
+        },
+        "required": ["period"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

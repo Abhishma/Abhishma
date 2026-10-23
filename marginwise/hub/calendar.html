@@ -1,0 +1,563 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>body{margin:0}</style><title>Marginwise Content Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column of post cards grouped by week, sticky section nav on top. */
+:root {
+  --bg:#f3f4f7; --surface:#ffffff; --ink:#18203a; --muted:#5b6478; --line:#dde1ea;
+  --accent:#1f6f5c; --accent-soft:#e3f1ec; --reel:#e8ecf7; --carousel:#f6efe1; --pin:#fbe7e3; --pin-ink:#8a2f1b;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#10131c; --surface:#181d2a; --ink:#e7eaf2; --muted:#9aa3b8; --line:#2a3142;
+  --accent:#5cc4a6; --accent-soft:#16332c; --reel:#222a3d; --carousel:#33291a; --pin:#3a201b; --pin-ink:#f2a493; color-scheme:dark } }
+:root[data-theme="dark"] {
+  --bg:#10131c; --surface:#181d2a; --ink:#e7eaf2; --muted:#9aa3b8; --line:#2a3142;
+  --accent:#5cc4a6; --accent-soft:#16332c; --reel:#222a3d; --carousel:#33291a; --pin:#3a201b; --pin-ink:#f2a493; color-scheme:dark }
+* { box-sizing:border-box }
+body { background:var(--bg); color:var(--ink); font-family:var(--body); font-size:15px; line-height:1.55 }
+.wrap { max-width:760px; margin:0 auto; padding-inline:16px; padding-block:8px 64px }
+nav { position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--bg); border-bottom:1px solid var(--line); }
+nav .in { max-width:760px; margin:0 auto; padding:10px 16px; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none }
+nav a { flex:0 0 auto; text-decoration:none; color:var(--ink); font-weight:600; font-size:13px; padding:7px 12px; border:1px solid var(--line); border-radius:999px; background:var(--surface) }
+nav a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
+h1 { font-family:var(--display); font-size:clamp(26px,6vw,36px); line-height:1.1; margin:24px 0 6px; text-wrap:balance }
+.lede { color:var(--muted); margin:0 0 8px; max-width:62ch }
+.rule { font-size:13px; color:var(--muted); margin:0 0 4px }
+h2 { font-family:var(--display); font-size:22px; margin:40px 0 12px; scroll-margin-top:64px }
+h3.week { font-family:var(--display); font-size:18px; margin:28px 0 10px; scroll-margin-top:64px }
+h3.week span { font-family:var(--mono); font-size:12px; color:var(--muted); font-weight:400; margin-left:6px }
+.post { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:14px; display:grid; gap:12px }
+.post-head { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px }
+.when { display:grid; gap:2px } .when b { font-size:15px }
+.mono { font-family:var(--mono); font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums }
+.tags { display:flex; flex-wrap:wrap; gap:6px; align-items:flex-start }
+.chip { font-size:12px; padding:2px 8px; border-radius:6px; background:var(--bg); border:1px solid var(--line); white-space:nowrap }
+.chip.reel { background:var(--reel) } .chip.carousel { background:var(--carousel) }
+.chip.pin { background:var(--pin); color:var(--pin-ink); border-color:transparent; font-weight:600 }
+.chip.trial { background:var(--accent-soft); color:var(--accent); border-color:transparent; font-weight:600 }
+.hook { font-family:var(--display); font-size:19px; font-weight:600; line-height:1.3; margin:0; text-wrap:balance }
+.block h4 { margin:0 0 4px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted) }
+.block p { margin:0 }
+.steps { margin:0; padding-left:20px; display:grid; gap:6px }
+.caphead { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px }
+.caphead h4 { margin:0 }
+.caption { background:var(--bg); border-radius:8px; padding:10px 12px; font-size:14px; user-select:text }
+button.copy { font:600 12px var(--body); color:var(--accent); background:var(--accent-soft); border:0; border-radius:6px; padding:6px 10px; cursor:pointer }
+.meta { display:flex; flex-wrap:wrap; gap:8px 20px; margin:0; padding-top:10px; border-top:1px solid var(--line) }
+.meta div { min-width:0 } .meta dt { font-size:11px; color:var(--muted) } .meta dd { margin:0; font-size:13px; font-weight:500 }
+.meta dd.mono { color:var(--accent); font-weight:500; font-size:13px }
+.tw { overflow-x:auto; background:var(--surface); border:1px solid var(--line); border-radius:10px }
+table { border-collapse:collapse; width:100%; font-size:14px; min-width:520px }
+th, td { text-align:left; vertical-align:top; padding:10px 12px; border-bottom:1px solid var(--line) }
+th { font-size:12px; color:var(--muted); font-weight:600 }
+tr:last-child td { border-bottom:0 }
+ul.checks { list-style:none; padding:0; margin:0; display:grid; gap:8px }
+ul.checks li { display:flex; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px }
+ul.checks input { margin-top:4px; accent-color:var(--accent); width:18px; height:18px; flex:0 0 auto }
+ul.checks label { display:grid; gap:2px; min-width:0 } ul.checks span { color:var(--muted); font-size:13px }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior:smooth } }
+</style><a href="index.html#instagram" style="position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;font:600 13px system-ui,sans-serif;background:#1F2A44;color:#fff;padding:9px 14px;border-radius:999px;text-decoration:none">Back to Marginwise HQ</a>
+
+<nav aria-label="Sections"><div class="in">
+  <a href="#calendar">Calendar</a><a href="#week1">Wk 1</a><a href="#week2">Wk 2</a><a href="#week3">Wk 3</a><a href="#week4">Wk 4</a><a href="#week5">Wk 5</a><a href="#week6">Wk 6</a><a href="#week7">Wk 7</a><a href="#week8">Wk 8</a><a href="#week9">Wk 9</a>
+  <a href="#how">How to make</a><a href="#batches">Recording</a><a href="#stories">Stories</a><a href="#setup">Setup</a>
+</div></nav>
+<main class="wrap">
+  <h1>@marginwise.in content calendar</h1>
+  <p class="lede">14 Oct to 13 Dec 2026. Australia, US and UK, adding Germany and Canada from 17 Nov. No face on camera: every post shows the work, with your voiceover.</p>
+  <p class="rule">From 18 Oct: Australia posts at 13:30 IST; US/UK and all-market posts at 19:30 IST. Reply to every comment in the first hour. Don't publish a keyword until its auto-DM works.</p>
+  <h2 id="calendar">Calendar</h2>
+  <h3 class='week' id='week1'>Week 1 <span>14 Oct to 18 Oct</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Wed 14 Oct</b><span class="mono">19:30 IST · 01:00 Sydney · 15:00 London · 10:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (60s)</span><span class="chip">All</span><span class="chip">Proof and trust</span><span class='chip'>Posted</span><span class='chip pin'>Pin</span></div>
+  </header>
+  <p class="hook">Every agency sells you ROAS. We sell you margin. This is what that looks like.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen walkthrough of a Marginwise audit on a demo store (your own Shopify dev store or a public store, no client data): 1) funnel numbers, 2) three leaks ranked by revenue impact, 3) the one fix to ship this week, 4) the written summary the founder gets. Close on the four services and who it is not for.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record (desktop, QuickTime or OBS, 1080p) a walkthrough of an audit on a demo store: GA4 funnel, three leaks marked in a doc, the one-page written summary. Use a Shopify dev store or public pages only.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Open with: &#x27;This is what we look at before we touch your ads.&#x27;</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Zoom (keyframes) on each leak as you name it; red box highlights. Pin this post after publishing.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-1-0">Copy caption</button></div>
+    <p class="caption" id="cap-1-0">Most agencies report ROAS. We report what you keep.<br><br>This is what a Marginwise audit looks like: your funnel, your three biggest leaks ranked by revenue impact, one fix to ship this week, and a written summary.<br><br>CRO, performance marketing, UX and app development for D2C and Shopify brands in India, the US and the UK.<br><br>Comment AUDIT and we will send you a 2-minute teardown of your store.<br><br>#d2c #shopify #ecommercegrowth</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Fri 16 Oct</b><span class="mono">19:30 IST · 01:00 Sydney · 15:00 London · 10:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (45s)</span><span class="chip">Intl</span><span class="chip">Margin math</span><span class='chip'>Posted</span><span class='chip pin'>Pin</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Your ROAS says 3x. Your bank account disagrees.</p>
+  <div class="block"><h4>What it shows</h4><p>Show 3x ROAS on screen. Remove over-attribution, returns, COGS, shipping, payment fees one by one. Land on contribution after ads. End: track contribution margin per order, not ROAS.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the PROFIT calculator (ROAS to Profit tab) at 150% zoom, typing in a 3x ROAS store and watching contribution turn negative.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Say each cost as it is subtracted; end on the break-even ROAS cell.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Highlight the cell being changed each time; end frame on the verdict cell.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-1-1">Copy caption</button></div>
+    <p class="caption" id="cap-1-1">ROAS is not profit. Here is what a 3x ROAS can actually leave you with once over-attribution, returns, product cost, shipping and fees come out.<br><br>Comment PROFIT and we will send you the calculator to run it on your own numbers.<br><br>#shopify #metaads #dtc</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">PROFIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 17 Oct</b><span class="mono">19:30 IST · 01:00 Sydney · 15:00 London · 10:00 New York</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (7 slides)</span><span class="chip">All</span><span class="chip">Margin math</span><span class='chip'>Posted</span></div>
+  </header>
+  <p class="hook">Where D2C revenue leaks: 4 numbers every founder should know</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 70.22% of carts abandoned (Baymard). S3 35% conversion gain from better checkout design (Baymard). S4 8.4% more conversions from 0.1s faster mobile (Deloitte/Google). S5 26% RTO on COD vs under 2% prepaid (Shipway FY25). S6 what to fix first. S7 CTA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Big number top half, one-line meaning and &#x27;what to fix&#x27; bottom half.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-1-2">Copy caption</button></div>
+    <p class="caption" id="cap-1-2">Four published numbers that explain where most D2C stores lose revenue, and what to fix first for each. Sources on every slide.<br><br>Save this for your next growth review. Comment AUDIT if you want us to check your store against them.<br><br>#ecommerce #cro #d2cbrands</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Design</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 18 Oct</b><span class="mono">19:30 IST · 01:00 Sydney · 15:00 London · 10:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">SEO/AEO/GEO</span><span class='chip pin'>Pin</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">We asked ChatGPT to recommend a brand in your category. Were you in the answer?</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record asking ChatGPT, Perplexity and Google (AI Overview) the same buying question for one category, for example &#x27;best running socks in Australia&#x27;. Show which brands get named and which don&#x27;t. Takeaway: AI search is a new shelf, and you can work on getting onto it.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record (desktop) ChatGPT, Perplexity and Google with the same buying question; scroll the answers slowly.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Open: &#x27;We asked AI what to buy.&#x27; End on &#x27;Comment GEO&#x27;.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Highlight each brand name the AI mentions; blur nothing needed, these are public answers.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-1-3">Copy caption</button></div>
+    <p class="caption" id="cap-1-3">Shoppers now ask ChatGPT, Perplexity and Google&#x27;s AI answers what to buy. Some brands get named. Most don&#x27;t.<br><br>Getting into those answers is a mix of SEO, clear product pages and being mentioned in the right places.<br><br>Comment GEO and we will send you the AI search visibility checklist.<br><br>#aisearch #seo #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">GEO</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-ai-search-visibility-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article><h3 class='week' id='week2'>Week 2 <span>20 Oct to 25 Oct</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 20 Oct</b><span class="mono">13:30 IST · 19:00 Sydney · 09:00 London · 04:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">AU</span><span class="chip">CRO</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">[Brand] does everything right on this page except one thing.</p>
+  <div class="block"><h4>What it shows</h4><p>Phone screen-record a well-known Australian brand&#x27;s mobile product page. Two strengths, one leak (card surcharge still showing after the 1 Oct ban, shipping cost hidden until checkout, Afterpay message buried, reviews too low, or a slow image). What that leak costs. Set the store to Australia and A$ before recording.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Phone screen-record the Australian brand&#x27;s mobile product page: scroll, add to cart, open cart. Do Not Disturb on.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Two things it does well, then the one leak and what it costs.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Red circle on the leak; slow zoom.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-2-0">Copy caption</button></div>
+    <p class="caption" id="cap-2-0">A product page teardown of an Australian brand: what converts, what leaks, and what the leak costs.<br><br>Want this for your store? Comment AUDIT.<br><br>#shopifyaustralia #ecommerceaustralia #cro</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 22 Oct</b><span class="mono">19:30 IST · 01:00 Sydney · 15:00 London · 10:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">US/UK</span><span class="chip">Performance marketing</span></div>
+  </header>
+  <p class="hook">Before you raise your Meta budget, check these 3 numbers.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record the PROFIT calculator. 1) Break-even ROAS, 2) contribution per order after ads, 3) new vs returning customer share in Shopify. If any is off, more budget scales the loss.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the PROFIT calculator at 150% zoom, then Shopify&#x27;s new vs returning customer report (demo store).</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. One sentence per number; end on &#x27;more budget scales the loss&#x27;.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Highlight each number as you name it.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-2-1">Copy caption</button></div>
+    <p class="caption" id="cap-2-1">More budget does not fix a campaign that loses money on every order. It scales it.<br><br>Check break-even ROAS, contribution after ads and your new-customer share first.<br><br>Comment PROFIT for the calculator.<br><br>#metaads #performancemarketing #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">PROFIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 24 Oct</b><span class="mono">19:30 IST · 01:00 Sydney · 15:00 London · 10:00 New York</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (7 slides)</span><span class="chip">All</span><span class="chip">SEO/AEO/GEO</span></div>
+  </header>
+  <p class="hook">How to show up when shoppers ask AI what to buy</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 AI answers pull from pages they can read: check your robots.txt and site speed. S3 product pages that answer real questions (sizing, materials, delivery, returns). S4 structured data: Product, Offer, Review and FAQ schema. S5 reviews and mentions on other sites, not only your own. S6 test it monthly: ask ChatGPT, Perplexity and Google the same 5 buying questions and log who appears. S7 CTA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Same template as the first carousel. Check every claim against its source line.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-2-2">Copy caption</button></div>
+    <p class="caption" id="cap-2-2">SEO still matters. AI search adds a second test: can an AI answer engine read your pages, trust them and quote them?<br><br>Five things you control, and a simple monthly test.<br><br>Comment GEO for the full checklist.<br><br>#aeo #geo #seo</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">GEO</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-ai-search-visibility-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Design</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 25 Oct</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 10:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">CRO</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Save these 5 checkout pages before you redesign yours.</p>
+  <div class="block"><h4>What it shows</h4><p>Phone screen-record five public checkouts from US, UK and Australian brands. One thing each does well: delivery date, express pay (Shop Pay, Apple Pay, Afterpay, Klarna), guest checkout, trust near the pay button, order summary.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Phone screen-record five public checkouts (US, UK, AU); stop before payment. 2 seconds each.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. One line per checkout: what it does well.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Numbered labels 1-5; &#x27;Save this&#x27; on the final frame.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-2-3">Copy caption</button></div>
+    <p class="caption" id="cap-2-3">Five checkouts worth studying before your next redesign, and the one thing each gets right.<br><br>Save this. Comment AUDIT if you want yours reviewed.<br><br>#checkout #shopify #cro</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Batch 1</dd></div></dl>
+</article><h3 class='week' id='week3'>Week 3 <span>27 Oct to 01 Nov</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 27 Oct</b><span class="mono">13:30 IST · 19:00 Sydney · 08:00 London · 04:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">AU</span><span class="chip">Performance marketing</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Since 1 October, this line is banned in Australian checkouts.</p>
+  <div class="block"><h4>What it shows</h4><p>Phone screen-record a checkout (demo store) showing a &#x27;1.5% card surcharge&#x27; line, then the same checkout without it. The RBA ban on surcharging Visa, Mastercard and eftpos started 1 Oct 2026. Two things follow: the line must go, and the fee lands in your margin unless prices or payment mix change. Show a payment-fee margin table with one SKU in red.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Phone screen-record the demo store checkout with a &#x27;1.5% card surcharge&#x27; line, then without it; then the payment-fee margin table.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Open on the ban date; end on &#x27;who pays the fee now?&#x27;.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Red strike-through on the surcharge line; one SKU row highlighted red.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-3-0">Copy caption</button></div>
+    <p class="caption" id="cap-3-0">The RBA ban on card surcharges started on 1 October. If your checkout still adds a card fee, it has to go.<br><br>Then the real question: who pays the fee now? Absorb it, reprice, or steer customers to cheaper ways to pay.<br><br>Comment PROFIT for the calculator and run your own card fees through it.<br><br>#ecommerceaustralia #shopifyaustralia #payments</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">PROFIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 29 Oct</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 10:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">AI solutions</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">This is what an AI support assistant for a Shopify store looks like.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record a demo on a Shopify development store: a shopper asks &#x27;where is my order&#x27; and &#x27;can I return this&#x27;, the assistant answers from store policies and order status, and hands over to a person when it is unsure. Demo store only, no client data.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record a support assistant demo on a Shopify development store (Shopify Inbox, or the tool you use). Demo data only.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Two shopper questions, the answers, then the hand-over to a person.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Text callouts: &#x27;answers from your policies&#x27;, &#x27;hands over when unsure&#x27;.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-3-1">Copy caption</button></div>
+    <p class="caption" id="cap-3-1">Most support tickets are the same five questions. An AI assistant can answer them in seconds, from your own policies, and pass anything unusual to your team.<br><br>Comment AI for 10 AI builds worth starting with for ecommerce brands.<br><br>#aiforbusiness #shopify #ecommerce</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AI</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-ai-for-ecommerce-builds.pdf</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 31 Oct</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 10:00 New York</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (6 slides)</span><span class="chip">All</span><span class="chip">Proof and trust</span></div>
+  </header>
+  <p class="hook">How US, UK and Australian brands work with a team in India</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 overlap hours: London afternoons and US mornings are India&#x27;s evening; Sydney evenings are India&#x27;s afternoon. S3 weekly written update, with a redacted example. S4 one senior contact. S5 billing in USD, GBP or AUD, NDA, 30-day notice. S6 CTA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Same template as the first carousel. Check every claim against its source line.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-3-2">Copy caption</button></div>
+    <p class="caption" id="cap-3-2">The three things founders worry about with an offshore team, and exactly how we handle each one.<br><br>Comment CHECKLIST for the questions to ask any agency, us included.<br><br>#ecommerceagency #shopifyexperts #dtc</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">CHECKLIST</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-agency-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Design</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 01 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">AI solutions</span><span class='chip pin'>Pin</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">We built a tool that audits a store in two minutes.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record the Marginwise audit crawler running on the demo store (terminal command, then the report): score out of 100, red rows for speed, trackers firing before consent, missing product schema, and one market rule (AU surcharge or German Impressum). End: a person checks every finding before it goes to you.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the terminal running the audit crawler on the demo store, then scroll the HTML report.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Tool first, person second: &#x27;a person checks every finding&#x27;.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Zoom on the score, then on three red rows.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-3-3">Copy caption</button></div>
+    <p class="caption" id="cap-3-3">Every free teardown starts with our audit tool: speed, accessibility, tracking, checkout, local rules and AI search readiness, scored in two minutes.<br><br>Then a person checks every finding and picks the one fix that matters most.<br><br>Comment AUDIT and we will run it on your store.<br><br>#ai #cro #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article><h3 class='week' id='week4'>Week 4 <span>03 Nov to 08 Nov</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 03 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">Retention</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Rating post-purchase emails. This one is a 2/10.</p>
+  <div class="block"><h4>What it shows</h4><p>Screenshot three order confirmation emails (your own inbox, details blurred). Score each with one reason; end on what a 9/10 contains.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screenshot three order confirmation emails from your own inbox; blur names, order numbers and addresses.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Score each out of 10 with one reason.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Big score number on each email.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-4-0">Copy caption</button></div>
+    <p class="caption" id="cap-4-0">Your order confirmation email is the most-opened email you send. Most brands waste it on a receipt.<br><br>Comment FLOWS for the post-purchase checklist and a 10-point scorecard.<br><br>#klaviyo #emailmarketing #dtc</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">FLOWS</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-post-purchase-email-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 05 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">Website development</span></div>
+  </header>
+  <p class="hook">A tenth of a second changed conversions by 8.4%.</p>
+  <div class="block"><h4>What it shows</h4><p>Deloitte/Google study of 37 brands. Run a public store through PageSpeed and show the three usual culprits: app scripts, oversized images, third-party widgets. Fix speed before buying more traffic.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record pagespeed.web.dev on a public Shopify store, then the opportunities list.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Lead with 0.1s = 8.4%; name the three culprits.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Highlight the three culprits as you name them.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-4-1">Copy caption</button></div>
+    <p class="caption" id="cap-4-1">Fix speed before you buy more traffic. The three culprits on most Shopify stores.<br><br>Comment SPEED and we will check your store.<br><br>#shopifyspeed #webdevelopment #cro</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">SPEED</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-shopify-speed-checklist.pdf + speed check</dd></div><div><dt>Record in</dt><dd>Batch 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 07 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (8 slides)</span><span class="chip">All</span><span class="chip">CRO</span></div>
+  </header>
+  <p class="hook">Black Friday checklist: 7 checkout fixes before 27 November</p>
+  <div class="block"><h4>What it shows</h4><p>One fix per slide: shipping cost shown early, guest checkout, express pay (Shop Pay, Apple Pay, Afterpay, Klarna), delivery date, honest offer messaging, mobile speed, post-purchase upsell that keeps margin. Final slide CTA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Same template as the first carousel. Check every claim against its source line.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-4-2">Copy caption</button></div>
+    <p class="caption" id="cap-4-2">Seven checkout fixes you can still ship before Black Friday and Click Frenzy, none of which need a redesign.<br><br>Comment BFCM for the full checklist with a sale timeline.<br><br>#blackfriday #bfcm #clickfrenzy</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">BFCM</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-black-friday-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Design</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 08 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">US</span><span class="chip">Performance marketing</span></div>
+  </header>
+  <p class="hook">Four tariff changes in twelve months. Is your price still right?</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record a landed-cost table for 5 demo SKUs: product cost, duty, tariff surcharge, freight, then margin. Change the tariff input and watch two SKUs turn red. Point: price on today&#x27;s landed cost, not last quarter&#x27;s. No legal or customs advice; rates come from your broker.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record a landed-cost sheet for 5 demo SKUs; change the tariff input live.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Lead with &#x27;four changes in a year&#x27;; end on &#x27;price on today&#x27;s landed cost&#x27;.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Two SKUs flip to red; on-screen note &#x27;rates from your broker&#x27;.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-4-3">Copy caption</button></div>
+    <p class="caption" id="cap-4-3">De minimis is gone and tariffs changed four times in a year. Most brands are still pricing on an old landed cost.<br><br>Run your SKUs through today&#x27;s numbers before Black Friday discounts eat what is left.<br><br>Comment PROFIT for the calculator.<br><br>#tariffs #ecommerce #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">PROFIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 3</dd></div></dl>
+</article><h3 class='week' id='week5'>Week 5 <span>10 Nov to 15 Nov</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 10 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">Performance marketing</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Buy now, pay later is not free. Here&#x27;s what it costs you.</p>
+  <div class="block"><h4>What it shows</h4><p>Afterpay, Klarna, Clearpay and Affirm all charge a merchant fee on every order. Enter your own BNPL fee in the PROFIT calculator&#x27;s payment fee line and show contribution per order before and after. Three levers: show BNPL above a minimum order value, bundle to lift AOV, steer repeat buyers to cheaper payment.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the PROFIT calculator: raise the payment fee to your BNPL fee, then raise AOV to recover margin.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Before vs after contribution per order; three levers.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Before/after numbers side by side.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-5-0">Copy caption</button></div>
+    <p class="caption" id="cap-5-0">BNPL can lift conversion, but every order pays a merchant fee. Know what it does to your margin before you push it.<br><br>Comment PROFIT for the calculator and run it with your own fee.<br><br>#afterpay #klarna #ecommerce</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">PROFIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 3</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 12 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">AI solutions</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Every morning, someone fixes these by hand.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record the sync exception agent demo (fixture data): a list of failed Shopify-to-ERP orders, the agent labelling each cause (missing SKU, duplicate, tax code), safe fixes retried, two waiting for approval, then a 7am Slack summary &#x27;12 fixed, 2 need you&#x27;.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the sync exception agent demo output (fixture data) and a mock Slack message.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Problem, what the agent does, what still needs a person.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Labels on each error type; &#x27;12 fixed, 2 need you&#x27; as the end frame.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-5-1">Copy caption</button></div>
+    <p class="caption" id="cap-5-1">If your Shopify orders fail to reach Cin7, NetSuite, Xero or MYOB, someone is fixing them by hand every morning.<br><br>An AI agent can sort the failures, fix the safe ones and leave the rest for a person to approve.<br><br>Comment AI for 10 AI builds worth starting with.<br><br>#ai #shopify #erp</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AI</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-ai-for-ecommerce-builds.pdf</dd></div><div><dt>Record in</dt><dd>Batch 3</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 14 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (7 slides)</span><span class="chip">All</span><span class="chip">Retention</span></div>
+  </header>
+  <p class="hook">After Black Friday: turn sale buyers into repeat buyers</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 why sale buyers churn. S3 the delivered and how-to-use email. S4 review request timing. S5 replenishment timed to your data. S6 win-back without a discount first. S7 CTA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Same template as the first carousel. Check every claim against its source line.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-5-2">Copy caption</button></div>
+    <p class="caption" id="cap-5-2">Sale buyers are the easiest to lose. Five emails that bring them back without giving away margin.<br><br>Comment FLOWS for the full checklist.<br><br>#retention #emailmarketing #dtc</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">FLOWS</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-post-purchase-email-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Design</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 15 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">Proof and trust</span></div>
+  </header>
+  <p class="hook">We audited [N] stores this month. The same 3 leaks showed up in [X] of them.</p>
+  <div class="block"><h4>What it shows</h4><p>Only post if the audits are real; use the actual count. Three most common leaks, anonymised. If fewer than 5 audits are done, swap for a second Australian teardown.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record a tally of audits you actually ran (store names hidden) and anonymised screenshots of the three leaks.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Use the real count; if under 5, record a second Australian teardown instead.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Counter for each leak&#x27;s tally.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-5-3">Copy caption</button></div>
+    <p class="caption" id="cap-5-3">What we keep finding when we audit ecommerce stores, with no names attached.<br><br>Comment AUDIT to get yours.<br><br>#ecommerce #cro #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Batch 3</dd></div></dl>
+</article><h3 class='week' id='week6'>Week 6 <span>17 Nov to 22 Nov</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 17 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">DE</span><span class="chip">CRO</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Selling to Germany? Since 19 June your shop needs this button.</p>
+  <div class="block"><h4>What it shows</h4><p>Phone screen-record a German shop&#x27;s footer and account area looking for the withdrawal button (Widerrufsbutton), then the two-step withdrawal flow on the demo store. Mention: public pages only, no shop named, and your lawyer confirms the wording.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Phone screen-record a German shop footer and account area (public, unnamed), then the demo store&#x27;s two-step withdrawal flow.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Date first (19 June), then the fix; say &#x27;your lawyer confirms the wording&#x27;.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Circle where the button should be; blur the shop&#x27;s logo.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-6-0">Copy caption</button></div>
+    <p class="caption" id="cap-6-0">Since 19 June 2026, online shops selling to German consumers need a withdrawal button: a two-step way to cancel a purchase during the withdrawal period.<br><br>Missing it is an easy target for warning letters. Your lawyer confirms the wording; we build it into the theme.<br><br>Comment AUDIT and we will check your shop.<br><br>#ecommercegermany #shopify #berlinstartups</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Batch 4</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 19 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">CA</span><span class="chip">Performance marketing</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Shipping to the US from Canada? Your customer might be paying at the door.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record a demo checkout for a US customer from a Canadian store: no duties shown, then a mock delivery notice with brokerage and duty owed. Then the same checkout with duties-included pricing. Mention de minimis is gone and tariffs rose on many Canadian goods; your broker confirms rates.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record a US checkout on the demo store without duties, a mock delivery notice, then the duties-included version.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. The surprise at the door, then the fix; &#x27;your broker confirms rates&#x27;.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Mock notice clearly labelled &#x27;example&#x27;.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-6-1">Copy caption</button></div>
+    <p class="caption" id="cap-6-1">With de minimis gone, US customers of Canadian stores can be hit with duties and brokerage at the door. Many never order again.<br><br>Duties-included pricing fixes the surprise, and shows you which SKUs still make money.<br><br>Comment PROFIT for the calculator.<br><br>#shopifycanada #ecommercecanada #crossborder</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">PROFIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 4</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 21 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (7 slides)</span><span class="chip">All</span><span class="chip">CRO</span></div>
+  </header>
+  <p class="hook">Black Friday week: 5 checks for the night before</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 place a test order on mobile with each payment method. S3 check discount codes and automatic discounts stack the way you planned. S4 shipping cut-off dates shown on product and cart pages. S5 tracking fires once per order (no double purchases in GA4 or Meta). S6 someone on DMs and email on the day. S7 CTA.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Same template as the first carousel. Check every claim against its source line.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-6-2">Copy caption</button></div>
+    <p class="caption" id="cap-6-2">Five checks to run the night before Black Friday, Click Frenzy or Cyber Monday. None of them need a developer.<br><br>Save this for next week. Comment BFCM for the full checklist and timeline.<br><br>#blackfriday #bfcm #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">BFCM</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-black-friday-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Design 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 22 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">Website development</span></div>
+  </header>
+  <p class="hook">Your store on Black Friday: test these 3 pages before the traffic does.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record PageSpeed (mobile) on the demo store&#x27;s home, collection and product pages, then an app list showing two unused apps still loading scripts. Fix: remove them before the sale.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record PageSpeed mobile on three demo store pages and the installed apps list.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Three pages, one culprit, one fix.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Score numbers large on screen.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-6-3">Copy caption</button></div>
+    <p class="caption" id="cap-6-3">Traffic spikes expose slow pages. Test home, collection and product pages on mobile this week, and remove apps you no longer use.<br><br>Comment SPEED and we will check your store before the sale.<br><br>#shopifyspeed #blackfriday #cro</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">SPEED</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-shopify-speed-checklist.pdf + speed check</dd></div><div><dt>Record in</dt><dd>Batch 4</dd></div></dl>
+</article><h3 class='week' id='week7'>Week 7 <span>24 Nov to 29 Nov</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 24 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">AI solutions</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">This is why month-end takes three days.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record the payout reconciliation demo (fixture data): Shopify, PayPal and Afterpay payouts next to the bank feed, nothing lines up; the matcher runs, 412 of 418 matched with fees and refunds split out; the six exceptions explained in plain English. Demo data only, labelled.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the payout reconciliation demo: inputs side by side, the match result, the exceptions summary.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Pain, result, what is left.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Counter &#x27;412 / 418 matched&#x27;; label &#x27;demo data&#x27;.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-7-0">Copy caption</button></div>
+    <p class="caption" id="cap-7-0">Shopify Payments, PayPal, Afterpay and Klarna payouts rarely match the bank feed line for line. That is why month-end drags.<br><br>We match every payout to the bank and explain what is left in plain English.<br><br>Comment AI for 10 AI builds worth starting with.<br><br>#xero #shopify #ecommercefinance</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AI</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-ai-for-ecommerce-builds.pdf</dd></div><div><dt>Record in</dt><dd>Batch 5</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 26 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">US</span><span class="chip">Retention</span></div>
+  </header>
+  <p class="hook">Thanksgiving orders are in. Send this email before the box arrives.</p>
+  <div class="block"><h4>What it shows</h4><p>Screenshot an order confirmation and a &#x27;your order is on its way&#x27; email from your own inbox (details blurred). Show one change: tell the customer how to use the product and when to expect it, not just a receipt.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screenshot two order emails from your own inbox, blurred; mock up the improved version in Canva.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Before and after; one change.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Before/after split.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-7-1">Copy caption</button></div>
+    <p class="caption" id="cap-7-1">The emails after a Black Friday order decide whether that customer buys again in January.<br><br>Start with the order confirmation and the shipping email.<br><br>Comment FLOWS for the post-purchase checklist.<br><br>#klaviyo #bfcm #emailmarketing</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">FLOWS</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-post-purchase-email-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 5</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Fri 27 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">CRO</span></div>
+  </header>
+  <p class="hook">It&#x27;s Black Friday. Three fixes you can still ship in an hour.</p>
+  <div class="block"><h4>What it shows</h4><p>Phone screen-record three quick fixes on the demo store: free-shipping threshold shown in the cart, express pay buttons above the fold in checkout, and a delivery cut-off banner. 3 seconds each.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Phone screen-record three quick changes on the demo store.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. One line per fix; &#x27;no developer needed&#x27;.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Numbered labels 1-3.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-7-2">Copy caption</button></div>
+    <p class="caption" id="cap-7-2">Three changes you can still make today without a developer: show the free-shipping threshold in the cart, put express pay first, and add a delivery cut-off banner.<br><br>Comment BFCM for the full checklist.<br><br>#blackfriday #bfcm #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">BFCM</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-black-friday-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 5</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 29 Nov</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (7 slides)</span><span class="chip">DE</span><span class="chip">Website development</span></div>
+  </header>
+  <p class="hook">From 1 January 2027, a PDF invoice is not enough in Germany</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 who: businesses above EUR 800K turnover must issue B2B e-invoices from 1 Jan 2027, all businesses from 2028. S3 what counts: XRechnung or ZUGFeRD; a plain PDF does not. S4 where Shopify stores get stuck: no native DATEV link, B2B orders mixed with B2C. S5 what to set up: invoice output, DATEV export, payout matching. S6 confirm the rules with your tax adviser. S7 CTA. Source line: German Finance Ministry letter of 15 Oct 2025.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Same template as the first carousel. Check every claim against its source line.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-7-3">Copy caption</button></div>
+    <p class="caption" id="cap-7-3">Germany&#x27;s B2B e-invoicing rules start biting on 1 January 2027. If you sell to businesses from a Shopify or Shopware store, a PDF invoice will no longer count.<br><br>Your tax adviser confirms what applies to you; we build the invoice output and the DATEV export.<br><br>Comment AUDIT and tell us your setup.<br><br>#erechnung #ecommercegermany #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Design 2</dd></div></dl>
+</article><h3 class='week' id='week8'>Week 8 <span>01 Dec to 06 Dec</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 01 Dec</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">Performance marketing</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Cyber Monday is over. Read these 4 numbers before you celebrate.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record the PROFIT calculator with demo BFCM numbers: revenue up, but discount depth, returns allowance, ad cost and payment fees take contribution per order down. Four numbers: contribution per order, new-customer share, discount depth, returns rate.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the PROFIT calculator with demo BFCM numbers.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Revenue up, contribution down; the four numbers.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Highlight each number as you name it.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-8-0">Copy caption</button></div>
+    <p class="caption" id="cap-8-0">Record revenue does not mean record profit. Before you celebrate, check contribution per order, new-customer share, discount depth and returns.<br><br>Comment PROFIT for the calculator.<br><br>#cybermonday #bfcm #ecommerce</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">PROFIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-profit-calculator-usd.xlsx + marginwise-roas-to-profit-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 6</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 03 Dec</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">US</span><span class="chip">AI solutions</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">Google now charges some businesses for calls they miss.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record the AI receptionist demo: a missed call at 9:47pm, a text-back within a minute, then the AI answering a second call, saying it is an AI, checking the suburb and booking a job into a demo calendar. Mention Google Local Services Ads started billing for missed calls on 1 Oct 2026. Demo line only.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the receptionist demo: phone missed-call screen, text-back, call transcript, demo calendar.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Lead with the Google change; the AI says it is an AI.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Time stamp &#x27;9:47pm&#x27; on screen; &#x27;demo line&#x27; label.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-8-1">Copy caption</button></div>
+    <p class="caption" id="cap-8-1">Since 1 October, Google bills Local Services Ads advertisers for missed calls during business hours. Every missed call now costs twice.<br><br>An AI receptionist answers, says it is an AI, books the job and texts back the calls you miss.<br><br>Comment AI to see it on a test line.<br><br>#smallbusiness #hvac #ai</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AI</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-ai-for-ecommerce-builds.pdf</dd></div><div><dt>Record in</dt><dd>Batch 6</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 05 Dec</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (6 slides)</span><span class="chip">CA</span><span class="chip">CRO</span></div>
+  </header>
+  <p class="hook">Selling into Quebec: what Bill 96 changes for your store</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 French must be available to Quebec customers on your storefront and product information. S3 since 1 June 2025, generic words on packaging also need French; grace period to 1 June 2027 for older stock. S4 Law 25: consent before non-essential cookies. S5 what to do: French storefront with human-reviewed translation, consent banner, packaging to your lawyer. S6 CTA. Not legal advice.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Same template as the first carousel. Check every claim against its source line.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-8-2">Copy caption</button></div>
+    <p class="caption" id="cap-8-2">Quebec has its own rules for language and privacy. If you sell there, check your storefront, your product data and your cookie banner.<br><br>Packaging and legal wording go to your lawyer; we build the French store and the consent setup.<br><br>Comment AUDIT and we will check your store.<br><br>#quebec #shopifycanada #ecommercecanada</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Design 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 06 Dec</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">SEO/AEO/GEO</span></div>
+  </header>
+  <p class="hook">Three page changes that make AI assistants quote your store.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record the demo store&#x27;s product page before and after: answers to real questions on the page (sizing, materials, delivery, returns), Product and FAQ schema validated in Google&#x27;s Rich Results Test, and robots.txt allowing AI crawlers. No claims about ranking results.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the demo product page before and after, Rich Results Test, and robots.txt.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Three changes, one per shot.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Tick on each change.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-8-3">Copy caption</button></div>
+    <p class="caption" id="cap-8-3">AI assistants quote pages they can read and trust. Three changes help: answer real questions on the page, add Product and FAQ schema, and let AI crawlers in.<br><br>Comment GEO for the full checklist.<br><br>#aeo #geo #seo</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">GEO</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-ai-search-visibility-checklist.pdf</dd></div><div><dt>Record in</dt><dd>Batch 6</dd></div></dl>
+</article><h3 class='week' id='week9'>Week 9 <span>08 Dec to 13 Dec</span></h3>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Tue 08 Dec</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">DE</span><span class="chip">CRO</span><span class='chip trial'>Trial Reel first</span></div>
+  </header>
+  <p class="hook">&#x27;Klimaneutral&#x27; is now a risky word on German product pages.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record the compliance copy auditor demo on fixture copy: a product page with a &#x27;klimaneutral&#x27; badge, the finding (rule, risk, suggested rewrite), and a lawyer sign-off column. Rules since 27 Sep 2026 limit offset-based climate claims and self-made labels. Not legal advice.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the compliance copy auditor output on fixture copy.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Date, the risky word, the safer rewrite, lawyer signs off.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Highlight the flagged phrase and the rewrite.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST as a Trial Reel (share to followers only if 3-second hold beats your average). Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-9-0">Copy caption</button></div>
+    <p class="caption" id="cap-9-0">Since 27 September, claims like &#x27;klimaneutral&#x27; based on offsetting and self-made eco labels are a risk in Germany.<br><br>We scan your product pages and ads, flag each claim with a safer rewrite, and your lawyer signs off.<br><br>Comment AUDIT and we will scan your shop.<br><br>#greenclaims #ecommercegermany #berlinstartups</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Batch 7</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Thu 10 Dec</b><span class="mono">13:30 IST · 19:00 Sydney · 08:00 London · 03:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">AU</span><span class="chip">AI solutions</span></div>
+  </header>
+  <p class="hook">Christmas orders plus Cin7 equals oversells. Here&#x27;s the 7am fix.</p>
+  <div class="block"><h4>What it shows</h4><p>Screen-record the sync exception agent demo again, framed for Christmas peak: stock mismatch errors, the agent flagging oversell risk and holding those SKUs for approval, then the Slack summary. Demo data only.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record the sync agent demo with stock-mismatch fixtures and the Slack summary.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Peak season framing; what the agent holds for approval.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. &#x27;Held for approval&#x27; label on the risky SKUs.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-9-1">Copy caption</button></div>
+    <p class="caption" id="cap-9-1">Peak season is when Shopify and your inventory system disagree most, and every mismatch is an oversell waiting to happen.<br><br>An AI agent watches the sync, fixes what is safe and flags the rest before the morning rush.<br><br>Comment AI for 10 AI builds worth starting with.<br><br>#shopifyaustralia #cin7 #ecommerceaustralia</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AI</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-ai-for-ecommerce-builds.pdf</dd></div><div><dt>Record in</dt><dd>Batch 7</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sat 12 Dec</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip carousel">Carousel (7 slides)</span><span class="chip">All</span><span class="chip">Proof and trust</span></div>
+  </header>
+  <p class="hook">What changed for online stores in 2026, by country</p>
+  <div class="block"><h4>What it shows</h4><p>S1 hook. S2 Australia: card surcharge ban (1 Oct), subscription and drip-pricing rules from 1 Jul 2027. S3 US: de minimis gone, tariff changes, accessibility lawsuits. S4 UK: keep this slide general unless a rule is checked before posting. S5 Germany: withdrawal button (19 Jun), green claims (27 Sep), e-invoicing (1 Jan 2027). S6 Canada: Quebec French and cookie consent. S7 CTA. Source line on every slide; not legal advice.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Canva &gt; Instagram Post (portrait) 1080x1350. Use one template for every carousel: navy background, white text, one idea per slide.</li><li>Slide copy: take it from the Outline column. Max 25 words per slide. Same template as the first carousel. Check every claim against its source line.</li><li>Put a source line (small, bottom) on every slide with a statistic.</li><li>Last slide: CTA with the comment keyword in large text.</li><li>Export as PNG, upload in order, add alt text to slide 1.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-9-2">Copy caption</button></div>
+    <p class="caption" id="cap-9-2">The rules for online stores changed a lot this year. One slide per country, with the date each change starts.<br><br>Save this for your 2027 planning. Comment AUDIT and we will check your store against them.<br><br>#ecommerce #shopify #compliance</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Design 2</dd></div></dl>
+</article>
+<article class="post">
+  <header class="post-head">
+    <div class="when"><b>Sun 13 Dec</b><span class="mono">19:30 IST · 01:00 Sydney · 14:00 London · 09:00 New York</span></div>
+    <div class="tags"><span class="chip reel">Reel (10s)</span><span class="chip">All</span><span class="chip">Proof and trust</span></div>
+  </header>
+  <p class="hook">What we found auditing stores this quarter.</p>
+  <div class="block"><h4>What it shows</h4><p>Only post with real numbers: the count of audits run since October and the three most common findings, anonymised. If fewer than 5 audits are done, swap for a teardown of a German or Canadian store instead.</p></div>
+  <div class="block"><h4>Step by step (no face)</h4><ol class='steps'><li>Record: Screen-record a tally of real audits (store names hidden) and anonymised screenshots of the top three findings.</li><li>Script the voiceover (about 25 words for 10 seconds): hook, the work, the CTA. Use the real count; if under 5 audits, record a German or Canadian teardown instead.</li><li>Voiceover: record in a quiet room on your phone (Voice Memos or CapCut &gt; Audio &gt; Record). One clean take; no AI voice.</li><li>Edit in CapCut (9:16): drop in recordings, lay voiceover, Auto captions on (white, bold, lower third), hook text on screen for the first 2 seconds. Counter for each finding.</li><li>Cover: freeze a frame of the work with the hook text on it; keep text inside the centre 1080x1080 so it crops cleanly on the grid.</li><li>Post: paste caption from this sheet, add the location-free cover, turn on the auto-DM keyword, publish at 19:30 IST. Reply to every comment in the first hour.</li></ol></div>
+  <div class="block"><div class="caphead"><h4>Caption</h4><button type="button" class="copy" data-target="cap-9-3">Copy caption</button></div>
+    <p class="caption" id="cap-9-3">The leaks we found most often this quarter, with no names attached.<br><br>Comment AUDIT to get yours checked before January.<br><br>#ecommerce #cro #shopify</p></div>
+  <dl class="meta"><div><dt>Comment keyword</dt><dd class="mono">AUDIT</dd></div>
+  <div><dt>Sends</dt><dd>marginwise-store-leak-audit.pdf + free 2-min teardown</dd></div><div><dt>Record in</dt><dd>Batch 7</dd></div></dl>
+</article>
+  <h2 id="how">How to make (no face)</h2><div class='tw'><table><thead><tr><th>Step</th><th>How</th></tr></thead><tbody><tr><td>Kit</td><td>Laptop with QuickTime (Mac) or OBS (Windows) for desktop recording; phone screen recorder; CapCut (free); Canva (free); wired earphones with mic or any USB mic. No camera needed.</td></tr><tr><td>Before recording</td><td>Do Not Disturb on, browser in a clean profile (no bookmarks, no logged-in personal accounts), zoom browser to 125-150% so text is readable on a phone.</td></tr><tr><td>Recording</td><td>Move the cursor slowly and pause 1 second on anything you will talk about. Record 20% more than you need.</td></tr><tr><td>Voiceover</td><td>Your own voice, phone held 15 cm away, in a room with soft furnishings. Read from the script, then do one natural take without reading; use whichever sounds less scripted. Instagram rewards real human content; skip AI voices.</td></tr><tr><td>If you do not want to use your voice</td><td>Text-only version: put each script line as a caption block (3-4 words per screen), add quiet background music from CapCut&#x27;s commercial library. Expect lower watch time; test it as a Trial Reel first.</td></tr><tr><td>Editing</td><td>CapCut: 9:16, Auto captions, hook text in the first 2 seconds, cut every pause over half a second, zoom and red-box highlights on whatever you name. Length 10 seconds; Google Flow clips work as b-roll.</td></tr><tr><td>Privacy</td><td>Blur names, emails, order numbers and any client data. Teardowns use public pages only.</td></tr><tr><td>Carousels</td><td>Canva 1080x1350, one template for all, max 25 words per slide, source line on stat slides, CTA slide last.</td></tr><tr><td>After posting</td><td>Reply to every comment in the first hour; check the auto-DM fired; log numbers in the Calendar tab after 7 days.</td></tr></tbody></table></div>
+  <h2 id="batches">Recording batches</h2><div class='tw'><table><thead><tr><th>Batch</th><th>Film on</th><th>Posts covered</th><th>What to prepare</th><th>Time needed</th></tr></thead><tbody><tr><td>Batch 1</td><td>Sun 18 Oct</td><td>AI search test (GEO); Australian product page teardown; Meta budget numbers; 5 checkouts</td><td>Pick the category question for the AI test, the Australian brand and five public checkouts. Record screens first, then all voiceovers in one sitting.</td><td>2 hours</td></tr><tr><td>Design</td><td>Mon 19 Oct</td><td>Carousels: AI search visibility, offshore trust, Black Friday checklist, after-the-sale retention</td><td>Same template as the first carousel: navy, white text, green numbers, one idea per slide.</td><td>3 hours</td></tr><tr><td>Batch 2</td><td>Sat 24 Oct</td><td>AU surcharge ban; AI support assistant demo; audit crawler demo; email ratings; site speed</td><td>Set up the Shopify development store with demo products, policies and a surcharge line to remove. Run the audit crawler on it.</td><td>3 hours</td></tr><tr><td>Batch 3</td><td>Fri 06 Nov</td><td>US tariffs and landed cost; BNPL fees; ERP sync agent demo; audit roundup</td><td>Prepare 5 demo SKUs for the landed-cost sheet. Run the sync exception agent on its fixtures.</td><td>2 hours</td></tr><tr><td>Batch 4</td><td>Sat 14 Nov</td><td>Germany withdrawal button; Canada duties at the door; Black Friday page speed</td><td>Find one public German shop (unnamed in the post) and set up a US checkout on the demo store.</td><td>2 hours</td></tr><tr><td>Batch 5</td><td>Sat 21 Nov</td><td>Payout reconciliation demo; Thanksgiving email; Black Friday quick fixes</td><td>Run the payout reconciliation agent on its fixtures; screenshot two order emails.</td><td>2 hours</td></tr><tr><td>Batch 6</td><td>Sat 28 Nov</td><td>Cyber Monday numbers; AI receptionist demo; AI search page changes</td><td>Set up a demo phone line for the receptionist (or record from fixtures). Add schema to the demo product page.</td><td>3 hours</td></tr><tr><td>Batch 7</td><td>Sat 05 Dec</td><td>German green claims; Christmas oversells; quarter roundup</td><td>Run the compliance copy auditor and sync agent on fixtures. Count the real audits done.</td><td>2 hours</td></tr><tr><td>Design 2</td><td>Sun 15 Nov</td><td>Carousels: Black Friday night-before checks, German e-invoicing, Quebec Bill 96, 2026 rules by country</td><td>Same template as earlier carousels. Every rule slide gets a date and a source line; mark &#x27;not legal advice&#x27;.</td><td>3 hours</td></tr></tbody></table></div>
+  <h2 id="stories">Stories, every week</h2><div class='tw'><table><thead><tr><th>Day</th><th>Story type</th><th>What to post</th><th>Sticker</th><th>Why</th></tr></thead><tbody><tr><td>Monday</td><td>Poll</td><td>One question for founders, alternating markets. Examples: &#x27;What is your COD share? Under 30% / Over 30%&#x27;; &#x27;Do you track contribution margin weekly? Yes / No&#x27;.</td><td>Poll</td><td>Two-way interaction now ranks; poll answers tell you what to post next.</td></tr><tr><td>Wednesday</td><td>Behind the scenes</td><td>15 seconds from a teardown in progress: the store on screen, one thing you spotted. No client names.</td><td>Question box: &#x27;Want yours next?&#x27;</td><td>Shows the work, feeds AUDIT requests.</td></tr><tr><td>Friday</td><td>Reel share</td><td>Share the week&#x27;s best-performing reel with a one-line takeaway.</td><td>Link: marginwise.in booking</td><td>Stories with link stickers are the highest-intent surface.</td></tr><tr><td>Sunday</td><td>Answer</td><td>Answer one question from DMs as 2-3 text frames over a screen recording or screenshot of the relevant page.</td><td>None</td><td>Turns DMs into content and shows you reply.</td></tr></tbody></table></div>
+  <h2 id="setup">Setup before the first post</h2><ul class='checks'><li><input type='checkbox' id='s0'><label for='s0'><b>Switch to Business account, category Marketing Agency, contact email set</b><span>Unlocks insights, contact button and approved DM tools</span></label></li><li><input type='checkbox' id='s1'><label for='s1'><b>Bio, name field and website link with UTM added</b><span>Profile visits convert from here</span></label></li><li><input type='checkbox' id='s2'><label for='s2'><b>Two-factor authentication on, backup codes saved</b><span>A hacked brand account is hard to recover</span></label></li><li><input type='checkbox' id='s3'><label for='s3'><b>All lead magnets (1 sheet, 8 PDFs) uploaded to Drive or the website with share links</b><span>Every CTA keyword depends on these</span></label></li><li><input type='checkbox' id='s4'><label for='s4'><b>Auto-DM tool connected and the 8 keywords tested from a second account</b><span>Broken DMs waste the first reels</span></label></li><li><input type='checkbox' id='s5'><label for='s5'><b>Highlight covers made: Teardowns, How we work, Tools we built, Book a call</b><span>Profile looks complete from day one</span></label></li><li><input type='checkbox' id='s6'><label for='s6'><b>GA4 check that utm_source=instagram shows up</b><span>So calls can be traced to reels</span></label></li><li><input type='checkbox' id='s7'><label for='s7'><b>Employment-contract check done</b><span>Before posting anything publicly</span></label></li><li><input type='checkbox' id='s8'><label for='s8'><b>Website updated for Australia, US and UK (hours, currency, services)</b><span>Bio and website must match</span></label></li></ul>
+</main>
+<script>
+document.querySelectorAll("button.copy").forEach(function (b) {
+  b.addEventListener("click", function () {
+    var el = document.getElementById(b.dataset.target);
+    var text = el.innerText;
+    function selectIt() { var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selected, copy now"; }
+    try {
+      navigator.clipboard.writeText(text).then(function () { b.textContent = "Copied"; setTimeout(function () { b.textContent = "Copy caption"; }, 1600); }, selectIt);
+    } catch (e) { selectIt(); }
+  });
+});
+document.querySelectorAll("ul.checks input").forEach(function (cb) {
+  try { cb.checked = localStorage.getItem("mw-" + cb.id) === "1"; } catch (e) {}
+  cb.addEventListener("change", function () { try { localStorage.setItem("mw-" + cb.id, cb.checked ? "1" : "0"); } catch (e) {} });
+});
+</script>
+</html>

@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Marginwise Calculators</title>
+<meta name="description" content="Free calculators for ecommerce brands: profit after ads, conversion lift, site speed, AI search value, AI support and phone agents, ops automation, the Australian surcharge ban, tariff landed cost and India COD returns.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: same identity as the booking page. Service chips on top, one calculator card at a time: inputs left, results right. */
+:root{
+  --bg:#F5F6F8; --surface:#FFFFFF; --ink:#16203A; --muted:#5A6378; --line:#DDE1E8;
+  --accent:#1E4FD8; --accent-ink:#FFFFFF; --mark:#F2B632; --soft:#E9EEFB; --ok:#1C7C54; --warn:#B4380B;
+  --f-display:"Young Serif", Georgia, "Times New Roman", serif;
+  --f-body:"Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1220; --surface:#161C2E; --ink:#E7EAF2; --muted:#9AA3B8; --line:#2A3247;
+  --accent:#7C9BFF; --accent-ink:#0E1220; --soft:#1C2540; --ok:#4CC08C; --warn:#FF9466; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1220; --surface:#161C2E; --ink:#E7EAF2; --muted:#9AA3B8; --line:#2A3247;
+  --accent:#7C9BFF; --accent-ink:#0E1220; --soft:#1C2540; --ok:#4CC08C; --warn:#FF9466; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--f-body);padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 72px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;line-height:1.12;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.label{font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.word{font:24px/1 var(--f-display);color:var(--ink);text-decoration:none}
+.word i{font-style:normal;color:var(--accent)}
+.back{font:600 14px var(--f-body)}
+.hero{padding-top:36px;display:grid;gap:12px}
+.hero h1{font-size:clamp(30px,4.6vw,48px)}
+.hero p{color:var(--muted);max-width:62ch;font-size:17px}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-top:28px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 13px/1 var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:9px 13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.cur{display:flex;gap:4px;padding:4px;background:var(--soft);border-radius:8px;flex-wrap:wrap}
+.cur button{font:500 12px/1 var(--f-mono);border:0;background:transparent;color:var(--muted);padding:8px 10px;border-radius:6px;cursor:pointer}
+.cur button[aria-pressed="true"]{background:var(--surface);color:var(--ink)}
+.picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.pick{font:500 14px/1.2 var(--f-body);border:1px dashed var(--line);background:transparent;color:var(--muted);border-radius:8px;padding:9px 12px;cursor:pointer;text-align:left}
+.pick[aria-pressed="true"]{border-style:solid;border-color:var(--accent);color:var(--ink);background:var(--soft)}
+.card{margin-top:20px;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.card-head{padding:22px 24px;border-bottom:1px solid var(--line);display:grid;gap:8px}
+.card-head h2{font-size:28px}
+.card-head p{color:var(--muted);max-width:70ch}
+.card-body{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}
+@media (max-width:760px){.card-body{grid-template-columns:1fr}}
+.inputs{padding:22px 24px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-content:start}
+@media (max-width:480px){.inputs{grid-template-columns:1fr}}
+.field{display:grid;gap:6px;min-width:0}
+.field label{font-size:13px;font-weight:600}
+.field label small{font-weight:400;color:var(--muted)}
+.field input{font:15px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+.field input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.results{padding:22px 24px;background:var(--soft);display:grid;gap:16px;align-content:start}
+@media (max-width:760px){.results{border-top:1px solid var(--line)}}
+.res{display:grid;gap:4px}
+.res small{font-size:13px;color:var(--muted)}
+.res b{font:400 30px/1.05 var(--f-display);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.res.key b{color:var(--accent)}
+.res.neg b{color:var(--warn)}
+.notes{padding:16px 24px;border-top:1px solid var(--line);display:grid;gap:8px;font-size:13px;color:var(--muted)}
+.notes ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:16px 24px;border-top:1px solid var(--line)}
+.cta a{font:600 15px/1 var(--f-body);background:var(--accent);color:var(--accent-ink);text-decoration:none;border-radius:8px;padding:13px 16px}
+.cta span{font-size:14px;color:var(--muted)}
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="word" href="index.html">Margin<i>wise</i></a>
+    <a class="back" href="index.html#book">Book a 30-minute call</a>
+  </header>
+  <div class="hero">
+    <p class="label">Free calculators</p>
+    <h1>Put your own numbers on the problem.</h1>
+    <p>One calculator for each thing we fix. Every default is an example or a published benchmark, labelled with its source. Replace them with your own figures; results are planning scenarios, not a promise of results.</p>
+  </div>
+  <div class="bar">
+    <div class="chips" role="group" aria-label="Service" id="services"></div>
+    <div class="cur" role="group" aria-label="Currency" id="currency"></div>
+  </div>
+  <div class="picker" role="group" aria-label="Calculator" id="picker"></div>
+  <section class="card" aria-live="polite">
+    <div class="card-head"><p class="label" id="c-service"></p><h2 id="c-title"></h2><p id="c-intro"></p></div>
+    <div class="card-body"><form class="inputs" id="inputs" novalidate></form><div class="results" id="results"></div></div>
+    <div class="notes" id="notes"></div>
+    <div class="cta"><span id="c-cta">Want us to go through these numbers with you?</span><a href="index.html#book">Book a 30-minute call</a></div>
+  </section>
+  <footer>Marginwise · Calculators run in your browser; nothing you type is sent anywhere.</footer>
+</div>
+<script src="calc.js"></script>
+<script>
+(function () {
+  var C = window.MWCalc;
+  var CUR = { AUD: ["en-AU", "AUD"], USD: ["en-US", "USD"], GBP: ["en-GB", "GBP"], INR: ["en-IN", "INR"] };
+  var state = { cur: "AUD", calc: "profit" };
+  function money(v, dp) {
+    if (!isFinite(v)) return "Not reachable";
+    var c = CUR[state.cur];
+    try { return new Intl.NumberFormat(c[0], { style: "currency", currency: c[1], minimumFractionDigits: dp || 0, maximumFractionDigits: dp || 0 }).format(v); }
+    catch (_) { return c[1] + " " + Math.round(v).toLocaleString(); }
+  }
+  function num(v, d) { return isFinite(v) ? v.toLocaleString(CUR[state.cur][0], { maximumFractionDigits: d === undefined ? 0 : d }) : "Not reachable"; }
+  function pct(v) { return isFinite(v) ? v.toFixed(1) + "%" : "Not reachable"; }
+
+  // Each calculator: inputs (key, label, default, unit hint), results, and notes with sources.
+  var CALCS = [
+    { id: "profit", service: "Performance marketing", title: "Profit after ads", fn: "profitAfterAds",
+      intro: "What a campaign leaves you after product cost, returns, fees and fulfilment, and the ROAS your ads platform must show to break even.",
+      inputs: [["spend", "Monthly ad spend", 10000, "money"], ["roas", "ROAS shown by the platform", 3, "x"], ["aov", "Average order value", 100, "money"], ["cogsPct", "Product cost", 35, "% of price"], ["feePct", "Payment fees", 3, "% of price"], ["returnsPct", "Returns", 8, "% of revenue"], ["fulfilPerOrder", "Pick, pack and shipping per order", 12, "money"], ["overAttribPct", "Platform over-counting", 0, "% (your estimate)"]],
+      results: function (r) { return [["Profit after ads, per month", money(r.profit), r.profit < 0 ? "neg" : "key"], ["Contribution per order before ads", money(r.contribution, 2)], ["Break-even ROAS on the platform", isFinite(r.breakEvenRoas) ? r.breakEvenRoas.toFixed(2) + "x" : "Not reachable: each order loses money before ads"], ["Orders you can count", num(r.orders)]]; },
+      notes: ["Returned goods are treated as not resold, which is conservative.", "If you think the platform over-counts conversions, enter your own estimate; we do not assume a figure."] },
+    { id: "lift", service: "CRO", title: "Conversion lift", fn: "conversionLift",
+      intro: "What a lift in conversion rate is worth on the traffic you already pay for.",
+      inputs: [["sessions", "Sessions a month", 40000, ""], ["crPct", "Conversion rate", 1.8, "%"], ["aov", "Average order value", 110, "money"], ["marginPct", "Gross margin", 60, "%"], ["liftPct", "Conversion lift", 20, "% (scenario)"]],
+      results: function (r) { return [["Extra gross margin per year", money(r.extraMarginYear), "key"], ["Extra revenue per month", money(r.extraRevenue)], ["Revenue today, per month", money(r.revenue)], ["Conversion rate after the lift", r.newCrPct.toFixed(2) + "%"]]; },
+      notes: ["Baymard Institute: the average large ecommerce site can gain 35% higher conversion through better checkout design. Lifts here are scenarios to plan with."] },
+    { id: "surcharge", cur: "AUD", service: "CRO", title: "Australian surcharge ban", fn: "surchargeBan",
+      intro: "Since 1 October 2026, Australian merchants cannot surcharge Visa, Mastercard or eftpos. This shows what the surcharge used to recover and what each fix is worth.",
+      inputs: [["cardRevenue", "Card revenue a month", 200000, "money"], ["surchargePct", "Surcharge you charged", 1.5, "%"], ["cardFeePct", "Your card fee", 1.4, "% (check your statement)"], ["cheaperFeePct", "Cheaper method fee (e.g. eftpos)", 0.5, "%"], ["shiftPct", "Share of card sales you could shift", 30, "%"]],
+      results: function (r) { return [["Surcharge income lost per year", money(r.lostYear), "neg"], ["Lost per month", money(r.lostSurcharge)], ["Price rise that keeps the same net", pct(r.priceRisePct)], ["Monthly saving from shifting payment mix", money(r.shiftSaving), "key"]]; },
+      notes: ["Source: Reserve Bank of Australia, media release 2026-10.", "Fees shown are examples; use the rates on your merchant statement."] },
+    { id: "cod", cur: "INR", service: "CRO", title: "India COD returns", fn: "codRto",
+      intro: "What cash-on-delivery orders that return to origin cost you, and what shifting buyers to prepaid saves.",
+      inputs: [["orders", "Orders a month", 5000, ""], ["codPct", "COD share of orders", 60, "%"], ["codRtoPct", "RTO rate on COD", 26, "%"], ["prepaidRtoPct", "RTO rate on prepaid", 2, "%"], ["rtoCost", "Cost per returned order (both ways)", 120, "money"], ["shiftPct", "COD orders you move to prepaid", 25, "%"]],
+      results: function (r) { return [["Monthly saving from the shift", money(r.saving), "key"], ["RTO cost today, per month", money(r.costNow), "neg"], ["Returned orders today", num(r.rtoNow)], ["Returned orders after the shift", num(r.rtoAfter)]]; },
+      notes: ["Source: Shipway ShipNotes FY25: 26% of COD orders return to origin, under 2% of prepaid."] },
+    { id: "speed", service: "Website development", title: "Site speed", fn: "speedValue",
+      intro: "What each tenth of a second is worth if your store behaves like the retail sites in the Deloitte and Google study.",
+      inputs: [["sessions", "Sessions a month", 40000, ""], ["crPct", "Conversion rate", 2, "%"], ["aov", "Average order value", 75, "money"], ["marginPct", "Gross margin", 60, "%"], ["tenths", "Tenths of a second you could save", 3, "x 0.1 s"]],
+      results: function (r) { return [["Extra gross margin per year (scenario)", money(r.scenarioMarginYear), "key"], ["Revenue at stake per 0.1 s, per month", money(r.perTenth)], ["Extra revenue per month (scenario)", money(r.scenario)], ["Revenue today, per month", money(r.revenue)]]; },
+      notes: ["Source: Deloitte Digital and Google, Milliseconds Make Millions (2020): a 0.1 s faster mobile site lifted retail conversions by 8.4% across 37 brands.", "The scenario applies that rate in a straight line; real gains vary and shrink as a site gets fast."] },
+    { id: "landed", cur: "USD", service: "Website development", title: "Tariff landed cost", fn: "landedCost",
+      intro: "Your landed cost per unit after duties and tariffs, the margin left at today's price, and the price that hits your target margin.",
+      inputs: [["unitCost", "Product cost per unit", 20, "money"], ["freight", "Freight per unit", 2, "money"], ["dutyPct", "Duty rate", 5, "%"], ["tariffPct", "Extra tariff", 10, "%"], ["otherFees", "Brokerage and other fees per unit", 0, "money"], ["price", "Selling price", 60, "money"], ["targetMarginPct", "Target margin", 60, "%"]],
+      results: function (r) { return [["Landed cost per unit", money(r.landed, 2)], ["Margin at today's price", pct(r.marginPct), r.marginPct < 0 ? "neg" : ""], ["Price for your target margin", money(r.priceForTarget, 2), "key"], ["Duties and tariffs per unit", money(r.duties, 2)]]; },
+      notes: ["Duty and tariff rates come from your customs broker; this is not customs advice."] },
+    { id: "search", service: "SEO, AEO and GEO", title: "Search and AI traffic value", fn: "searchValue",
+      intro: "What your organic and AI-referred visits are worth, and what the same visits would cost to buy as ads.",
+      inputs: [["sessions", "Organic and AI-referred sessions a month", 20000, ""], ["crPct", "Conversion rate", 1.5, "%"], ["aov", "Average order value", 80, "money"], ["marginPct", "Gross margin", 50, "%"], ["cpc", "Your average paid click cost", 1.5, "money"]],
+      results: function (r) { return [["Ad spend you would need to buy this traffic", money(r.adCostEquivalent), "key"], ["Revenue from it, per month", money(r.revenue)], ["Gross margin from it, per month", money(r.margin)]]; },
+      notes: ["Use the average cost per click from your own Google Ads account."] },
+    { id: "support", service: "AI solutions", title: "AI support agent", fn: "supportAgent",
+      intro: "Tickets an AI agent can resolve without a person, such as order status and returns, and what that saves.",
+      inputs: [["tickets", "Support tickets a month", 3000, ""], ["automatablePct", "Share that are order status, returns or edits", 40, "%"], ["resolvePct", "Share of those the agent resolves", 60, "%"], ["costPerTicket", "Cost per ticket handled by a person", 5, "money"], ["minutesPerTicket", "Minutes per ticket", 6, ""], ["fee", "Agent monthly fee", 750, "money"]],
+      results: function (r) { return [["Net saving per month", money(r.saving), r.saving < 0 ? "neg" : "key"], ["Tickets resolved by the agent", num(r.resolved)], ["Team hours freed per month", num(r.hours)]]; },
+      notes: ["Measure your own resolution rate on a sample of past tickets before relying on it."] },
+    { id: "phone", service: "AI solutions", title: "AI phone receptionist", fn: "receptionist",
+      intro: "Jobs you win back when an AI answers the calls nobody picks up, for trades, clinics and service businesses.",
+      inputs: [["calls", "Inbound calls a month", 400, ""], ["answeredPct", "Calls answered by a person today", 52, "%"], ["aiAnsweredPct", "Calls answered with the AI", 95, "%"], ["bookPct", "Answered calls that book", 43, "%"], ["jobValue", "Average job value", 450, "money"], ["marginPct", "Gross margin", 50, "%"], ["fee", "Receptionist monthly fee", 600, "money"]],
+      results: function (r) { return [["Extra gross profit per month", money(r.profit), r.profit < 0 ? "neg" : "key"], ["Extra calls answered", num(r.extraAnswered)], ["Extra jobs booked", num(r.jobs, 1)], ["Extra revenue per month", money(r.revenue)]]; },
+      notes: ["Source: Invoca 2026 home services benchmarks: 52% of inbound calls answered by a person; 43% of answered HVAC calls convert. Use your own call data where you have it."] },
+    { id: "ops", service: "AI solutions", title: "ERP sync and reconciliation", fn: "opsAutomation",
+      intro: "Manual hours and costly errors removed when an agent handles Shopify-to-ERP sync failures and payout reconciliation.",
+      inputs: [["hours", "Hours a month spent fixing sync and reconciling", 40, ""], ["hourlyCost", "Cost per hour", 35, "money"], ["automatePct", "Share an agent can handle", 70, "%"], ["errors", "Oversells or posting errors a month", 10, ""], ["costPerError", "Cost per error", 60, "money"], ["fee", "Monitoring fee per month", 900, "money"]],
+      results: function (r) { return [["Net saving per month", money(r.saving), r.saving < 0 ? "neg" : "key"], ["Hours saved", num(r.hoursSaved)], ["Errors avoided", num(r.errorsAvoided)]]; },
+      notes: ["Anything that changes orders, prices or invoices still goes to a person for approval."] }
+  ];
+  var SERVICES = ["Performance marketing", "CRO", "Website development", "SEO, AEO and GEO", "AI solutions"];
+  var values = {};
+  CALCS.forEach(function (c) { values[c.id] = {}; c.inputs.forEach(function (i) { values[c.id][i[0]] = i[2]; }); });
+
+  var $ = function (id) { return document.getElementById(id); };
+  function current() { return CALCS.filter(function (c) { return c.id === state.calc; })[0]; }
+
+  function renderNav() {
+    var calc = current();
+    $("services").innerHTML = "";
+    SERVICES.forEach(function (s) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = s;
+      b.setAttribute("aria-pressed", String(calc.service === s));
+      b.onclick = function () { state.calc = CALCS.filter(function (c) { return c.service === s; })[0].id; render(); };
+      $("services").appendChild(b);
+    });
+    $("picker").innerHTML = "";
+    CALCS.filter(function (c) { return c.service === calc.service; }).forEach(function (c) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "pick"; b.textContent = c.title;
+      b.setAttribute("aria-pressed", String(c.id === calc.id));
+      b.onclick = function () { state.calc = c.id; render(); };
+      $("picker").appendChild(b);
+    });
+    $("currency").innerHTML = "";
+    Object.keys(CUR).forEach(function (k) {
+      var b = document.createElement("button"); b.type = "button"; b.textContent = k;
+      b.setAttribute("aria-pressed", String(state.cur === k));
+      b.onclick = function () { state.cur = k; if (!current().cur) homeCur = k; renderInputs(); renderResults(); renderNav(); };
+      $("currency").appendChild(b);
+    });
+  }
+
+  function renderInputs() {
+    var calc = current(), form = $("inputs");
+    form.innerHTML = "";
+    calc.inputs.forEach(function (i) {
+      var id = "in-" + calc.id + "-" + i[0];
+      var hint = i[3] === "money" ? "(" + state.cur + ")" : i[3];
+      var f = document.createElement("div"); f.className = "field";
+      f.innerHTML = '<label for="' + id + '">' + i[1] + (hint ? ' <small>' + hint + '</small>' : '') + '</label><input id="' + id + '" type="number" inputmode="decimal" min="0" step="any">';
+      var input = f.querySelector("input");
+      input.value = values[calc.id][i[0]];
+      input.addEventListener("input", function () { var v = parseFloat(input.value); values[calc.id][i[0]] = isFinite(v) && v >= 0 ? v : 0; renderResults(); });
+      form.appendChild(f);
+    });
+    form.onsubmit = function (e) { e.preventDefault(); };
+  }
+
+  function renderResults() {
+    var calc = current();
+    var r = C[calc.fn](values[calc.id]);
+    $("results").innerHTML = calc.results(r).map(function (x) { return '<div class="res ' + (x[2] || "") + '"><small>' + x[0] + '</small><b>' + x[1] + '</b></div>'; }).join("");
+    document.querySelectorAll("#inputs small").forEach(function (s, idx) { var i = calc.inputs[idx]; if (i && i[3] === "money") s.textContent = "(" + state.cur + ")"; });
+  }
+
+  var homeCur;
+  function render() {
+    var calc = current();
+    // market-specific calculators open in their own currency; the rest use the visitor's
+    state.cur = calc.cur || homeCur;
+    $("c-service").textContent = calc.service;
+    $("c-title").textContent = calc.title;
+    $("c-intro").textContent = calc.intro;
+    $("notes").innerHTML = "<ul>" + calc.notes.map(function (n) { return "<li>" + n + "</li>"; }).join("") + "</ul>";
+    renderNav(); renderInputs(); renderResults();
+    try { localStorage.setItem("mw-calc", state.calc); } catch (_) {}
+  }
+
+  // Start in the visitor's currency, on the calculator named in the link (#profit, #lift, ...), else the last one used
+  var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+  homeCur = /^America\//.test(tz) ? "USD" : /^Europe\//.test(tz) ? "GBP" : /^Asia\/(Kolkata|Calcutta)$/.test(tz) ? "INR" : "AUD";
+  var hash = location.hash.slice(1);
+  if (CALCS.some(function (c) { return c.id === hash; })) state.calc = hash;
+  else { try { var s = localStorage.getItem("mw-calc"); if (s && CALCS.some(function (c) { return c.id === s; })) state.calc = s; } catch (_) {} }
+  render();
+})();
+</script>
+</body>
+</html>

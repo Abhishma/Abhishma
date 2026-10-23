@@ -1,0 +1,57 @@
+{
+  "requires_approval": [],
+  "tools": [
+    {
+      "name": "get_copy",
+      "description": "Fetch a copy asset (product page, ad, email, landing page) with its text, target markets, channel and language.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"asset_id": {"type": "string"}},
+        "required": ["asset_id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "scan_rules",
+      "description": "Run the deterministic rule pre-scan (EmpCo green claims, PAngV price reductions, Meta ads unrealistic outcomes and personal attributes, AU drip pricing, AU environmental claims). Returns candidate hits with quote, rule, risk and a rewrite hint. Candidates may be false positives.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "text": {"type": "string"},
+          "markets": {"type": "array", "items": {"type": "string", "enum": ["DE", "EU", "AU", "NZ", "US", "CA", "SA"]}},
+          "channel": {"type": "string", "enum": ["web", "email", "meta_ad", "marketplace", "all"]}
+        },
+        "required": ["text", "markets"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "record_findings",
+      "description": "Save the final audit for an asset. Each finding needs quote, rule, risk (high/medium/low) and suggested_rewrite; rule_id and market are recommended.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "asset_id": {"type": "string"},
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "rule_id": {"type": "string"},
+                "market": {"type": "string"},
+                "quote": {"type": "string"},
+                "rule": {"type": "string"},
+                "risk": {"type": "string", "enum": ["high", "medium", "low"]},
+                "suggested_rewrite": {"type": "string"}
+              },
+              "required": ["quote", "rule", "risk", "suggested_rewrite"]
+            }
+          },
+          "overall_risk": {"type": "string", "enum": ["high", "medium", "low", "none"]}
+        },
+        "required": ["asset_id", "findings", "overall_risk"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}
