@@ -21,3 +21,8 @@
 
 ## Publish rule
 Publish only after the build is clean, tests pass and the booking double-check passes.
+
+## Update 27 Oct 2026
+- Fix round 1 done (commit ab8c2ed, 2.5 credits): type check clean, build passes, 59+ tests, new booking-slots tests. The database refuses a second active booking for the same slot (unique index booking_requests_one_active_per_slot, verified), and cancelling a booking frees its slot. A real test booking created a Calendar invite with a Meet link and showed the slot as "Booked"; the calendar event and the database row have been deleted.
+- Incident: the migration made slot_start NOT NULL, so the live 22 Oct code (which doesn't send slot_start) would have failed every booking from 25 Oct. Fixed on 27 Oct by dropping NOT NULL. The live form works again, but the live site has no double-booking protection until the new build is published.
+- Still left: 16 serious accessibility findings, final test run; then the build items (free store check, home page order, Lighthouse), the logo and positioning. Lovable is out of credits; the next message to send is the accessibility fix (see chat).
