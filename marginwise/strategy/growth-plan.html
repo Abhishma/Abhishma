@@ -1,0 +1,274 @@
+<title>Marginwise Growth Plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column with wide tables that scroll in place; navy ink with the logo's growth green as the one accent */
+:root {
+  --bg: #F6F7F9; --surface: #FFFFFF; --fg: #1F2A44; --muted: #5A6478; --line: #DDE1E8;
+  --accent: #1E7A5F; --accent-soft: #E3F3EE; --warn: #8A500E; --warn-soft: #FBF0E1;
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11172A; --surface: #182038; --fg: #E6EAF2; --muted: #9AA4B8; --line: #2A3452;
+  --accent: #4CC3A0; --accent-soft: #173A36; --warn: #E7B26B; --warn-soft: #3A2C17; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11172A; --surface: #182038; --fg: #E6EAF2; --muted: #9AA4B8; --line: #2A3452;
+  --accent: #4CC3A0; --accent-soft: #173A36; --warn: #E7B26B; --warn-soft: #3A2C17; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 960px; margin: 0 auto; padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 48px; }
+header { display: grid; gap: 14px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1, h2, h3 { font-family: var(--display); font-weight: 650; text-wrap: balance; margin: 0; line-height: 1.2; }
+h1 { font-size: clamp(30px, 5vw, 44px); }
+h2 { font-size: clamp(22px, 3vw, 28px); }
+h3 { font-size: 18px; font-weight: 500; }
+p, ul, ol { margin: 0; max-width: 68ch; }
+ul, ol { padding-left: 1.2em; display: grid; gap: 6px; }
+.lede { font-size: 18px; color: var(--muted); }
+.meta { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+section { display: grid; gap: 18px; }
+.sec-head { display: grid; gap: 4px; border-top: 1px solid var(--line); padding-top: 20px; }
+.decision { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); padding: 20px 22px; border-radius: 6px; font-size: 17px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.grid2 > * { min-width: 0; }
+.cell { display: grid; gap: 8px; align-content: start; }
+.cell p { color: var(--muted); }
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 640px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); white-space: nowrap; }
+tr.tier td { background: var(--accent-soft); font-weight: 600; }
+.code { font-family: var(--mono); font-weight: 500; color: var(--accent); }
+.hook { font-style: italic; }
+.note { font-size: 14px; color: var(--muted); }
+.phases { display: grid; gap: 14px; }
+.phase { display: grid; grid-template-columns: 120px 1fr; gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; }
+.phase > * { min-width: 0; }
+.phase .when { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+.target { margin-top: 8px; font-size: 14px; color: var(--fg); }
+.target b { font-family: var(--mono); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); margin-right: 6px; }
+.decide { background: var(--warn-soft); border: 1px solid var(--line); border-radius: 6px; padding: 20px 22px; display: grid; gap: 10px; }
+.decide h2 { color: var(--warn); }
+code { font-family: var(--mono); font-size: .92em; }
+@media (max-width: 560px) { .phase { grid-template-columns: 1fr; gap: 6px; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Marginwise strategy, 28 Oct 2026</div>
+    <h1>One desk for every store problem</h1>
+    <p class="lede">Global growth plan: the single-point-of-contact offer, regional prices in local currency, buyer personas, the lead plan and the website currency rules.</p>
+    <p class="meta">Based on 59 competitor agencies (AU, UK, US, India), a packaging benchmark of 25+ agencies, lead-channel evidence and 7 personas. Competitor prices and results are their own claims.</p>
+  </header>
+
+  <section>
+    <div class="sec-head"><h2>The decision</h2></div>
+    <p class="decision">Become the one desk a growing Shopify brand calls for anything that touches revenue or margin: ads, conversion, the store and its integrations, search and AI visibility, and the operations AI can take over. Sell it as <b>Marginwise Desk</b>, a monthly plan with a named lead, one channel and one request board, at published local prices. Use small fixed-price entry offers to start. Win the first clients through referral partners and trigger-based outreach in Australia. Report monthly on contribution profit, not ROAS.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Why the position is open</h2></div>
+    <div class="grid2">
+      <div class="cell"><h3>Nobody publishes prices</h3><p>Only 4 of 59 agencies show any price. None of the 10 Australian agencies reviewed does.</p></div>
+      <div class="cell"><h3>Nobody sells AI for operations</h3><p>Competitor "AI" means creative or reporting. No one packages order-status, ERP sync, payout reconciliation or phone agents.</p></div>
+      <div class="cell"><h3>The middle is empty</h3><p>Fractional ecommerce directors cost $3K-15K/mo (US), fractional CMOs A$10K-18K/mo (AU). TUXEN&amp;Co's $2,495/mo subscription is execution only. Strategy plus execution plus AI from $1,500/mo has no owner.</p></div>
+      <div class="cell"><h3>Why brands leave agencies</h3><p>Delivery dissatisfaction (48%), then "didn't understand our business" (SetUp survey). A named senior lead who owns the whole problem answers both.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Personas and what to lead with</h2></div>
+    <div class="tbl"><table>
+      <thead><tr><th>#</th><th>Persona</th><th>Region</th><th>Company</th><th>Lead with</th><th>Expand into</th><th>Hook</th></tr></thead>
+      <tbody>
+        <tr><td class="code">P1</td><td>Founder-operator</td><td>AU</td><td>A$2-10M, Shopify, Klaviyo, Xero, Afterpay</td><td>Profit-after-ads performance marketing</td><td>CRO, payout reconciliation</td><td class="hook">"Your ads look profitable in Meta. Are they profitable in Xero?"</td></tr>
+        <tr><td class="code">P2</td><td>Ecommerce manager</td><td>AU</td><td>A$10-50M, Shopify Plus</td><td>CRO and Shopify development</td><td>SEO/AI search, support agent</td><td class="hook">"Three fixes to your mobile checkout, shipped in a sprint."</td></tr>
+        <tr><td class="code">P3</td><td>Ops or finance manager</td><td>AU</td><td>A$15-50M, Cin7/NetSuite, Xero/MYOB</td><td>Payout reconciliation and sync agents</td><td>ERP integration, custom dev</td><td class="hook">"Close the month in days, not a week of spreadsheets."</td></tr>
+        <tr><td class="code">P4</td><td>Trades owner</td><td>AU</td><td>A$1-5M, ServiceM8, Xero</td><td>AI phone receptionist</td><td>Local SEO, reviews</td><td class="hook">"Every missed call is a quote your competitor wins."</td></tr>
+        <tr><td class="code">P5</td><td>Head of growth</td><td>US</td><td>US$10-50M DTC, Shopify Plus, TikTok Shop</td><td>SEO and AI search, contribution-margin reporting</td><td>CRO, support agent</td><td class="hook">"Is ChatGPT recommending your competitor instead of you?"</td></tr>
+        <tr><td class="code">P6</td><td>CTO or IT lead</td><td>UK</td><td>£10-40M, Magento to Shopify Plus, NetSuite/Linnworks</td><td>Shopify Plus migration with ERP integration</td><td>SEO, CRO, sync agents</td><td class="hook">"Migrate before June 2027, keep your rankings, own your code."</td></tr>
+        <tr><td class="code">P7</td><td>D2C founder</td><td>India</td><td>₹10-100 crore, Shopify, Razorpay, Shiprocket</td><td>Performance marketing with RTO and COD reduction</td><td>WhatsApp support agent, order sync</td><td class="hook">"Your ROAS includes orders that come back."</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">P6 timing: Adobe Commerce on Cloud switches off unsupported versions from 1 June 2027.</p>
+    <div class="grid2">
+      <div class="cell"><h3>Offshore objections and answers</h3>
+        <ul>
+          <li><b>"Cheap means low quality"</b> (AU): price on profit after ads, report from Shopify and Xero, paid 30-day pilot.</li>
+          <li><b>"Time zones slow sprints"</b> (AU): Sydney lunchtime calls (6:30-7:30 AM IST), overnight QA.</li>
+          <li><b>"Offshore means juniors"</b> (US): named senior leads, calls in US mornings.</li>
+          <li><b>"IP and GDPR risk"</b> (UK): UK GDPR DPA with SCCs, code ownership in contract.</li>
+          <li><b>"Every agency is in India"</b> (IN): report profit after RTO, not ROAS.</li>
+        </ul></div>
+      <div class="cell"><h3>Buying style by region</h3>
+        <ul>
+          <li><b>Australia:</b> relationship and reference led, 30-36 day terms, invoice in AUD.</li>
+          <li><b>US:</b> fast and ROI-led, MSA plus SOW, net 30.</li>
+          <li><b>UK:</b> formal procurement, security and GDPR checks, reverse charge VAT.</li>
+          <li><b>India:</b> most price-sensitive, 18% GST domestic, exports zero-rated under LUT.</li>
+        </ul>
+        <p class="note">General guidance, not tax advice.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>The offer: Marginwise Desk</h2></div>
+    <ul>
+      <li><b>One named lead:</b> Abhimanyu. Velmurgan joins for paid media.</li>
+      <li><b>One shared channel</b> (Slack, or WhatsApp in India), one request board, one weekly scorecard: contribution profit, MER, conversion rate, AI visibility.</li>
+      <li><b>Anything about revenue or margin goes to the desk.</b> We do it, or bring in a vetted partner we manage. The client never manages vendors.</li>
+      <li><b>Terms:</b> 90-day first term, then month to month, pausing allowed. Flat monthly fee, no hour counting.</li>
+    </ul>
+    <div class="tbl"><table>
+      <thead><tr><th>Tier</th><th>Suits</th><th>Included</th><th>Response times</th></tr></thead>
+      <tbody>
+        <tr><td><b>Desk</b></td><td>P1, P7, smaller brands</td><td>Named lead, 1 active request at a time (dev, CRO, SEO or ops), monthly profit review, vendor coordination</td><td>Reply in 1 business day; most requests done in 72 hours</td></tr>
+        <tr><td><b>Operator</b></td><td>P1, P2, P5</td><td>Desk plus paid media management, 2 CRO tests a month, 2 active requests, weekly 30-minute call, monthly business review</td><td>Same-day reply in your time zone; urgent fixes within 4 hours</td></tr>
+        <tr><td><b>Partner</b></td><td>P2, P3, P5, P6</td><td>Operator plus SEO and AI search programme, one AI agent run, management of your other vendors, quarterly roadmap</td><td>Urgent fixes within 2 hours; quarterly business review</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">AI agents (support, sync, reconciliation, phone) add to any tier as setup plus run fee, each with a stated automation target. Delivery: Abhimanyu is the only client-facing lead; Velmurgan runs paid media; white-label partners take overflow dev, design and PR; agents run on Retell, Trillet, n8n and Gorgias. Cap: 8-10 Desk or Operator clients.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Prices by region</h2><p class="note">Local currency, excluding local taxes. GST extra in India.</p></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Offer</th><th class="num">US (USD)</th><th class="num">Australia (AUD)</th><th class="num">UK (GBP)</th><th class="num">India (INR)</th></tr></thead>
+      <tbody>
+        <tr><td>Free 2-minute video teardown</td><td class="num">Free</td><td class="num">Free</td><td class="num">Free</td><td class="num">Free</td></tr>
+        <tr><td>Free store check (instant)</td><td class="num">Free</td><td class="num">Free</td><td class="num">Free</td><td class="num">Free</td></tr>
+        <tr><td>Dev pilot task (credited if you subscribe)</td><td class="num">$150</td><td class="num">A$250</td><td class="num">£150</td><td class="num">₹3,500</td></tr>
+        <tr><td>AI agent scoping session (credited)</td><td class="num">$500</td><td class="num">A$800</td><td class="num">£400</td><td class="num">₹12,500</td></tr>
+        <tr><td>AI Visibility Snapshot</td><td class="num">$750</td><td class="num">A$1,100</td><td class="num">£600</td><td class="num">₹19,000</td></tr>
+        <tr><td>Margin Audit (rename pending)</td><td class="num">$1,500</td><td class="num">A$2,300</td><td class="num">£1,200</td><td class="num">₹35,000</td></tr>
+        <tr><td>CRO page rebuild plus A/B test</td><td class="num">$2,500</td><td class="num">A$3,800</td><td class="num">£2,000</td><td class="num">₹60,000</td></tr>
+        <tr><td>Fixed-price sprint, from</td><td class="num">$3,900</td><td class="num">A$5,900</td><td class="num">£3,100</td><td class="num">₹95,000</td></tr>
+        <tr class="tier"><td>Desk, per month</td><td class="num">$1,500</td><td class="num">A$2,300</td><td class="num">£1,200</td><td class="num">₹40,000</td></tr>
+        <tr class="tier"><td>Operator, per month</td><td class="num">$3,500</td><td class="num">A$5,400</td><td class="num">£2,800</td><td class="num">₹90,000</td></tr>
+        <tr class="tier"><td>Partner, per month, from</td><td class="num">$6,500</td><td class="num">A$9,900</td><td class="num">£5,200</td><td class="num">₹1,65,000</td></tr>
+        <tr><td>AI agent setup</td><td class="num">$2,500-6,000</td><td class="num">A$3,800-9,200</td><td class="num">£2,000-4,800</td><td class="num">₹60,000-1,50,000</td></tr>
+        <tr><td>AI agent run fee, per month</td><td class="num">$300-1,200</td><td class="num">A$450-1,800</td><td class="num">£250-950</td><td class="num">₹7,500-30,000</td></tr>
+        <tr><td>AI phone receptionist (AU trades)</td><td class="num">n/a</td><td class="num">A$290/mo + A$600</td><td class="num">n/a</td><td class="num">n/a</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="note">
+      <li>Audit, sprint and Desk equal the prices confirmed on 20 Oct, so nothing already published changes. Desk replaces "Monthly retainer, from".</li>
+      <li>India prices follow local market rates (Sqroot charges from ₹60K/mo), not a USD conversion.</li>
+      <li>AU receptionist is set against Amplify Automation (A$250-1,100/mo plus setup) and Avenue (about A$400/mo).</li>
+      <li>Optional for ads-heavy clients: base fee plus 3-5% of contribution margin above an agreed baseline, once tracking is trusted.</li>
+    </ul>
+    <h3>Visitors outside the four markets</h3>
+    <p>USD prices converted to NZD, CAD, EUR, AED or SGD (USD for everyone else), using a monthly European Central Bank snapshot stored with its date. Round up to the next 50 below 1,000, nearest 100 from 1,000. Label: "Converted from USD at [date] rates. Invoiced in USD or your currency."</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Offer</th><th class="num">NZD</th><th class="num">CAD</th><th class="num">EUR</th><th class="num">AED</th><th class="num">SGD</th></tr></thead>
+      <tbody>
+        <tr><td>Audit</td><td class="num">2,600</td><td class="num">2,100</td><td class="num">1,400</td><td class="num">5,500</td><td class="num">2,000</td></tr>
+        <tr><td>Sprint</td><td class="num">6,700</td><td class="num">5,400</td><td class="num">3,600</td><td class="num">14,300</td><td class="num">5,300</td></tr>
+        <tr><td>Operator</td><td class="num">6,000</td><td class="num">4,800</td><td class="num">3,300</td><td class="num">12,800</td><td class="num">4,700</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Example values at current rates, refreshed monthly.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Currency on every page</h2></div>
+    <ol>
+      <li><b>Detect the country on the server:</b> Cloudflare <code>cf-ipcountry</code>, then browser time zone, then saved choice. <code>?market=</code> overrides all. Right currency on first paint, no flash of USD.</li>
+      <li><b>Map country to currency:</b> AU-AUD, US-USD, GB-GBP, IN-INR, NZ-NZD, CA-CAD, eurozone and IE-EUR, AE-AED, SG-SGD, everything else USD.</li>
+      <li><b>Apply to every money value:</b> home plans, pricing, service and AI solution pages, market pages, calculator defaults, lead form revenue bands, store check, confirmation emails, and the team Leads tab (lead's currency plus USD).</li>
+      <li><b>Header currency switcher,</b> remembered, with the 4 core currencies plus "Other (converted)".</li>
+      <li><b>One source of truth:</b> <code>src/lib/pricing.ts</code> holds the price table and FX snapshot. No page hard-codes a price.</li>
+      <li><b>Machine-readable:</b> JSON-LD with an Offer per core currency; llms.txt lists all four price tables.</li>
+      <li><b>Tests:</b> correct currency for AU, US, UK, IN and NZ; rounding rules; FX snapshot date shown.</li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Lead plan</h2></div>
+    <ul>
+      <li><b>Referrals</b> are "by far" agencies' biggest source of new business; 15% name partner referrals first (SparkToro 2025).</li>
+      <li><b>Cold email</b> benchmarks run from 0.45% (Belkins) to 5-9% (Instantly), both vendor claims. Plan on 1-3% replies.</li>
+      <li><b>Shopify Partner Directory</b> Plus tier needs US$500K referral revenue. Register anyway and log every store.</li>
+    </ul>
+    <div class="tbl"><table>
+      <thead><tr><th>Rank</th><th>Channel</th><th>Region</th><th>Cost</th><th class="num">Hrs/wk</th><th>First lead</th></tr></thead>
+      <tbody>
+        <tr><td class="code">1</td><td>Referral partners: ecommerce accountants (A2X directory, SBO Financial, Bean Ninjas), app developers, white-label for agencies</td><td>AU first</td><td>Free or 10-15% referral fee</td><td class="num">1.5</td><td>4-8 weeks</td></tr>
+        <tr><td class="code">2</td><td>Trigger-based email: AU stores still showing a card surcharge; US importers after de minimis</td><td>AU, US</td><td>US$50-100/mo tools</td><td class="num">2</td><td>2-4 weeks</td></tr>
+        <tr><td class="code">3</td><td>Founder-led LinkedIn: 2 posts and 25 invites a week</td><td>AU, UK, US</td><td>Free</td><td class="num">1.5</td><td>3-6 weeks</td></tr>
+        <tr><td class="code">4</td><td>Helpful answers in communities (AU Shopify groups, r/shopify)</td><td>AU, US</td><td>Free</td><td class="num">1</td><td>3-8 weeks</td></tr>
+        <tr><td class="code">5</td><td>Instagram case files, comment-keyword DMs, Meta ads to /au</td><td>AU</td><td>A$40/day test</td><td class="num">0.5</td><td>1-3 weeks</td></tr>
+        <tr><td class="code">6</td><td>Free tools: store check, calculators, teardown videos</td><td>All</td><td>Free</td><td class="num">0.5</td><td>Supports others</td></tr>
+        <tr><td class="code">7</td><td>Directories: Clutch, Klaviyo, Gorgias, Recharge, Cin7 partner programmes</td><td>US, UK</td><td>Free</td><td class="num">0.5</td><td>2-6 months</td></tr>
+        <tr><td class="code">8</td><td>Podcast guest spots: Add To Cart, After Hours eCommerce</td><td>AU</td><td>Free</td><td class="num">0.5</td><td>2-4 months</td></tr>
+        <tr><td class="code">9</td><td>Events: Online Retailer Sydney (21-22 Jul 2027), Shopify Meetup Melbourne, eCommerce Expo London (22-23 Sep 2027), India D2C Summit</td><td>By region</td><td>A$0-1,500+</td><td class="num">Bursts</td><td>Event-driven</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>90 days, Australia first</h3>
+    <div class="phases">
+      <div class="phase"><div class="when">Weeks 1-2</div><div><ul>
+        <li>Register as Shopify Partner; join Klaviyo, Gorgias, Recharge; create Clutch profile.</li>
+        <li>List 150 AU Shopify stores at A$1-20M still showing surcharge text or checkout friction.</li>
+        <li>Separate sending domain with SPF, DKIM, DMARC. Loom teardown template.</li></ul></div></div>
+      <div class="phase"><div class="when">Weeks 3-6</div><div><ul>
+        <li>Each week: 60 trigger emails to published role addresses, 25 LinkedIn invites and 2 posts, 3 community answers, 3 accountant partners contacted.</li></ul>
+        <p class="target"><b>Target</b>5+ replies, 3 teardowns, 2 calls, 1 signed partner.</p></div></div>
+      <div class="phase"><div class="when">Weeks 7-10</div><div><ul>
+        <li>Same volume. Pitch Add To Cart with the surcharge data story. One co-marketing teardown with a Shopify app developer. Ask the first client for a Clutch review.</li></ul>
+        <p class="target"><b>Target</b>6 calls, 2 proposals, 1 paid audit or project (cumulative).</p></div></div>
+      <div class="phase"><div class="when">Weeks 11-13</div><div><ul>
+        <li>First real case file (with written permission). Start the US de minimis sequence at 30 emails a week. Keep the channel that produced calls; cut the rest.</li></ul>
+        <p class="target"><b>Day 90</b>8-10 calls, 3 proposals, 1-2 clients, 2 active referral partners.</p></div></div>
+    </div>
+    <p class="note">Targets are planning assumptions, not benchmarks.</p>
+
+    <h3>Outbound compliance</h3>
+    <ul>
+      <li><b>Australia, Spam Act:</b> email only conspicuously published business addresses, about the recipient's role. Identify the sender (name and ABN). Honour unsubscribes within 5 working days. ACMA fined Lululemon A$702K over unsubscribes.</li>
+      <li><b>UK, PECR:</b> B2B email to limited companies and LLPs with identification and opt-out. Sole traders need consent. Keep a legitimate-interests assessment.</li>
+      <li><b>US, CAN-SPAM:</b> accurate headers, postal address, opt-out within 10 business days.</li>
+      <li><b>India, DPDP:</b> Rules notified Nov 2025, core duties from about May 2027. Keep consent records now.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Website changes this drives</h2><p class="note">Sent to Lovable after the current accessibility fixes.</p></div>
+    <ol>
+      <li>Desk as the main offer: three tiers on pricing and home, a new /desk page, entry offers as "Start here" cards.</li>
+      <li>Location-based currency across every page, as above.</li>
+      <li>"I'm a..." persona entry on the home page, routing each persona to its service and hook.</li>
+      <li>Prices on AI solution pages (setup plus run fee), replacing "Quoted after a call".</li>
+      <li>Rename the audit to "Margin Audit" (Optamize in Australia already uses "Profit Leak Audit").</li>
+      <li>A partners page for accountants and agencies, with referral fee and white-label terms.</li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>What could go wrong</h2></div>
+    <div class="grid2">
+      <div class="cell"><h3>Scope creep inside Desk</h3><p>One request at a time, with a written definition of a request. Anything larger becomes a sprint.</p></div>
+      <div class="cell"><h3>Capacity</h3><p>Two people with a day job. Hard cap of 8-10 clients; partners vetted before the first overflow job.</p></div>
+      <div class="cell"><h3>Thin proof</h3><p>Every claim stays sourced. First two clients get a discount for a named case file and a Clutch review.</p></div>
+      <div class="cell"><h3>Outbound compliance</h3><p>One complaint in Australia costs more than a quarter of leads. Follow the rules above.</p></div>
+      <div class="cell"><h3>India price pressure</h3><p>Keep India to performance marketing plus RTO. Don't sell Partner-tier depth at India prices.</p></div>
+    </div>
+  </section>
+
+  <section class="decide">
+    <h2>Decisions needed</h2>
+    <ol>
+      <li>Approve the Desk, Operator and Partner tiers and their prices.</li>
+      <li>Approve the regional price table and the converted-currency rule for other countries.</li>
+      <li>Rename "Revenue Leak Audit" to "Margin Audit".</li>
+      <li>Show AI solution prices on the site instead of "Quoted after a call".</li>
+    </ol>
+  </section>
+</div>
