@@ -30,3 +30,4 @@ Publish only after the build is clean, tests pass and the booking double-check p
 ## Update 29 Oct 2026
 - Fix stage complete in Lovable (commit 7ba3d69, not published): type check clean, build OK, 70/70 tests across 9 files, 0 serious or critical axe findings (11 pages x 375/1280 px x light/dark), no horizontal scroll. Booking verified end to end: second booking for the same slot refused, test row and calendar event deleted, slot free again.
 - Next, in order: build items (free store check, home page order, Lighthouse); logo option B (re-upload files); positioning prompt; then Desk tiers, currency on every page and the persona entry from marginwise/strategy/global-growth-plan-2026-10.md once prices are approved. Publish after that build passes tests and the booking check.
+- 29 Oct: sent to Lovable, in order: (1) store check, home order, Lighthouse (running); (2) logo option B with 9 files (queued); (3) positioning brief (queued). Nothing published.
