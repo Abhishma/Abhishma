@@ -1,0 +1,220 @@
+<title>Marginwise Margin Check Plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column with wide tables that scroll in place; navy ink with the logo's growth green as the one accent */
+:root {
+  --bg: #F6F7F9; --surface: #FFFFFF; --fg: #1F2A44; --muted: #5A6478; --line: #DDE1E8;
+  --accent: #1E7A5F; --accent-soft: #E3F3EE; --warn: #8A500E; --warn-soft: #FBF0E1;
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11172A; --surface: #182038; --fg: #E6EAF2; --muted: #9AA4B8; --line: #2A3452;
+  --accent: #4CC3A0; --accent-soft: #173A36; --warn: #E7B26B; --warn-soft: #3A2C17; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11172A; --surface: #182038; --fg: #E6EAF2; --muted: #9AA4B8; --line: #2A3452;
+  --accent: #4CC3A0; --accent-soft: #173A36; --warn: #E7B26B; --warn-soft: #3A2C17; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 960px; margin: 0 auto; padding-block: 40px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 48px; }
+header { display: grid; gap: 14px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1, h2, h3 { font-family: var(--display); font-weight: 650; text-wrap: balance; margin: 0; line-height: 1.2; }
+h1 { font-size: clamp(30px, 5vw, 44px); }
+h2 { font-size: clamp(22px, 3vw, 28px); }
+h3 { font-size: 18px; font-weight: 500; }
+p, ul, ol { margin: 0; max-width: 68ch; }
+ul, ol { padding-left: 1.2em; display: grid; gap: 6px; }
+.lede { font-size: 18px; color: var(--muted); }
+.meta { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+section { display: grid; gap: 18px; }
+.sec-head { display: grid; gap: 4px; border-top: 1px solid var(--line); padding-top: 20px; }
+.decision { background: var(--surface); border: 1px solid var(--line); padding: 22px 24px; border-radius: 6px; font-size: 17px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.grid2 > * { min-width: 0; }
+.cell { display: grid; gap: 8px; align-content: start; }
+.cell p { color: var(--muted); }
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 640px; }
+th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); white-space: nowrap; }
+tr.tier td { background: var(--accent-soft); font-weight: 600; }
+.code { font-family: var(--mono); font-weight: 500; color: var(--accent); }
+.hook { font-style: italic; }
+.note { font-size: 14px; color: var(--muted); }
+.phases { display: grid; gap: 14px; }
+.phase { display: grid; grid-template-columns: 120px 1fr; gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; }
+.phase > * { min-width: 0; }
+.phase .when { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+.target { margin-top: 8px; font-size: 14px; color: var(--fg); }
+.target b { font-family: var(--mono); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); margin-right: 6px; }
+.decide { background: var(--warn-soft); border: 1px solid var(--line); border-radius: 6px; padding: 20px 22px; display: grid; gap: 10px; }
+.decide h2 { color: var(--warn); }
+code { font-family: var(--mono); font-size: .92em; }
+@media (max-width: 560px) { .phase { grid-template-columns: 1fr; gap: 6px; } }
+.pill { display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.high { background: var(--warn-soft); color: var(--warn); }
+.pill.med { background: var(--accent-soft); color: var(--accent); }
+.pill.low { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+.flow { display: grid; gap: 10px; counter-reset: s; padding: 0; list-style: none; }
+.flow li { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+.flow li b { display: block; margin-bottom: 2px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Marginwise lead magnet, 30 Oct 2026</div>
+    <h1>From store check to Margin Check</h1>
+    <p class="lede">What the free store check misses from the user's side, who it has to serve, and how it becomes the main source of leads.</p>
+    <p class="meta">Inputs: the check as built (Lovable commit 0c3ee32), 6 competing free audit tools, Shopify Community merchant feedback (Aug-Oct 2026), and the 7 personas from the growth plan. Competitor claims are their own; targets are assumptions.</p>
+  </header>
+
+  <section>
+    <div class="sec-head"><h2>The finding</h2></div>
+    <p class="decision">A free home-page audit is no longer a lead magnet on its own. At least six free Shopify audit tools launched in 2026, most with no signup, and most check more than ours. Ours checks one page, scores every visitor the same way and never mentions money, even though the brand promise is profit-first. Merchants want 3 to 5 ranked fixes with evidence, likely impact and who has to do the fix. The opening: a <b>Margin Check</b> that answers "what is this costing me, in my currency" and adapts to who you are and where you sell.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>What competitors give away</h2></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Tool</th><th>Pages</th><th>Checks</th><th>Gate</th><th>Stands out</th></tr></thead>
+      <tbody>
+        <tr><td>Zib Digital (AU)</td><td>Up to 10</td><td>25 checks, 7 categories, AI-search readiness, "senior strategist read", sample ad</td><td>Email and phone</td><td>30 seconds; sample ad</td></tr>
+        <tr><td>Golden Digital</td><td>Home, product, collection</td><td>Conversion, brand, SEO, UX/speed, email retention, paid-ad readiness</td><td>Email</td><td>Evidence per finding, "My audits" history</td></tr>
+        <tr><td>ExtensionsMarket</td><td>Home</td><td>PageSpeed Core Web Vitals, SEO, schema, script bloat, conversion elements</td><td>None</td><td>Ranked by business impact; "measured" vs "suggestion"</td></tr>
+        <tr><td>Eastside Co (UK)</td><td>Crawl</td><td>SEO health</td><td>Form</td><td>SEO only</td></tr>
+        <tr><td>Dripshipper</td><td>Home</td><td>Trust and conversion</td><td>None</td><td>60 seconds</td></tr>
+        <tr><td>Auditify, Solkendo, Summi</td><td>Varies</td><td>CRO, speed, AI visibility, PDF</td><td>Mostly none</td><td>AI-visibility score</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid2">
+      <div class="cell"><h3>What merchants ask for</h3><ul>
+        <li>3 to 5 ranked fixes with likely impact, not a bare score</li>
+        <li>Evidence for each finding and a plain "why it matters"</li>
+        <li>No false positives; say "couldn't tell" instead of guessing</li>
+        <li>"You can fix this" versus "needs a developer"</li>
+        <li>Re-check after fixing to see what improved</li>
+      </ul></div>
+      <div class="cell"><h3>What agencies learn</h3><p>Blanket "free audit" offers get ignored. What works is one specific observation that proves you looked at their business (r/agency).</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Gaps in our check, from the user's side</h2></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Gap</th><th>Why it matters to the user</th><th>Severity</th></tr></thead>
+      <tbody>
+        <tr><td>No money anywhere; score is technical</td><td>Breaks the profit-first promise; looks like every free tool</td><td><span class="pill high">High</span></td></tr>
+        <tr><td>Home page only</td><td>Buying problems sit on the product page, cart and policies</td><td><span class="pill high">High</span></td></tr>
+        <tr><td>"Speed" is our server's response time</td><td>Can call a slow store fast; a wrong first finding costs trust</td><td><span class="pill high">High</span></td></tr>
+        <tr><td>Same checks for every visitor</td><td>Indian founders told to add Afterpay; trades get Shopify advice</td><td><span class="pill high">High</span></td></tr>
+        <tr><td>Nothing to keep or share</td><td>No report link, email copy or re-check; no second touch for us</td><td><span class="pill high">High</span></td></tr>
+        <tr><td>No funnel analytics</td><td>We can't see checks run, teardowns asked or which persona converts</td><td><span class="pill high">High</span></td></tr>
+        <tr><td>Crowded field</td><td>6+ no-signup tools; without a reason to pick ours, no traffic</td><td><span class="pill high">High</span></td></tr>
+        <tr><td>"Not Shopify" scores as a warning</td><td>Marks down Magento CTOs, the biggest projects</td><td><span class="pill med">Medium</span></td></tr>
+        <tr><td>No evidence or confidence on findings</td><td>One false positive and the whole report gets dismissed</td><td><span class="pill med">Medium</span></td></tr>
+        <tr><td>Result not attached to the teardown</td><td>The team starts from zero</td><td><span class="pill med">Medium</span></td></tr>
+        <tr><td>Ops, finance and trades problems invisible from a home page</td><td>P3 and P4 get nothing, though AI agents are our differentiator</td><td><span class="pill med">Medium</span></td></tr>
+        <tr><td>Generic fix text</td><td>No owner or time estimate</td><td><span class="pill low">Low</span></td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Site-wide: no proof yet (a sample report and sample teardown video are the fastest stand-ins); only 3 Australian call slots a day; the live site is still the 22 Oct build.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Personas</h2></div>
+    <div class="tbl"><table>
+      <thead><tr><th>#</th><th>Persona</th><th>Region and size</th><th>Trigger</th><th>The check must answer</th><th>Next step</th></tr></thead>
+      <tbody>
+        <tr><td class="code">P1</td><td>Founder-operator</td><td>AU, A$2-10M, Shopify, Klaviyo, Xero, Afterpay</td><td>Ad costs up, profit flat; surcharge ban from 1 Oct 2026</td><td>Are my ads profitable after cost, fees and returns? Is my surcharge text gone?</td><td>Profit-after-ads calculator, then Margin Audit</td></tr>
+        <tr><td class="code">P2</td><td>Ecommerce manager</td><td>AU, A$10-50M, Shopify Plus</td><td>Conversion target, mobile checkout drop</td><td>Which 3 product page and cart fixes first, with evidence for my boss?</td><td>Teardown video, then CRO rebuild + A/B</td></tr>
+        <tr><td class="code">P3</td><td>Ops or finance manager</td><td>AU, A$15-50M, Cin7/NetSuite, Xero/MYOB</td><td>Month-end takes a week; syncs fixed by hand</td><td>How many hours a month do we lose, and which can an AI agent take?</td><td>Ops leak quiz, then AI scoping</td></tr>
+        <tr><td class="code">P4</td><td>Trades owner</td><td>AU, A$1-5M, ServiceM8, Xero</td><td>Missed calls, few reviews</td><td>How many jobs do I lose to missed calls and a weak Google profile?</td><td>Missed-call calculator, then AI receptionist</td></tr>
+        <tr><td class="code">P5</td><td>Head of growth</td><td>US, US$10-50M DTC, Shopify Plus</td><td>AI answers name competitors; CAC rising</td><td>Can ChatGPT, Perplexity and Google AI read and recommend my products?</td><td>AI Visibility Snapshot</td></tr>
+        <tr><td class="code">P6</td><td>CTO or IT lead</td><td>UK, £10-40M, Magento</td><td>Adobe Commerce cutoff 1 June 2027</td><td>What platform and version am I on, how big is the migration, will I lose rankings?</td><td>Migration scoping, then sprint</td></tr>
+        <tr><td class="code">P7</td><td>D2C founder</td><td>India, ₹10-100 crore, Shopify, Razorpay, Shiprocket</td><td>High RTO on COD (20-35% typical, ClickPost 2026)</td><td>How much do COD returns cost me, and does my store push prepaid?</td><td>RTO calculator, then performance marketing</td></tr>
+        <tr><td class="code">P8</td><td>Referral partner (accountant, app developer, small agency)</td><td>AU first</td><td>Clients ask for growth help they don't offer</td><td>Can I give clients a useful free check and get referral credit?</td><td>Partner link, 10-15% fee</td></tr>
+        <tr><td class="code">P0</td><td>Pre-revenue or hobby store (not a fit)</td><td>Any</td><td>Wants a free fix list</td><td>Serve with self-fix guidance only</td><td>Self-fix report and newsletter</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>The Margin Check</h2><p class="note">"See what your store is costing you, in your currency, in 60 seconds. No signup."</p></div>
+    <ol class="flow">
+      <li><b>Inputs</b>Store URL, one tap on "I'm a...", market from location, optional revenue band to turn findings into money.</li>
+      <li><b>Crawl</b>Home, one product page, cart, shipping and returns policies, robots.txt, sitemap, llms.txt. Speed from Google PageSpeed (real mobile LCP, CLS, INP).</li>
+      <li><b>Money first</b>A range in local currency from sourced ratios applied to their own revenue band, labelled "planning scenario". No band, no money figure.</li>
+      <li><b>Each finding</b>Evidence, confidence (measured, likely, couldn't tell), why it matters, who fixes it. Ordered by persona and market.</li>
+      <li><b>Keep it</b>Optional: email me this report and re-check in 30 days. The main lead capture, offered after value is shown.</li>
+      <li><b>Next step by persona</b>The teardown request carries the check result, so the team starts with context.</li>
+    </ol>
+    <div class="tbl"><table>
+      <thead><tr><th>Module</th><th>Checks</th><th>Persona</th></tr></thead>
+      <tbody>
+        <tr><td>Profit and ads readiness</td><td>Meta Pixel and Conversions API hints, GA4, consent, surcharge text (AU), price and delivery above the fold, pre-filled profit-after-ads calculator</td><td>P1</td></tr>
+        <tr><td>Product page and cart</td><td>Price, delivery and returns near Add to cart, reviews, BNPL on product page (AU/US/UK), sticky mobile Add to cart, image weight and format, free-shipping message</td><td>P2</td></tr>
+        <tr><td>Speed (measured)</td><td>PageSpeed mobile LCP, CLS, INP; third-party scripts; app bloat</td><td>P2, P5</td></tr>
+        <tr><td>AI and search visibility</td><td>AI crawlers in robots.txt, llms.txt, Product schema completeness, Organization schema, sitemap</td><td>P5</td></tr>
+        <tr><td>Platform and migration</td><td>Platform and version, URL count, June 2027 date for Magento. Information only, never a penalty</td><td>P6</td></tr>
+        <tr><td>India checkout</td><td>COD, prepaid incentive, WhatsApp, checkout provider (GoKwik, Shiprocket, Razorpay), returns clarity, INR; RTO calculator</td><td>P7</td></tr>
+        <tr><td>Local service</td><td>Click-to-call, after-hours booking, LocalBusiness schema, reviews, service-area pages; missed-call calculator</td><td>P4</td></tr>
+        <tr><td>Ops leak quiz</td><td>6 questions on orders, failed syncs, payout matching, tickets, after-hours enquiries; hours and cost a month; the AI agent that fits</td><td>P3</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>How it brings leads</h2></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Channel</th><th>How</th><th>Persona</th></tr></thead>
+      <tbody>
+        <tr><td>Instagram and Meta ads to /au</td><td>"Comment CHECK" and story links to the check with market and persona preset</td><td>P1, P2</td></tr>
+        <tr><td>Trigger outreach</td><td>Run the check on the 150-store AU list; the first email quotes one real finding and links to their saved report</td><td>P1, P2</td></tr>
+        <tr><td>Referral partners</td><td>Partner link with ?ref= credits the partner if a project follows; one-page partner kit</td><td>P8</td></tr>
+        <tr><td>One-problem search pages</td><td>"Is my Shopify store blocking ChatGPT?", "Australian card surcharge checker", "Shopify RTO calculator India", "Magento end of support checker"</td><td>P5, P1, P7, P6</td></tr>
+        <tr><td>Data story</td><td>Anonymous totals from consented checks (e.g. AU stores still showing surcharge text) for podcasts, LinkedIn and PR, with sample size and method</td><td>All</td></tr>
+        <tr><td>Monthly re-check email</td><td>Opt-in: "3 things changed on your store this month"</td><td>All</td></tr>
+        <tr><td>Shopify Community, r/shopify</td><td>Post the data story, not the tool link; the forums are full of tool launches</td><td>All</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Events: check_started, check_completed, report_emailed, recheck_opt_in, teardown_requested, call_booked, partner_ref, each with UTM source. Targets for the first 90 days (assumptions): 60% of checks finish, 15% ask for the emailed report, 25% of those request a teardown, 30% of teardowns book a call.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Build plan</h2></div>
+    <div class="phases">
+      <div class="phase"><div class="when">Phase 1</div><div><p>Trust fixes: PageSpeed speed, platform as information, market-aware checks (COD checks in India, no BNPL advice), evidence and confidence, who-fixes-it labels, persona tap, funnel events, check result attached to the teardown, partner ?ref= tracking.</p><p class="target"><b>Prompt</b>marginwise/website/lovable-margin-check-phase1-prompt.md</p></div></div>
+      <div class="phase"><div class="when">Phase 2</div><div><p>Worth keeping: product page, cart and policy crawl; money estimate from the revenue band; emailed report with a private link and 30-day re-check, with consent.</p></div></div>
+      <div class="phase"><div class="when">Phase 3</div><div><p>Persona modules, the ops leak quiz, one-problem search pages, anonymous totals for the data story.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>What could go wrong</h2></div>
+    <div class="grid2">
+      <div class="cell"><h3>False positives</h3><p>"Couldn't tell" over guessing, saved HTML fixtures for every check, weekly review of 10 random reports.</p></div>
+      <div class="cell"><h3>Money read as a promise</h3><p>Always a range, always sourced, always "planning scenario", only from the visitor's own revenue band.</p></div>
+      <div class="cell"><h3>Crawling others' stores</h3><p>Public pages only, a few requests per check, honest user agent, robots.txt respected, rate limit kept.</p></div>
+      <div class="cell"><h3>Privacy</h3><p>No store data kept without consent; totals only in aggregate; consent wording for the Privacy Act, UK GDPR and DPDP.</p></div>
+      <div class="cell"><h3>Team time</h3><p>Teardowns only for persona-fit stores above a revenue band; everyone else gets the self-fix report.</p></div>
+      <div class="cell"><h3>Costs</h3><p>PageSpeed API is free within quota. Live AI-answer checks cost per query, so they stay in the paid AI Visibility Snapshot.</p></div>
+    </div>
+  </section>
+
+  <section class="decide">
+    <h2>Decisions needed</h2>
+    <ol>
+      <li>Rename the free tool to "Margin Check" (and the paid audit to "Margin Audit").</li>
+      <li>Approve phase 1 to send to Lovable after the current build finishes.</li>
+      <li>Create a PageSpeed Insights API key in Google Cloud and add it to Lovable as PAGESPEED_API_KEY.</li>
+      <li>Approve the partner programme terms (10-15% referral fee) so the ?ref= link can go live.</li>
+    </ol>
+  </section>
+</div>
