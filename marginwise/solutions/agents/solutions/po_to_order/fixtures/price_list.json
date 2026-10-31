@@ -1,0 +1,18 @@
+{
+  "AU-WHOLESALE-A": {
+    "currency": "AUD",
+    "items": {
+      "GL-OAT-1L": {"description": "Oat milk barista 1L", "unit_price": 3.90, "uom": "each", "pack_size": 12, "moq": 12},
+      "GL-ALM-1L": {"description": "Almond milk barista 1L", "unit_price": 3.95, "uom": "each", "pack_size": 12, "moq": 12},
+      "GL-CHAI-1KG": {"description": "Chai powder 1kg", "unit_price": 38.00, "uom": "each", "pack_size": 1, "moq": 1},
+      "GL-CUP-12OZ": {"description": "Compostable cup 12oz, carton of 1000", "unit_price": 139.00, "uom": "carton", "pack_size": 1, "moq": 1}
+    }
+  },
+  "EU-WHOLESALE": {
+    "currency": "EUR",
+    "items": {
+      "GL-OAT-1L": {"description": "Hafermilch Barista 1L", "unit_price": 2.60, "uom": "each", "pack_size": 12, "moq": 24},
+      "GL-CHAI-1KG": {"description": "Chai Pulver 1kg", "unit_price": 24.00, "uom": "each", "pack_size": 1, "moq": 1}
+    }
+  }
+}
