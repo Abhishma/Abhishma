@@ -1,0 +1,29 @@
+{
+  "sunstate_air": {
+    "name": "Sunstate Air & Electrical",
+    "market": "AU",
+    "currency": "AUD",
+    "tax": {"name": "GST", "rate_pct": 10, "prices_include_tax": false},
+    "abn": "51 824 753 556",
+    "address": "14 Industrial Ave, Molendinar QLD 4214",
+    "licence": "QBCC 1234567, Electrical Contractor 87654",
+    "quote_validity_days": 30,
+    "slots": [
+      {"slot_id": "sv-2026-10-20-0900", "start": "2026-10-20T09:00:00+10:00"},
+      {"slot_id": "sv-2026-10-21-1400", "start": "2026-10-21T14:00:00+10:00"}
+    ]
+  },
+  "meister_elektro": {
+    "name": "Meister Elektrotechnik GmbH",
+    "market": "DE",
+    "currency": "EUR",
+    "tax": {"name": "USt", "rate_pct": 19, "prices_include_tax": false},
+    "ust_id": "DE298765432",
+    "steuernummer": "27/123/45678",
+    "address": "Hauptstrasse 5, 80331 Muenchen",
+    "handwerksrolle": "Eingetragen in der Handwerksrolle der HWK Muenchen",
+    "quote_validity_days": 30,
+    "kleinunternehmer": false,
+    "slots": [{"slot_id": "sv-2026-10-22-1000", "start": "2026-10-22T10:00:00+02:00"}]
+  }
+}

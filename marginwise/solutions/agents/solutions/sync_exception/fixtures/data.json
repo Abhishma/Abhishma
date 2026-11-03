@@ -1,0 +1,40 @@
+{
+  "failed_syncs": [
+    {"sync_id": "SYN-001", "erp": "Cin7", "object": "sales_order", "shopify_order": "#2201", "failed_at": "2026-10-16T22:10:00Z",
+     "error": "Product with code 'TEA-GREEN-100G ' not found", "attempts": 1},
+    {"sync_id": "SYN-002", "erp": "Unleashed", "object": "sales_order", "shopify_order": "#2202", "failed_at": "2026-10-16T22:14:00Z",
+     "error": "Product code 'MUG-STONE-BLU' does not exist", "attempts": 3},
+    {"sync_id": "SYN-003", "erp": "Xero", "object": "invoice", "shopify_order": "#2199", "failed_at": "2026-10-16T23:01:00Z",
+     "error": "Invoice # INV-2199 already exists for this organisation", "attempts": 1},
+    {"sync_id": "SYN-004", "erp": "NetSuite", "object": "sales_order", "shopify_order": "#2203", "failed_at": "2026-10-17T00:30:00Z",
+     "error": "Invalid Field Value AUS for the following field: country", "attempts": 1},
+    {"sync_id": "SYN-005", "erp": "MYOB", "object": "invoice", "shopify_order": "#2204", "failed_at": "2026-10-17T01:02:00Z",
+     "error": "Tax amount 1.8182 does not match calculated tax 1.82 for line 1", "attempts": 1},
+    {"sync_id": "SYN-006", "erp": "Cin7", "object": "sales_order", "shopify_order": "#2205", "failed_at": "2026-10-17T01:40:00Z",
+     "error": "Insufficient stock: SOAP-LAV-6PK available 2, requested 6 at location Melbourne DC", "attempts": 1},
+    {"sync_id": "SYN-007", "erp": "Xero", "object": "bank_deposit", "shopify_order": null, "payout_id": "PO-88412", "failed_at": "2026-10-17T02:00:00Z",
+     "error": "Payout total 4,812.40 does not match sum of invoices 4,861.15", "attempts": 1},
+    {"sync_id": "SYN-008", "erp": "QuickBooks", "object": "sales_receipt", "shopify_order": "#2206", "failed_at": "2026-10-17T02:12:00Z",
+     "error": "Business Validation Error: Unexpected Error: timeout", "attempts": 1},
+    {"sync_id": "SYN-009", "erp": "DATEV", "object": "booking", "shopify_order": "#2207", "failed_at": "2026-10-17T03:00:00Z",
+     "error": "Steuerschluessel 9 ungueltig fuer Konto 8400", "attempts": 1}
+  ],
+  "shopify_orders": {
+    "#2201": {"name": "#2201", "currency": "AUD", "total": 24.95, "country_code": "AU", "line_items": [{"sku": "TEA-GREEN-100G ", "qty": 1, "price": 24.95}]},
+    "#2202": {"name": "#2202", "currency": "NZD", "total": 38.0, "country_code": "NZ", "line_items": [{"sku": "MUG-STONE-BLU", "qty": 1, "price": 38.0}]},
+    "#2199": {"name": "#2199", "currency": "AUD", "total": 59.0, "country_code": "AU", "line_items": [{"sku": "TEA-SAMPLER", "qty": 1, "price": 59.0}]},
+    "#2203": {"name": "#2203", "currency": "USD", "total": 72.0, "country_code": "AU", "country": "AUS", "line_items": [{"sku": "TEA-CHAI-250G", "qty": 2, "price": 36.0}]},
+    "#2204": {"name": "#2204", "currency": "AUD", "total": 20.0, "country_code": "AU", "line_items": [{"sku": "TEA-MINT-50G", "qty": 1, "price": 20.0, "tax": 1.8182}]},
+    "#2205": {"name": "#2205", "currency": "AUD", "total": 89.7, "country_code": "AU", "line_items": [{"sku": "SOAP-LAV-6PK", "qty": 6, "price": 14.95}]},
+    "#2206": {"name": "#2206", "currency": "USD", "total": 45.0, "country_code": "US", "line_items": [{"sku": "TEA-EARL-100G", "qty": 1, "price": 45.0}]},
+    "#2207": {"name": "#2207", "currency": "EUR", "total": 29.9, "country_code": "DE", "line_items": [{"sku": "TEA-ROOI-100G", "qty": 1, "price": 29.9}]}
+  },
+  "erp_items": {
+    "TEA-GREEN-100G": {"code": "TEA-GREEN-100G", "name": "Green Tea 100g", "on_hand": {"Melbourne DC": 140}},
+    "MUG-STONE-BLUE": {"code": "MUG-STONE-BLUE", "name": "Stoneware Mug Blue", "on_hand": {"Auckland": 22}},
+    "SOAP-LAV-6PK": {"code": "SOAP-LAV-6PK", "name": "Lavender Soap 6 pack", "on_hand": {"Melbourne DC": 2, "Sydney DC": 30}},
+    "TEA-CHAI-250G": {"code": "TEA-CHAI-250G", "name": "Chai 250g", "on_hand": {"Melbourne DC": 50}},
+    "TEA-MINT-50G": {"code": "TEA-MINT-50G", "name": "Mint 50g", "on_hand": {"Melbourne DC": 75}},
+    "TEA-SAMPLER": {"code": "TEA-SAMPLER", "name": "Tea Sampler", "on_hand": {"Melbourne DC": 12}}
+  }
+}

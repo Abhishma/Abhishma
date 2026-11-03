@@ -1,0 +1,8 @@
+Date,Reference,Account,Amount,Currency,Source
+2026-09-04,P-SHP-1001,610 Shopify Clearing,160.68,AUD,A2X
+2026-09-11,P-SHP-1002,610 Shopify Clearing,303.97,AUD,A2X
+2026-09-07,WD-7Y1,612 PayPal Clearing,490.90,USD,A2X
+2026-09-25,WD-8K2,612 PayPal Clearing,74.47,USD,A2X
+2026-09-12,AP-77001,614 Afterpay Clearing,342.40,AUD,Manual
+2026-09-19,KL-5501,615 Klarna Clearing,323.70,AUD,Manual
+2026-09-30,P-SHP-0999,610 Shopify Clearing,99.00,AUD,Manual

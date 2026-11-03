@@ -1,0 +1,4 @@
+automatic_payout_id,automatic_payout_effective_at,balance_transaction_id,reporting_category,gross,fee,net,currency,customer_facing_amount,customer_facing_currency,order_id
+po_1Stripe01,2026-09-24,txn_1,charge,152.00,4.71,147.29,aud,100.00,usd,#1008
+po_1Stripe01,2026-09-24,txn_2,charge,80.00,2.52,77.48,aud,80.00,aud,#1009
+po_1Stripe01,2026-09-24,txn_3,refund,-30.00,0.00,-30.00,aud,-30.00,aud,#1009

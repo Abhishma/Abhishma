@@ -1,0 +1,13 @@
+{
+  "revenue_band_points": {"0-1M": 0, "1-5M": 18, "5-20M": 30, "20-100M": 26, "100M+": 12},
+  "stack_points": {"Shopify Plus": 15, "Shopify": 10, "Gorgias": 6, "Zendesk": 5, "Klaviyo": 3, "Jobber": 10, "ServiceM8": 10, "ServiceTitan": 8, "Housecall Pro": 8, "simPRO": 8, "Tradify": 8, "Cin7": 6, "Unleashed": 6, "NetSuite": 6, "Xero": 4, "MYOB": 4, "QuickBooks": 4, "DATEV": 4, "Shopware": 5, "WooCommerce": 4, "Salla": 8, "Zid": 8},
+  "stack_cap": 25,
+  "market_points": {"AU": 20, "NZ": 18, "US": 16, "CA": 16, "DE": 18, "SA": 18},
+  "intent_points": {"demo_request": 15, "pricing_question": 12, "contact": 5, "content_download": 3, "newsletter_signup": 0},
+  "industry_prefixes": ["ecommerce", "trades", "clinic"],
+  "industry_points": 10,
+  "free_email_domains": ["gmail.com", "outlook.com", "hotmail.com", "yahoo.com", "icloud.com", "gmx.de", "web.de"],
+  "free_email_penalty": -10,
+  "disqualify_flags": ["vendor_pitch", "competitor", "student"],
+  "tiers": {"A": 70, "B": 45}
+}

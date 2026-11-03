@@ -1,0 +1,38 @@
+{
+  "requires_approval": [],
+  "tools": [
+    {
+      "name": "list_question_sets",
+      "description": "List available buying-question template sets (local_service, ecommerce_product) and their templates per language.",
+      "input_schema": {"type": "object", "properties": {}, "additionalProperties": false}
+    },
+    {
+      "name": "run_visibility_check",
+      "description": "Fill a question set with values (category, city, country, product, use_case, budget), ask each AI assistant, parse which tracked brands are named and in what position, and score share of voice. Returns run_id and the score table.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "set_name": {"type": "string", "enum": ["local_service", "ecommerce_product"]},
+          "values": {"type": "object", "description": "Placeholder values, e.g. {\"category\": \"air conditioning installer\", \"city\": \"Brisbane\", \"country\": \"Australia\"}"},
+          "language": {"type": "string", "enum": ["en", "de", "ar"]},
+          "assistants": {"type": "array", "items": {"type": "string", "enum": ["anthropic", "openai", "perplexity"]}}
+        },
+        "required": ["set_name", "values"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_share_of_voice",
+      "description": "Get the score table for a previous run, optionally with each answer's parsed mentions (brand, position, list rank, sentiment, snippet).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "run_id": {"type": "string"},
+          "include_answers": {"type": "boolean"}
+        },
+        "required": ["run_id"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

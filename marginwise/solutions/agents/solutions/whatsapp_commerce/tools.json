@@ -1,0 +1,94 @@
+{
+  "requires_approval": [],
+  "tools": [
+    {
+      "name": "get_order",
+      "description": "Fetch the customer's order by order id, or by their WhatsApp phone number (latest order). Returns a minimised view: first name, status, items, total, city, payment method, prepay link. Never returns the full address or full phone.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "order_id": {"type": "string", "description": "e.g. SA-50121"},
+          "phone": {"type": "string", "description": "Sender phone from runtime context, E.164."}
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "confirm_cod",
+      "description": "Record the customer's answer to the cash-on-delivery confirmation. confirmed=false cancels the order; include the reason in the customer's words.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "order_id": {"type": "string"},
+          "confirmed": {"type": "boolean"},
+          "reason": {"type": "string"}
+        },
+        "required": ["order_id", "confirmed"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "validate_national_address",
+      "description": "Format-check a Saudi National Address short code (4 Latin letters + 4 digits, e.g. RRRD2929). Normalises spaces, lower case and Arabic-Indic digits. Call before update_address.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"short_address": {"type": "string"}},
+        "required": ["short_address"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_address",
+      "description": "Save a validated National Address short code (and optional delivery notes such as landmark or gate) on an unfulfilled order.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "order_id": {"type": "string"},
+          "short_address": {"type": "string"},
+          "notes": {"type": "string", "description": "Max 200 characters. No ID numbers."}
+        },
+        "required": ["order_id", "short_address"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_tracking",
+      "description": "Get carrier tracking (SMSA, Aramex, SPL, J&T, Naqel) for an order: latest event, last 3 events, and whether a failed delivery needs attention.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"order_id": {"type": "string"}},
+        "required": ["order_id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_return",
+      "description": "Create a return for delivered items within the store's return window. The handler enforces the window and non-returnable categories (opened fragrance, opened personal care) and books a courier pickup.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "order_id": {"type": "string"},
+          "skus": {"type": "array", "items": {"type": "string"}},
+          "reason": {"type": "string", "enum": ["damaged", "wrong_item", "not_as_described", "changed_mind", "other"]}
+        },
+        "required": ["order_id", "skus", "reason"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "handoff_to_agent",
+      "description": "Hand the WhatsApp conversation to a human agent with a short summary. Returns support hours (and Ramadan hours) to tell the customer.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "order_id": {"type": "string"},
+          "reason": {"type": "string", "enum": ["complaint", "payment_issue", "shipped_address_change", "refund_dispute", "customer_requested_human", "other"]},
+          "summary": {"type": "string"},
+          "language": {"type": "string", "enum": ["ar", "en"]}
+        },
+        "required": ["reason", "summary"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "requires_approval": ["map_sku"],
+  "tools": [
+    {
+      "name": "list_failed_syncs",
+      "description": "List unresolved Shopify-to-ERP sync failures. Each record includes a deterministic triage: likely root cause, suggested fix, and whether that fix is on the safe auto-apply whitelist.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "erp": {"type": "string", "description": "Optional filter: Cin7, Unleashed, MYOB, Xero, NetSuite, QuickBooks, DATEV."},
+          "limit": {"type": "integer"}
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_shopify_order",
+      "description": "Fetch the Shopify order (line items, SKUs, tax, country) behind a failed sync.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"order_name": {"type": "string", "description": "Shopify order name, e.g. #2201"}},
+        "required": ["order_name"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_erp_item",
+      "description": "Look up an item in the ERP by SKU/code (respects existing SKU mappings). Returns on-hand stock by location.",
+      "input_schema": {
+        "type": "object",
+        "properties": {"sku": {"type": "string"}},
+        "required": ["sku"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "map_sku",
+      "description": "Create a permanent mapping from a Shopify SKU to an existing ERP item code. Requires human approval.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "shopify_sku": {"type": "string"},
+          "erp_code": {"type": "string"}
+        },
+        "required": ["shopify_sku", "erp_code"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "retry_sync",
+      "description": "Retry a failed sync, optionally applying a named fix. Whitelisted fixes (trim_sku_whitespace, normalize_country_code, round_tax_2dp, skip_duplicate, retry_transient) run immediately; any other fix returns pending_approval.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "sync_id": {"type": "string"},
+          "fix": {"type": "string"}
+        },
+        "required": ["sync_id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "post_slack",
+      "description": "Post the triage summary to the client's ops Slack channel. Max 3500 characters.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "channel": {"type": "string"},
+          "text": {"type": "string"}
+        },
+        "required": ["channel", "text"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+Settlement Date,Settlement ID,Order ID,Type,Order Amount,Merchant Fee,Net Amount,Currency
+2026-09-12,AP-77001,#1005,Sale,300.00,18.30,281.70,AUD
+2026-09-12,AP-77001,#1006,Sale,150.00,9.30,140.70,AUD
+2026-09-12,AP-77001,#0995,Refund,-80.00,0.00,-80.00,AUD

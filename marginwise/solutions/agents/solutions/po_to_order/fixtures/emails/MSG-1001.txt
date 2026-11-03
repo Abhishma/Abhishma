@@ -1,0 +1,27 @@
+From: purchasing@harbourcafes.com.au
+To: orders@greenleafwholesale.com.au
+Date: Thu, 15 Oct 2026 08:42:00 +1000
+Subject: PO 45512 - Harbour Cafes Group
+
+Hi team,
+
+Please find our purchase order below. Deliver to our Surry Hills store.
+
+PURCHASE ORDER No. 45512
+Date: 15/10/2026
+Bill to: Harbour Cafes Group Pty Ltd, ABN 12 345 678 901
+Ship to: Harbour Cafes - Surry Hills, 88 Crown St, Surry Hills NSW 2010
+Required by: 21/10/2026
+Payment terms: 30 days EOM
+
+Item code     Description                    Qty   Unit    Unit price
+GL-OAT-1L     Oat milk barista 1L (12/ctn)   24    each    3.90
+GL-ALM-1L     Almond milk barista 1L         12    each    4.10
+GL-CHAI-1KG   Chai powder 1kg                6     each    38.00
+GL-CUP-12OZ   Compostable cup 12oz (1000)    2     carton  139.00
+
+Subtotal ex GST: 485.60
+
+Thanks,
+Mia Rossi
+Purchasing, Harbour Cafes Group

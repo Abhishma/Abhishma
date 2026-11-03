@@ -1,0 +1,18 @@
+{
+  "sunstate_air": {
+    "aircon_split_install_2_5kw": {"trade": "aircon", "label": "Supply and install 2.5kW split system (back-to-back)", "unit": "system", "low": 1450, "high": 1750, "questions": ["room_size_m2", "wall_type", "storeys"], "requires_site_visit": false},
+    "aircon_split_install_7kw": {"trade": "aircon", "label": "Supply and install 7.1kW split system (back-to-back)", "unit": "system", "low": 2350, "high": 2850, "questions": ["room_size_m2", "wall_type", "storeys"], "requires_site_visit": false},
+    "aircon_extra_pipe_m": {"trade": "aircon", "label": "Additional pipe run beyond 3m", "unit": "m", "low": 65, "high": 85, "questions": [], "requires_site_visit": false},
+    "aircon_ducted": {"trade": "aircon", "label": "Ducted system", "unit": "system", "low": 9000, "high": 16000, "questions": ["home_size_m2", "roof_access"], "requires_site_visit": true},
+    "roof_tile_replace": {"trade": "roofing", "label": "Replace broken roof tiles (incl. matching tiles)", "unit": "tile", "low": 25, "high": 45, "questions": ["roof_type", "storeys"], "requires_site_visit": false, "min_charge": 280},
+    "roof_repoint_ridge_lm": {"trade": "roofing", "label": "Re-bed and re-point ridge capping", "unit": "lm", "low": 45, "high": 70, "questions": ["roof_type", "storeys"], "requires_site_visit": true},
+    "elec_powerpoint_double": {"trade": "electrical", "label": "Install new double power point (accessible wall)", "unit": "each", "low": 140, "high": 190, "questions": ["wall_type"], "requires_site_visit": false},
+    "elec_led_downlight": {"trade": "electrical", "label": "Supply and install LED downlight", "unit": "each", "low": 65, "high": 90, "questions": ["ceiling_access"], "requires_site_visit": false, "min_charge": 260}
+  },
+  "meister_elektro": {
+    "steckdose_neu": {"trade": "electrical", "label": "Neue Doppelsteckdose Aufputz setzen inkl. Material", "unit": "Stk", "low": 95, "high": 95, "questions": ["wandart"], "requires_site_visit": false},
+    "led_einbauleuchte": {"trade": "electrical", "label": "LED-Einbauleuchte liefern und montieren", "unit": "Stk", "low": 78, "high": 78, "questions": ["deckenart"], "requires_site_visit": false},
+    "anfahrt": {"trade": "electrical", "label": "Anfahrtspauschale", "unit": "pauschal", "low": 45, "high": 45, "questions": [], "requires_site_visit": false},
+    "zaehlerschrank_neu": {"trade": "electrical", "label": "Zaehlerschrank erneuern", "unit": "pauschal", "low": 2400, "high": 4200, "questions": ["baujahr", "anzahl_zaehler"], "requires_site_visit": true}
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "kindredskin.com.au": {"name": "Kindred Skin", "industry": "ecommerce_beauty", "employees": 18, "revenue_band": "5-20M", "stack": ["Shopify Plus", "Gorgias", "Klaviyo", "Xero"], "hq_country": "AU"},
+  "alpenrad.de": {"name": "Alpenrad GmbH", "industry": "ecommerce_sports", "employees": 45, "revenue_band": "20-100M", "stack": ["Shopware", "Zendesk", "DATEV"], "hq_country": "DE"},
+  "northshoreplumbing.ca": {"name": "North Shore Plumbing", "industry": "trades_plumbing", "employees": 12, "revenue_band": "1-5M", "stack": ["Jobber", "QuickBooks"], "hq_country": "CA"},
+  "cheap-backlinks.biz": {"name": "Cheap Backlinks", "industry": "marketing_services", "employees": 2, "revenue_band": "0-1M", "stack": [], "hq_country": "US", "flags": ["vendor_pitch"]}
+}

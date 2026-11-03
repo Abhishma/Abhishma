@@ -1,0 +1,110 @@
+{
+  "requires_approval": [],
+  "tools": [
+    {
+      "name": "check_availability",
+      "description": "List the next open booking slots for a service at this business. Returns up to 3 slots with start/end times in the business timezone. Call before offering any time to the caller.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string", "description": "Business id from runtime context."},
+          "service": {"type": "string", "description": "Service key from the price guide, e.g. aircon_service."},
+          "urgency": {"type": "string", "enum": ["standard", "urgent"], "description": "urgent = caller wants same or next day."}
+        },
+        "required": ["business_id", "service"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "book_job",
+      "description": "Book a confirmed slot into the business's job management system (ServiceM8, simPRO, Tradify, Jobber, Housecall Pro, ServiceTitan or the clinic calendar). Only call after the caller has confirmed the slot, their name, mobile number and job address.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "slot_id": {"type": "string", "description": "slot_id returned by check_availability."},
+          "customer_name": {"type": "string"},
+          "phone": {"type": "string", "description": "Caller mobile in E.164 format."},
+          "address": {"type": "string", "description": "Job or patient address, as confirmed by the caller."},
+          "service": {"type": "string"},
+          "notes": {"type": "string", "description": "Short job notes for the technician. No payment or health details beyond what is needed."}
+        },
+        "required": ["business_id", "slot_id", "customer_name", "phone", "address", "service"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "create_lead",
+      "description": "Create a lead / enquiry for a caller who is not ready to book, is outside hours, or needs a quote. Use for every missed call that leaves contact details.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "name": {"type": "string"},
+          "phone": {"type": "string"},
+          "summary": {"type": "string", "description": "One or two sentences: what they need and when."},
+          "service": {"type": "string"},
+          "postcode": {"type": "string"},
+          "channel": {"type": "string", "enum": ["phone", "sms", "missed_call", "web_chat"]}
+        },
+        "required": ["business_id", "name", "phone", "summary"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "send_sms",
+      "description": "Send an SMS to the caller (booking confirmation, missed-call text-back, or a callback promise). Max 480 characters. The business name is added automatically if missing.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "to": {"type": "string", "description": "E.164 mobile number."},
+          "body": {"type": "string"}
+        },
+        "required": ["business_id", "to", "body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_service_area",
+      "description": "Check whether a postcode (or Canadian FSA) is inside the business's service area.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "postcode": {"type": "string"}
+        },
+        "required": ["business_id", "postcode"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_price_guide",
+      "description": "Return the approved price range for a service. These are the ONLY prices the receptionist may quote. If found=false, do not estimate.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "service": {"type": "string"}
+        },
+        "required": ["business_id", "service"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "transfer_to_human",
+      "description": "Warm-transfer the call or page the on-call person. Use immediately for emergencies, complaints, a caller asking for a person, or anything outside policy.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "business_id": {"type": "string"},
+          "reason": {"type": "string", "enum": ["emergency", "caller_requested_human", "complaint", "out_of_policy", "technical_question", "other"]},
+          "urgency": {"type": "string", "enum": ["normal", "high", "emergency"]},
+          "summary": {"type": "string", "description": "What the human needs to know before picking up."}
+        },
+        "required": ["business_id", "reason"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

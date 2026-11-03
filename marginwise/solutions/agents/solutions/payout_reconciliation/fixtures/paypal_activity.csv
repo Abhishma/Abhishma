@@ -1,0 +1,9 @@
+Date,Name,Type,Status,Currency,Gross,Fee,Net,Transaction ID,Invoice Number
+2026-09-02,J Smith,Express Checkout Payment,Completed,USD,200.00,-7.28,192.72,1AB23456CD789012E,#1003
+2026-09-05,K Brown,Express Checkout Payment,Completed,USD,330.00,-11.82,318.18,2BC34567DE890123F,#1004
+2026-09-06,J Smith,Payment Refund,Completed,USD,-20.00,0.00,-20.00,3CD45678EF901234G,#1003
+2026-09-07,,General Withdrawal,Completed,USD,-490.90,0.00,-490.90,WD-7Y1,
+2026-09-20,L Chen,Express Checkout Payment,Completed,USD,150.00,-5.53,144.47,4DE56789FG012345H,#1021
+2026-09-22,K Brown,Chargeback,Completed,USD,-50.00,-20.00,-70.00,5EF67890GH123456I,#1004
+2026-09-23,M Ito,Express Checkout Payment,Pending,USD,75.00,-2.90,72.10,6FG78901HI234567J,#1022
+2026-09-25,,General Withdrawal,Completed,USD,-74.47,0.00,-74.47,WD-8K2,

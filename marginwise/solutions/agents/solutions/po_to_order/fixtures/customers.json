@@ -1,0 +1,32 @@
+{
+  "CUST-HCG": {
+    "customer_id": "CUST-HCG",
+    "name": "Harbour Cafes Group Pty Ltd",
+    "email_domains": ["harbourcafes.com.au"],
+    "currency": "AUD",
+    "market": "AU",
+    "payment_terms": "30 days EOM",
+    "price_list": "AU-WHOLESALE-A",
+    "credit_limit": 5000.00,
+    "balance_owing": 4700.00,
+    "ship_to": [
+      {"code": "SURRY", "address": "88 Crown St, Surry Hills NSW 2010"},
+      {"code": "BONDI", "address": "12 Hall St, Bondi Beach NSW 2026"}
+    ],
+    "tax": {"name": "GST", "rate": 0.10}
+  },
+  "CUST-BERG": {
+    "customer_id": "CUST-BERG",
+    "name": "Bergcafe GmbH",
+    "email_domains": ["bergcafe-gmbh.de"],
+    "currency": "EUR",
+    "market": "DE",
+    "payment_terms": "30 Tage netto",
+    "price_list": "EU-WHOLESALE",
+    "credit_limit": 3000.00,
+    "balance_owing": 0.0,
+    "ship_to": [{"code": "BERLIN", "address": "Torstrasse 101, 10119 Berlin"}],
+    "tax": {"name": "USt (reverse charge if EU VAT ID valid)", "rate": 0.0},
+    "vat_id": "DE123456789"
+  }
+}

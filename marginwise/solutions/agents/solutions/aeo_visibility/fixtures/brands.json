@@ -1,0 +1,11 @@
+{
+  "client": "CoolBreeze Air Conditioning",
+  "category": "air conditioning installer",
+  "market": {"country": "Australia", "city": "Brisbane"},
+  "brands": [
+    {"name": "CoolBreeze Air Conditioning", "aliases": ["CoolBreeze", "Cool Breeze Air"]},
+    {"name": "Polar Air Services", "aliases": ["Polar Air"]},
+    {"name": "Brisbane Climate Co", "aliases": ["Brisbane Climate Company", "BCC Air"]},
+    {"name": "Arctic Breeze Services", "aliases": ["Arctic Breeze"]}
+  ]
+}

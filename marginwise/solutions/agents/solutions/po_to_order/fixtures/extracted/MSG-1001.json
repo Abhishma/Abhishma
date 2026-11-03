@@ -1,0 +1,18 @@
+{
+  "po_number": "45512",
+  "po_date": "2026-10-15",
+  "customer_name": "Harbour Cafes Group Pty Ltd",
+  "customer_email": "purchasing@harbourcafes.com.au",
+  "ship_to_address": "88 Crown St, Surry Hills NSW 2010",
+  "required_by": "2026-10-21",
+  "payment_terms": "30 days EOM",
+  "currency": "AUD",
+  "stated_subtotal": 485.60,
+  "notes": null,
+  "lines": [
+    {"line_no": 1, "sku": "GL-OAT-1L", "description": "Oat milk barista 1L (12/ctn)", "quantity": 24, "uom": "each", "unit_price": 3.90},
+    {"line_no": 2, "sku": "GL-ALM-1L", "description": "Almond milk barista 1L", "quantity": 12, "uom": "each", "unit_price": 4.10},
+    {"line_no": 3, "sku": "GL-CHAI-1KG", "description": "Chai powder 1kg", "quantity": 6, "uom": "each", "unit_price": 38.00},
+    {"line_no": 4, "sku": "GL-CUP-12OZ", "description": "Compostable cup 12oz (1000)", "quantity": 2, "uom": "carton", "unit_price": 139.00}
+  ]
+}

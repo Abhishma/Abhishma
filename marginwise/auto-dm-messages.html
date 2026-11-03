@@ -1,0 +1,159 @@
+<title>Marginwise Auto-DM Messages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column of post cards grouped by week, sticky section nav on top. */
+:root {
+  --bg:#f3f4f7; --surface:#ffffff; --ink:#18203a; --muted:#5b6478; --line:#dde1ea;
+  --accent:#1f6f5c; --accent-soft:#e3f1ec; --reel:#e8ecf7; --carousel:#f6efe1; --pin:#fbe7e3; --pin-ink:#8a2f1b;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#10131c; --surface:#181d2a; --ink:#e7eaf2; --muted:#9aa3b8; --line:#2a3142;
+  --accent:#5cc4a6; --accent-soft:#16332c; --reel:#222a3d; --carousel:#33291a; --pin:#3a201b; --pin-ink:#f2a493; color-scheme:dark } }
+:root[data-theme="dark"] {
+  --bg:#10131c; --surface:#181d2a; --ink:#e7eaf2; --muted:#9aa3b8; --line:#2a3142;
+  --accent:#5cc4a6; --accent-soft:#16332c; --reel:#222a3d; --carousel:#33291a; --pin:#3a201b; --pin-ink:#f2a493; color-scheme:dark }
+* { box-sizing:border-box }
+body { background:var(--bg); color:var(--ink); font-family:var(--body); font-size:15px; line-height:1.55 }
+.wrap { max-width:760px; margin:0 auto; padding-inline:16px; padding-block:8px 64px }
+nav { position:sticky; top:env(safe-area-inset-top,0px); z-index:5; background:var(--bg); border-bottom:1px solid var(--line); }
+nav .in { max-width:760px; margin:0 auto; padding:10px 16px; display:flex; gap:8px; overflow-x:auto; scrollbar-width:none }
+nav a { flex:0 0 auto; text-decoration:none; color:var(--ink); font-weight:600; font-size:13px; padding:7px 12px; border:1px solid var(--line); border-radius:999px; background:var(--surface) }
+nav a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
+h1 { font-family:var(--display); font-size:clamp(26px,6vw,36px); line-height:1.1; margin:24px 0 6px; text-wrap:balance }
+.lede { color:var(--muted); margin:0 0 8px; max-width:62ch }
+.rule { font-size:13px; color:var(--muted); margin:0 0 4px }
+h2 { font-family:var(--display); font-size:22px; margin:40px 0 12px; scroll-margin-top:64px }
+h3.week { font-family:var(--display); font-size:18px; margin:28px 0 10px; scroll-margin-top:64px }
+h3.week span { font-family:var(--mono); font-size:12px; color:var(--muted); font-weight:400; margin-left:6px }
+.post { background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:14px; display:grid; gap:12px }
+.post-head { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px }
+.when { display:grid; gap:2px } .when b { font-size:15px }
+.mono { font-family:var(--mono); font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums }
+.tags { display:flex; flex-wrap:wrap; gap:6px; align-items:flex-start }
+.chip { font-size:12px; padding:2px 8px; border-radius:6px; background:var(--bg); border:1px solid var(--line); white-space:nowrap }
+.chip.reel { background:var(--reel) } .chip.carousel { background:var(--carousel) }
+.chip.pin { background:var(--pin); color:var(--pin-ink); border-color:transparent; font-weight:600 }
+.chip.trial { background:var(--accent-soft); color:var(--accent); border-color:transparent; font-weight:600 }
+.hook { font-family:var(--display); font-size:19px; font-weight:600; line-height:1.3; margin:0; text-wrap:balance }
+.block h4 { margin:0 0 4px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted) }
+.block p { margin:0 }
+.steps { margin:0; padding-left:20px; display:grid; gap:6px }
+.caphead { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px }
+.caphead h4 { margin:0 }
+.caption { background:var(--bg); border-radius:8px; padding:10px 12px; font-size:14px; user-select:text }
+button.copy { font:600 12px var(--body); color:var(--accent); background:var(--accent-soft); border:0; border-radius:6px; padding:6px 10px; cursor:pointer }
+.meta { display:flex; flex-wrap:wrap; gap:8px 20px; margin:0; padding-top:10px; border-top:1px solid var(--line) }
+.meta div { min-width:0 } .meta dt { font-size:11px; color:var(--muted) } .meta dd { margin:0; font-size:13px; font-weight:500 }
+.meta dd.mono { color:var(--accent); font-weight:500; font-size:13px }
+.tw { overflow-x:auto; background:var(--surface); border:1px solid var(--line); border-radius:10px }
+table { border-collapse:collapse; width:100%; font-size:14px; min-width:520px }
+th, td { text-align:left; vertical-align:top; padding:10px 12px; border-bottom:1px solid var(--line) }
+th { font-size:12px; color:var(--muted); font-weight:600 }
+tr:last-child td { border-bottom:0 }
+ul.checks { list-style:none; padding:0; margin:0; display:grid; gap:8px }
+ul.checks li { display:flex; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px }
+ul.checks input { margin-top:4px; accent-color:var(--accent); width:18px; height:18px; flex:0 0 auto }
+ul.checks label { display:grid; gap:2px; min-width:0 } ul.checks span { color:var(--muted); font-size:13px }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior:smooth } }
+</style><style>
+.dm{position:relative;margin:6px 0 14px}
+.dm pre{white-space:pre-wrap;word-break:break-word;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 14px 14px;margin:0;font:14px/1.55 var(--body)}
+.dm .copy{position:absolute;top:8px;right:8px}
+main p,main li{max-width:65ch} code{font-family:var(--mono);font-size:12.5px;background:var(--surface);padding:1px 5px;border-radius:4px;word-break:break-all}
+h2{border-top:1px solid var(--line);padding-top:18px}
+</style>
+<nav aria-label="Keywords"><div class="in"><a href="#audit">AUDIT</a><a href="#profit">PROFIT</a><a href="#geo">GEO</a><a href="#ai">AI</a><a href="#speed">SPEED</a><a href="#flows">FLOWS</a><a href="#checklist">CHECKLIST</a><a href="#bfcm">BFCM</a><a href="#fallback">Fallback</a></div></nav>
+<main class="wrap"><h1>Marginwise auto-DM messages (8 keywords: Australia, US, UK)</h1><p>Paste into ManyChat or your Meta-approved DM tool. Replace every <code>[...]</code> link with the Drive share link for that file.</p><p>Booking link pattern: <code>https://marginwise.in/?utm_source=instagram&amp;utm_medium=dm&amp;utm_campaign=&lt;keyword&gt;#book</code></p><p>Setup for every keyword:</p><ul><li>Trigger on the keyword in any case, in comments and in DMs.</li><li>Rotate the three public replies.</li><li>Tag each lead with the keyword and market (Australia, US, UK, Other).</li><li>One automatic follow-up only. After 24 hours, a person replies.</li></ul><h2 id="audit">AUDIT</h2><p><b>Public replies</b></p><ol><li>Sent to your DMs. Check message requests if you don&#x27;t see it.</li><li>Just sent. Reply there with your store link for the video teardown.</li><li>In your inbox now.</li></ol><p><b>DM 1</b></p><div class="dm"><button type="button" class="copy" data-t="c1">Copy</button><pre id="c1">Hi [first name], thanks for commenting.
+
+Here is the 30-point store leak audit: [AUDIT PDF link]
+
+Want us to look at your store too? Reply with:
+1. Your store URL
+2. Roughly how many sessions a month
+3. Where you mainly sell (Australia, US, UK, other)
+
+We will send you a 2-minute video teardown within one working day.
+
+Marginwise</pre></div><p>Quick replies: Send my store link / Just the checklist, thanks</p><p><b>DM 2a (they send store details)</b></p><div class="dm"><button type="button" class="copy" data-t="c2">Copy</button><pre id="c2">Got it, thanks. Your teardown will reach you within one working day.
+
+If you would rather talk it through live, pick a 30-minute slot here: [booking link: audit]</pre></div><p><b>DM 2b (just the checklist)</b></p><div class="dm"><button type="button" class="copy" data-t="c3">Copy</button><pre id="c3">No problem. If you score under 25, start with the checkout section; that is usually where the quickest wins are.
+
+Whenever you want a second pair of eyes, reply AUDIT again.</pre></div><p><b>Person follows up (after sending the video)</b></p><div class="dm"><button type="button" class="copy" data-t="c4">Copy</button><pre id="c4">Here is your teardown: [video link]
+
+The first fix we would ship: [one line].
+
+If you want to go through the rest of the funnel, here is the link to book 30 minutes: [booking link: audit]. No obligation either way.</pre></div><h2 id="profit">PROFIT</h2><p><b>Public replies</b></p><ol><li>Sent to your DMs.</li><li>Just sent the calculator. Try it with last month&#x27;s numbers.</li><li>In your inbox now.</li></ol><p><b>DM 1</b></p><div class="dm"><button type="button" class="copy" data-t="c5">Copy</button><pre id="c5">Hi [first name], here are the two files from the reel:
+
+1. Profit calculator (make a copy): [PROFIT sheet link]
+2. ROAS to profit checklist: [PROFIT PDF link]
+
+Put in your ad spend, ROAS, order value and costs. It shows your true ROAS, profit per order after ads, and the break-even ROAS your campaigns need to hit.
+
+Quick question so we can send something useful next: roughly what is your monthly ad spend?
+
+Marginwise</pre></div><p>Quick replies: Under $10K / $10K-50K / Over $50K / Not running ads</p><p><b>DM 2: Under $10K</b></p><div class="dm"><button type="button" class="copy" data-t="c6">Copy</button><pre id="c6">Got it. At that spend, fixing conversion usually pays back faster than scaling ads. Reply AUDIT and we will send the 30-point store leak audit.</pre></div><p><b>DM 2: $10K-50K or Over $50K</b></p><div class="dm"><button type="button" class="copy" data-t="c7">Copy</button><pre id="c7">At that spend, a small conversion lift is often worth more than any campaign change.
+
+Want to go through your numbers on a free 30-minute call? You leave with your top three leaks and a written summary: [booking link: profit]</pre></div><p><b>DM 2: Not running ads</b></p><div class="dm"><button type="button" class="copy" data-t="c8">Copy</button><pre id="c8">Then conversion, search and repeat purchases are your biggest levers. Reply GEO to see whether AI search recommends your brand, or FLOWS for the post-purchase email checklist.</pre></div><h2 id="geo">GEO</h2><p><b>Public replies</b></p><ol><li>Sent to your DMs.</li><li>Just sent the checklist.</li><li>In your inbox now.</li></ol><p><b>DM 1</b></p><div class="dm"><button type="button" class="copy" data-t="c9">Copy</button><pre id="c9">Hi [first name], here is the AI search visibility checklist: [GEO PDF link]
+
+It covers what ChatGPT, Perplexity and Google&#x27;s AI answers need to name your brand: readable pages, real answers, structured data, and proof from other sites.
+
+Want us to run the test for you? Reply with your store URL and your main product category. We will ask the AI tools 5 buying questions and send you who gets named, within one working day.
+
+Marginwise</pre></div><p>Quick replies: Send my store link / Just the checklist, thanks</p><p><b>DM 2a (they send details)</b></p><div class="dm"><button type="button" class="copy" data-t="c10">Copy</button><pre id="c10">Got it. Your AI search test results will reach you within one working day.
+
+If you want to talk through SEO, AEO and GEO together, here is a free 30-minute slot: [booking link: geo]</pre></div><p><b>DM 2b (just the checklist)</b></p><div class="dm"><button type="button" class="copy" data-t="c11">Copy</button><pre id="c11">No problem. Start with section 5: ask the AI tools 5 buying questions for your category this week and note who gets named. That is your baseline.</pre></div><h2 id="ai">AI</h2><p><b>Public replies</b></p><ol><li>Sent to your DMs.</li><li>Just sent the list.</li><li>In your inbox now.</li></ol><p><b>DM 1</b></p><div class="dm"><button type="button" class="copy" data-t="c12">Copy</button><pre id="c12">Hi [first name], here are 10 AI builds worth starting with for ecommerce brands: [AI PDF link]
+
+Each one lists what it does, what data it needs and what to watch.
+
+Which area takes most of your team&#x27;s repeated time?
+
+Marginwise</pre></div><p>Quick replies: Customer service / Content and SEO / Ads and reporting / Operations</p><p><b>DM 2 (any answer)</b></p><div class="dm"><button type="button" class="copy" data-t="c13">Copy</button><pre id="c13">That is usually the best place to start. Want to map one AI build for your store on a free 30-minute call? We will look at the task, the data and how to measure it: [booking link: ai]</pre></div><h2 id="speed">SPEED</h2><p><b>Public replies</b></p><ol><li>Send us your store link in DMs.</li><li>Messaged you.</li><li>Check your DMs.</li></ol><p><b>DM 1</b></p><div class="dm"><button type="button" class="copy" data-t="c14">Copy</button><pre id="c14">Hi [first name], here is the Shopify speed checklist: [SPEED PDF link]
+
+Want us to run the test for you? Reply with your store URL and we will send the top three things slowing it down within one working day.
+
+Marginwise</pre></div><p><b>DM 2 (they send the URL)</b></p><div class="dm"><button type="button" class="copy" data-t="c15">Copy</button><pre id="c15">Thanks, we will get back to you within one working day.
+
+While you wait: the most common culprit is apps you have uninstalled whose code is still loading. Section 2 of the checklist shows how to check.</pre></div><p><b>Person follows up</b></p><div class="dm"><button type="button" class="copy" data-t="c16">Copy</button><pre id="c16">Your store loads in [X]s on mobile. The three biggest slowdowns are [1], [2] and [3].
+
+Fix [1] first; it is usually a [time] job. Want to talk through the rest? [booking link: speed]</pre></div><h2 id="flows">FLOWS</h2><p><b>Public replies</b></p><ol><li>Sent to your DMs.</li><li>Just sent the checklist.</li><li>In your inbox now. Start with the order confirmation email.</li></ol><p><b>DM 1</b></p><div class="dm"><button type="button" class="copy" data-t="c17">Copy</button><pre id="c17">Hi [first name], here is the post-purchase email checklist: [FLOWS PDF link]
+
+Start with the 10-point scorecard on page 1. Score your order confirmation email, then fix the gaps.
+
+Which email tool are you on?
+
+Marginwise</pre></div><p>Quick replies: Klaviyo / Shopify Email / Other / No email set up</p><p><b>DM 2: Klaviyo</b></p><div class="dm"><button type="button" class="copy" data-t="c18">Copy</button><pre id="c18">Then you can set most of this up in an afternoon. Send us your store link and we will tell you which flow to fix first.</pre></div><p><b>DM 2: Shopify Email or Other</b></p><div class="dm"><button type="button" class="copy" data-t="c19">Copy</button><pre id="c19">The checklist works on any tool. Fix the order confirmation first; it is the most-opened email you send.</pre></div><p><b>DM 2: No email set up</b></p><div class="dm"><button type="button" class="copy" data-t="c20">Copy</button><pre id="c20">Then this is probably the cheapest revenue you are leaving behind.
+
+Want a free 30-minute call to plan your first three emails? [booking link: flows]</pre></div><h2 id="checklist">CHECKLIST</h2><p><b>Public replies</b></p><ol><li>Sent to your DMs.</li><li>Just sent the full list.</li><li>In your inbox now.</li></ol><p><b>DM 1</b></p><div class="dm"><button type="button" class="copy" data-t="c21">Copy</button><pre id="c21">Hi [first name], here is the agency hiring checklist: [CHECKLIST PDF link]
+
+It covers the five questions to ask, the answers that should worry you, contract terms, and what to ask an agency in another country.
+
+Are you working with an agency right now?
+
+Marginwise</pre></div><p>Quick replies: Yes, reviewing them / Yes, happy / No, looking / No, in-house</p><p><b>DM 2: Yes, reviewing them</b></p><div class="dm"><button type="button" class="copy" data-t="c22">Copy</button><pre id="c22">Fair. If it helps, send us a recent report from them and we will tell you what we would ask about. Or talk it through on a free 30-minute call: [booking link: checklist]</pre></div><p><b>DM 2: Yes, happy</b></p><div class="dm"><button type="button" class="copy" data-t="c23">Copy</button><pre id="c23">Good to hear. Keep the checklist for your next review anyway.</pre></div><p><b>DM 2: No, looking</b></p><div class="dm"><button type="button" class="copy" data-t="c24">Copy</button><pre id="c24">Then use the list on everyone, us included. Here is how we work and how pricing is set: [marginwise.in link]</pre></div><p><b>DM 2: No, in-house</b></p><div class="dm"><button type="button" class="copy" data-t="c25">Copy</button><pre id="c25">Makes sense. The same questions work for a freelancer or an in-house hire.</pre></div><h2 id="bfcm">BFCM</h2><p><b>Public replies</b></p><ol><li>Sent to your DMs.</li><li>Just sent the checklist with the timeline.</li><li>In your inbox now.</li></ol><p><b>DM 1</b></p><div class="dm"><button type="button" class="copy" data-t="c26">Copy</button><pre id="c26">Hi [first name], here is the Black Friday checkout checklist: [BFCM PDF link]
+
+Seven fixes you can still ship before 27 November, plus a week-by-week timeline.
+
+Want us to check your checkout before the sale? Reply with your store URL and we will send a 2-minute video teardown within one working day.
+
+Marginwise</pre></div><p>Quick replies: Send my store link / Just the checklist, thanks</p><p><b>DM 2a (they send the URL)</b></p><div class="dm"><button type="button" class="copy" data-t="c27">Copy</button><pre id="c27">Got it. Your teardown will reach you within one working day, with the fixes ranked by what to ship first before the sale.</pre></div><p><b>DM 2b (just the checklist)</b></p><div class="dm"><button type="button" class="copy" data-t="c28">Copy</button><pre id="c28">No problem. If you only do one thing, turn on express payment and show shipping cost before the cart.</pre></div><h2 id="fallback">Fallback replies</h2><p><b>Message with no keyword</b></p><div class="dm"><button type="button" class="copy" data-t="c29">Copy</button><pre id="c29">Thanks for the message. We read every DM and reply within one working day.
+
+For something specific, reply with one of these:
+AUDIT, store leak audit
+PROFIT, profit calculator
+GEO, AI search visibility checklist
+AI, 10 AI builds for ecommerce
+SPEED, speed checklist
+FLOWS, post-purchase emails
+CHECKLIST, agency hiring checklist
+BFCM, Black Friday checklist</pre></div><p><b>Pricing question</b></p><div class="dm"><button type="button" class="copy" data-t="c30">Copy</button><pre id="c30">Pricing depends on scope and ad spend, so we quote after a free 30-minute call. Audits are a fixed fee; retainers are monthly. Book here: [booking link: pricing]</pre></div></main>
+<script>
+document.querySelectorAll("button.copy").forEach(function(b){b.addEventListener("click",function(){
+var el=document.getElementById(b.dataset.t);var t=el.innerText;
+function sel(){var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected";}
+try{navigator.clipboard.writeText(t).then(function(){b.textContent="Copied";setTimeout(function(){b.textContent="Copy"},1500)},sel)}catch(e){sel()}
+})});
+</script>

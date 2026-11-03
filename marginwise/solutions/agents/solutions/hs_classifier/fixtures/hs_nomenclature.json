@@ -1,0 +1,28 @@
+{
+  "_note": "Small subset of HS 2022 six-digit subheadings for offline tests. Not a complete or authoritative nomenclature.",
+  "subheadings": [
+    {"code": "0902.10", "description": "Green tea (not fermented) in immediate packings of a content not exceeding 3 kg", "keywords": ["tea", "green", "loose", "leaf", "packet"]},
+    {"code": "0902.30", "description": "Black tea (fermented) and partly fermented tea, in immediate packings not exceeding 3 kg", "keywords": ["tea", "black", "earl grey", "chai", "packet"]},
+    {"code": "0901.21", "description": "Coffee, roasted, not decaffeinated", "keywords": ["coffee", "roasted", "beans", "ground"]},
+    {"code": "3303.00", "description": "Perfumes and toilet waters", "keywords": ["perfume", "eau de parfum", "fragrance", "toilet water", "oud"]},
+    {"code": "3304.99", "description": "Other beauty or make-up preparations and preparations for the care of the skin", "keywords": ["skincare", "cream", "serum", "moisturiser", "lotion", "face"]},
+    {"code": "3307.41", "description": "Agarbatti and other odoriferous preparations which operate by burning", "keywords": ["incense", "bakhoor", "agarbatti", "burning", "cones"]},
+    {"code": "3401.11", "description": "Soap and organic surface-active products for toilet use, in bars or cakes", "keywords": ["soap", "bar", "toilet", "hand", "body"]},
+    {"code": "4202.21", "description": "Handbags with outer surface of leather or composition leather", "keywords": ["handbag", "bag", "leather", "purse", "tote"]},
+    {"code": "4202.22", "description": "Handbags with outer surface of plastic sheeting or textile materials", "keywords": ["handbag", "bag", "canvas", "textile", "tote", "nylon"]},
+    {"code": "6109.10", "description": "T-shirts, singlets and other vests, knitted or crocheted, of cotton", "keywords": ["t-shirt", "tee", "singlet", "cotton", "knitted", "jersey"]},
+    {"code": "6110.20", "description": "Jerseys, pullovers, cardigans and similar articles, knitted or crocheted, of cotton", "keywords": ["jumper", "sweater", "hoodie", "pullover", "cardigan", "cotton"]},
+    {"code": "6302.60", "description": "Toilet linen and kitchen linen, of terry towelling or similar terry fabrics, of cotton", "keywords": ["towel", "terry", "bath", "cotton"]},
+    {"code": "6404.11", "description": "Sports footwear with outer soles of rubber or plastics and uppers of textile materials", "keywords": ["shoe", "sneaker", "trainer", "running", "textile upper", "rubber sole"]},
+    {"code": "6911.10", "description": "Tableware and kitchenware, of porcelain or china", "keywords": ["porcelain", "china", "plate", "cup", "mug", "bowl"]},
+    {"code": "6912.00", "description": "Ceramic tableware, kitchenware, other household articles, other than porcelain or china", "keywords": ["ceramic", "stoneware", "earthenware", "mug", "plate", "bowl"]},
+    {"code": "7117.19", "description": "Imitation jewellery of base metal, whether or not plated with precious metal (other than cuff links and studs)", "keywords": ["jewellery", "jewelry", "necklace", "earrings", "bracelet", "plated", "brass"]},
+    {"code": "8471.30", "description": "Portable automatic data processing machines, weighing not more than 10 kg", "keywords": ["laptop", "notebook", "computer", "portable"]},
+    {"code": "8509.40", "description": "Food grinders and mixers; fruit or vegetable juice extractors (domestic, with self-contained electric motor)", "keywords": ["blender", "mixer", "juicer", "grinder", "kitchen", "electric"]},
+    {"code": "8516.31", "description": "Hair dryers", "keywords": ["hair dryer", "hairdryer", "blow dryer"]},
+    {"code": "8543.70", "description": "Other electrical machines and apparatus having individual functions, not specified elsewhere", "keywords": ["electrical", "apparatus", "ultrasonic", "device", "diffuser"]},
+    {"code": "9403.60", "description": "Other wooden furniture", "keywords": ["furniture", "wooden", "table", "shelf", "cabinet", "chair"]},
+    {"code": "9503.00", "description": "Tricycles, scooters and similar wheeled toys; dolls; other toys; reduced-size models; puzzles", "keywords": ["toy", "puzzle", "doll", "stacking", "kids", "children", "game"]},
+    {"code": "9603.21", "description": "Toothbrushes, including dental-plate brushes", "keywords": ["toothbrush", "brush", "dental", "bamboo"]}
+  ]
+}

@@ -1,0 +1,50 @@
+# Lovable prompt: service calculators
+
+Send this to the Lovable project once credits are available.
+
+Next update after the India one: add a Calculators page with one calculator per service. Do not invent results; every default is an example or a cited benchmark, labelled on the page.
+
+1. New route /calculators (in the sitemap, header nav link "Calculators" next to Case studies and Pricing). Page: label "Free calculators", H1 "Put your own numbers on the problem.", lede "One calculator for each thing we fix. Every default is an example or a published benchmark, labelled with its source. Replace them with your own figures; results are planning scenarios, not a promise of results." Service chips (Performance marketing, CRO, Website development, SEO, AEO and GEO, AI solutions), then a picker of that service's calculators, then one card: inputs left (2 columns, 1 on mobile), results right on the soft background, notes with sources, and a "Book a 30-minute call" button to /#book. A currency switch AUD / USD / GBP / INR defaults from the visitor's time zone (America/* USD, Europe/* GBP, Asia/Kolkata INR, else AUD); the surcharge calculator always opens in AUD, India COD in INR, tariff landed cost in USD. Deep links /calculators#<id> open that calculator. Everything runs in the browser; nothing is sent anywhere (say so in the footer).
+
+2. Put the formulas as pure functions in src/lib/calculators.ts and unit-test them with exactly these cases (all must pass):
+- profitAfterAds({spend,roas,aov,cogsPct,feePct,returnsPct,fulfilPerOrder,overAttribPct}): trueRevenue = spend*roas*(1-overAttribPct/100); orders = trueRevenue/aov; contribution = aov*(1-(returnsPct+cogsPct+feePct)/100) - fulfilPerOrder; profit = orders*contribution - spend; breakEvenRoas = aov/(contribution*(1-overAttribPct/100)), Infinity when contribution <= 0. Test: 10000,3,100,35,3,8,12,20 -> trueRevenue 24000, orders 240, contribution 42, profit 80, breakEvenRoas 2.976.
+- conversionLift({sessions,crPct,aov,marginPct,liftPct}): orders, revenue, extraRevenue = revenue*lift, extraMarginYear = extraRevenue*margin*12, newCrPct. Test 40000,1.8,110,60,20 -> 720, 79200, 15840, 114048, 2.16.
+- speedValue({sessions,crPct,aov,marginPct,tenths}) with 8.4% per 0.1 s: revenue, perTenth = revenue*0.084, scenario = perTenth*tenths, scenarioMarginYear = scenario*margin*12. Test 40000,2,75,60,3 -> 60000, 5040, 15120, 108864.
+- searchValue({sessions,crPct,aov,marginPct,cpc}): revenue, margin, adCostEquivalent = sessions*cpc. Test 20000,1.5,80,50,1.5 -> 24000, 12000, 30000.
+- supportAgent({tickets,automatablePct,resolvePct,costPerTicket,minutesPerTicket,fee}): resolved = tickets*a*r, hours = resolved*minutes/60, saving = resolved*cost - fee. Test 3000,40,60,5,6,750 -> 720, 72, 2850.
+- receptionist({calls,answeredPct,aiAnsweredPct,bookPct,jobValue,marginPct,fee}): extraAnswered = calls*max(0, ai-answered)/100, jobs = extraAnswered*book/100, revenue = jobs*jobValue, profit = revenue*margin - fee. Test 400,52,95,43,450,50,600 -> 172, 73.96, 33282, 16041; and ai below answered gives 0 jobs.
+- opsAutomation({hours,hourlyCost,automatePct,errors,costPerError,fee}): hoursSaved, errorsAvoided, saving = hoursSaved*hourlyCost + errorsAvoided*costPerError - fee. Test 40,35,70,10,60,900 -> 28, 7, 500.
+- surchargeBan({cardRevenue,surchargePct,cardFeePct,cheaperFeePct,shiftPct}): lostSurcharge = cardRevenue*s, lostYear = x12, cardFees, shiftSaving = cardRevenue*shift*max(0,cardFee-cheaperFee), priceRisePct = surchargePct (the price rise that keeps the same net after fees). Test 200000,1.5,1.4,0.5,30 -> 3000, 36000, 2800, 540, 1.5.
+- landedCost({unitCost,freight,dutyPct,tariffPct,otherFees,price,targetMarginPct}): duties = unitCost*(duty+tariff)/100, landed, marginPct, priceForTarget = landed/(1-target/100). Test 20,2,5,10,0,60,60 -> 3, 25, 58.333, 62.5.
+- codRto({orders,codPct,codRtoPct,prepaidRtoPct,rtoCost,shiftPct}): rtoNow, costNow, rtoAfter (after shifting shiftPct of COD orders to prepaid), saving. Test 5000,60,26,2,120,25 -> 820, 98400, 640, 21600.
+
+3. The ten calculators, with these default inputs, results and notes:
+- Performance marketing / Profit after ads: spend 10000, ROAS 3, AOV 100, product cost 35%, payment fees 3%, returns 8%, fulfilment 12 per order, over-counting 0% "(your estimate)". Results: profit after ads (red if negative), contribution per order (2 decimals), break-even ROAS ("Not reachable: each order loses money before ads" if infinite), orders. Notes: returned goods treated as not resold; we do not assume an over-counting figure.
+- CRO / Conversion lift: the existing calculator logic (40000, 1.8%, 110, 60%, lift 20%). Note: Baymard 35% checkout benchmark; lifts are scenarios.
+- CRO / Australian surcharge ban: card revenue 200000, surcharge 1.5%, card fee 1.4% "(check your statement)", cheaper method fee 0.5%, shift 30%. Results: surcharge income lost per year, per month, price rise that keeps the same net, monthly saving from shifting payment mix. Notes: RBA media release 2026-10; fees are examples.
+- CRO / India COD returns: orders 5000, COD 60%, RTO on COD 26%, RTO on prepaid 2%, cost per returned order 120, shift 25%. Results: monthly saving, RTO cost today, returned orders today and after. Note: Shipway ShipNotes FY25.
+- Website development / Site speed: 40000, 2%, 75, 60%, 3 tenths. Results: extra gross margin per year (scenario), revenue at stake per 0.1 s, extra revenue per month, revenue today. Notes: Deloitte Digital and Google 2020, 8.4% per 0.1 s across 37 brands; straight-line scenario, real gains vary.
+- Website development / Tariff landed cost: 20, 2, 5%, 10%, 0, price 60, target 60%. Results with 2 decimals: landed cost, margin at today's price, price for target margin, duties per unit. Note: rates from your customs broker, not customs advice.
+- SEO, AEO and GEO / Search and AI traffic value: 20000 sessions, 1.5%, 80, 50%, CPC 1.5. Results: ad spend needed to buy this traffic, revenue, gross margin. Note: use your own Google Ads CPC.
+- AI solutions / AI support agent: 3000 tickets, 40% automatable, 60% resolved, 5 per ticket, 6 minutes, fee 750. Results: net saving, tickets resolved, team hours freed. Note: measure resolution on past tickets first.
+- AI solutions / AI phone receptionist: 400 calls, 52% answered today, 95% with AI, 43% book, job 450, margin 50%, fee 600. Results: extra gross profit, extra calls answered, extra jobs (1 decimal), extra revenue. Note: Invoca 2026 home services benchmarks (52% answered; 43% of answered HVAC calls convert).
+- AI solutions / ERP sync and reconciliation: 40 hours, 35 per hour, 70% automatable, 10 errors, 60 per error, fee 900. Results: net saving, hours saved, errors avoided. Note: anything that changes orders, prices or invoices still goes to a person.
+
+4. Link each home-page service card to its calculator: Performance marketing -> #profit, CRO -> #lift, Website development -> #speed, SEO -> #search, AI solutions -> #support (link text: "Profit after ads calculator", "Conversion, surcharge and COD calculators", "Site speed and landed cost calculators", "Search and AI traffic value calculator", "AI support, receptionist and ops calculators"). Keep the existing home-page conversion calculator and the plan calculator working; reuse the shared conversionLift function there.
+
+5. Checks: unit tests above pass; type check clean; /calculators has no serious axe violations, no horizontal scroll at 375px, works in dark mode; editing any input updates results immediately. List files changed and test results.
+
+---
+
+## Follow-up to send once credits are added (19 Oct)
+
+Lovable built the calculators (commit 8f172be, 27 tests pass) but stopped with a type-check error and a failed input-update check. Send this:
+
+```
+Please finish the calculators update:
+
+1. Fix the type-check error in src/test/booking-timezone.test.tsx and any other preview build errors, so the type check is clean and the preview builds.
+2. The input-update check failed. Find which calculator and which input did not change the results. If it is a real bug (the input is not wired to the formula), fix it. If the change is real but hidden by rounding, change the test to use a bigger step for that input. Do not change the formulas or the test values in src/test/calculators.test.ts.
+3. Run the mobile checks at 375px: /calculators and the home page have no horizontal scroll and no serious axe violations, in light and dark mode.
+4. Report the full test count, the type-check result, and which input had failed and why. Do not publish.
+```
